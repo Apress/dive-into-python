@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!ENTITY regression_name 'regression'>
+<!ENTITY regression_filename '<filename class="headerfile">&regression_name;.py</filename>'>
+<!ENTITY unittest_modulename '<filename class="headerfile">unittest</filename>'>
+
+<!ENTITY regression_doc '"""Regression testing framework
+
+This module will search for scripts in the same directory named
+XYZtest.py.  Each such script should be a test suite that tests a
+module through PyUnit.  (As of Python 2.1, PyUnit is included in
+the standard library as "unittest".)  This script will aggregate all
+found test suites into one big test suite and run them all at once.
+"""'>
+
+<!ENTITY regression_import 'import sys, os, re, unittest'>
+
+<!ENTITY regression_testdef    'def regressionTest():'>
+<!ENTITY regression_path1          'path = os.path.abspath(os.path.dirname(sys.argv[0]))   '>
+<!ENTITY regression_listdir1       'files = os.listdir(path)                               '>
+<!ENTITY regression_compile1       'test = re.compile("test\.py$", re.IGNORECASE)          '>
+<!ENTITY regression_filter1        'files = filter(test.search, files)                     '>
+<!ENTITY regression_lambda1        'filenameToModuleName = lambda f: os.path.splitext(f)[0]'>
+<!ENTITY regression_map1           'moduleNames = map(filenameToModuleName, files)         '>
+<!ENTITY regression_mapimport1     'modules = map(__import__, moduleNames)                 '>
+<!ENTITY regression_load1          'load = unittest.defaultTestLoader.loadTestsFromModule  '>
+<!ENTITY regression_testsuite1     'return unittest.TestSuite(map(load, modules))          '>
+
+<!ENTITY regression_path      '    &regression_path1;'>
+<!ENTITY regression_listdir   '    &regression_listdir1;'>
+<!ENTITY regression_compile   '    &regression_compile1;'>
+<!ENTITY regression_filter    '    &regression_filter1;'>
+<!ENTITY regression_lambda    '    &regression_lambda1;'>
+<!ENTITY regression_map       '    &regression_map1;'>
+<!ENTITY regression_mapimport '    &regression_mapimport1;'>
+<!ENTITY regression_load      '    &regression_load1;'>
+<!ENTITY regression_testsuite '    &regression_testsuite1;'>
+
+<!ENTITY regression_ifmain 'if __name__ == "__main__":                   '>
+<!ENTITY regression_main '    unittest.main(defaultTest="regressionTest")'>
+
+<!ENTITY sysargv0 '<literal>sys.argv[0]</literal>'>
+<!ENTITY ospathdirname '<function>os.path.dirname</function>'>
+<!ENTITY oslistdir '<function>os.listdir</function>'>
+<!ENTITY ospathjoin '<function>os.path.join</function>'>
+<!ENTITY filter_function '<function>filter</function>'>
+<!ENTITY map_function '<function>map</function>'>
+<!ENTITY ospathabspath '<function>os.path.abspath</function>'>
+<!ENTITY ospathsplitext '<function>os.path.splitext</function>'>
+<!ENTITY importfunction '<function>__import__</function>'>
+<!ENTITY regressiontestfunction '<function>regressionTest</function>'>

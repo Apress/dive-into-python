@@ -1,0 +1,798 @@
+<?xml version="1.0" encoding="utf-8"?>
+<bookinfo>
+&pubinfo;
+<revhistory>
+<revision>
+<revnumber>5.4</revnumber>
+<date>2004-05-20</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Added <xref linkend="soap.divein"/>.</para></listitem>
+<listitem><para>Added <xref linkend="soap.install"/>.</para></listitem>
+<listitem><para>Added <xref linkend="soap.firststeps"/>.</para></listitem>
+<listitem><para>Added <xref linkend="soap.debug"/>.</para></listitem>
+<listitem><para>Added <xref linkend="soap.wsdl"/>.</para></listitem>
+<listitem><para>Added <xref linkend="soap.introspection"/>.</para></listitem>
+<listitem><para>Added <xref linkend="soap.google"/>.</para></listitem>
+<listitem><para>Added <xref linkend="soap.troubleshooting"/>.</para></listitem>
+<listitem><para>Added <xref linkend="soap.summary"/>.</para></listitem>
+<listitem><para>Incorporated technical reviewer revisions in <xref linkend="regression"/> and <xref linkend="soundex"/>.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision><revision>
+<revnumber>5.3</revnumber>
+<date>2004-05-12</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Added <methodname>isalpha()</methodname> example to <xref linkend="soundex.stage1"/>.  Thanks, Paul.</para></listitem>
+<listitem><para>Incorporated copyediting revisions into <xref linkend="fileinfo"/> and <xref linkend="filehandling"/>.</para></listitem>
+<listitem><para>Fixed URL of <xref linkend="kgp.segue"/>.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>5.2</revnumber>
+<date>2004-05-09</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Fixed URL of <xref linkend="roman.stage1"/>.</para></listitem>
+<listitem><para>Added <xref linkend="soundex.divein"/>.</para></listitem>
+<listitem><para>Added <xref linkend="soundex.timeit"/>.</para></listitem>
+<listitem><para>Added <xref linkend="soundex.stage1"/>.</para></listitem>
+<listitem><para>Added <xref linkend="soundex.stage2"/>.</para></listitem>
+<listitem><para>Added <xref linkend="soundex.stage3"/>.</para></listitem>
+<listitem><para>Added <xref linkend="soundex.stage4"/>.</para></listitem>
+<listitem><para>Added <xref linkend="soundex.summary"/>.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>5.1</revnumber>
+<date>2004-05-05</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Clarified <xref linkend="re.tens.example"/> and <xref linkend="re.nm.example"/>.</para></listitem>
+<listitem><para>Clarified <xref linkend="re.phone.example"/>.</para></listitem>
+<listitem><para>Fixed typo in <xref linkend="oa.etags.example.1"/>.  Thanks, Jesir.</para></listitem>
+<listitem><para>Fixed typo in <xref linkend="odbchelper.list.append.vs.extend"/>.  Thanks, Daniel.</para></listitem>
+<listitem><para>Incorporated technical reviewer revisions.</para></listitem>
+<listitem><para>Incorporated copy editor revisions in <xref linkend="install"/>, <xref linkend="odbchelper"/>, <xref linkend="datatypes"/>, and <xref linkend="apihelper"/>.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>5.0</revnumber>
+<date>2004-04-16</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Added <xref linkend="oa.divein"/>.</para></listitem>
+<listitem><para>Added <xref linkend="oa.review"/>.</para></listitem>
+<listitem><para>Added <xref linkend="oa.features"/>.</para></listitem>
+<listitem><para>Added <xref linkend="oa.debug"/>.</para></listitem>
+<listitem><para>Added <xref linkend="oa.useragent"/>.</para></listitem>
+<listitem><para>Added <xref linkend="oa.etags"/>.</para></listitem>
+<listitem><para>Added <xref linkend="oa.redirect"/>.</para></listitem>
+<listitem><para>Added <xref linkend="oa.gzip"/>.</para></listitem>
+<listitem><para>Added <xref linkend="oa.alltogether"/>.</para></listitem>
+<listitem><para>Added <xref linkend="oa.summary"/>.</para></listitem>
+<listitem><para>Added <xref linkend="odbchelper.list.append.vs.extend"/>.</para></listitem>
+<listitem><para>Changed descriptions of how to download &python; throughout <xref linkend="install"/> to be more generic and less version-specific.</para></listitem>
+<listitem><para>Changed references of <quote>module</quote> to <quote>program</quote> in <xref linkend="odbchelper.divein"/> and <xref linkend="odbchelper.objects"/> since we haven't explained modules yet.</para></listitem>
+<listitem><para>Added explicit instructions in <xref linkend="odbchelper.objects"/> for the reader to open their &python; &ide; and follow along with the examples.</para></listitem>
+<listitem><para>Changed all examples and descriptions that referred to truth values &one; and &zero; to refer to &true; and &false;.</para></listitem>
+<listitem><para>Updated <xref linkend="odbchelper.stringformatting.coerce"/> to show new &python; 2.3 <literal>TypeError</literal> message.</para></listitem>
+<listitem><para>Fixed typo in <xref linkend="plural.fib.example"/>.</para></listitem>
+<listitem><para>Fixed typo in <xref linkend="re.summary"/>.</para></listitem>
+<listitem><para>Fixed typo in <xref linkend="plural.stage4.example.1"/>.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>4.9</revnumber>
+<date>2004-03-25</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Finished <xref linkend="regression.alltogether"/>.</para></listitem>
+<listitem><para>Added <xref linkend="regression.summary"/>.</para></listitem>
+<listitem><para>Split unit testing introduction into two chapters, <xref linkend="roman"/> and <xref linkend="roman1.5"/>.</para></listitem>
+<listitem><para>Fixed typo in <xref linkend="plural.finishing.up"/>.</para></listitem>
+<listitem><para>Fixed typo in <xref linkend="plural.introducing.generators"/>.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision><revision>
+<revnumber>4.8</revnumber>
+<date>2004-03-25</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Finished <xref linkend="plural.stage6"/>.</para></listitem>
+<listitem><para>Finished <xref linkend="plural.summary"/>.</para></listitem>
+<listitem><para>Fixed broken links in <xref linkend="furtherreading"/>, <xref linkend="abstracts"/>, <xref linkend="tips"/>, <xref linkend="examples"/>.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>4.7</revnumber>
+<date>2004-03-21</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Added <xref linkend="plural.divein"/>.</para></listitem>
+<listitem><para>Added <xref linkend="plural.stage1"/>.</para></listitem>
+<listitem><para>Added <xref linkend="plural.stage2"/>.</para></listitem>
+<listitem><para>Added <xref linkend="plural.stage3"/>.</para></listitem>
+<listitem><para>Added <xref linkend="plural.stage4"/>.</para></listitem>
+<listitem><para>Added <xref linkend="plural.stage5"/>.</para></listitem>
+<listitem><para>Added <xref linkend="plural.stage6"/> (unfinished).</para></listitem>
+<listitem><para>Added <xref linkend="plural.summary"/> (unfinished).</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision><revision>
+<revnumber>4.6</revnumber>
+<date>2004-03-14</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Finished <xref linkend="re.nm"/>.</para></listitem>
+<listitem><para>Finished <xref linkend="re.verbose"/>.</para></listitem>
+<listitem><para>Finished <xref linkend="re.phone"/>.</para></listitem>
+<listitem><para>Expanded <xref linkend="re.summary"/>.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>4.5</revnumber>
+<date>2004-03-07</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Added <xref linkend="re.intro"/>.</para></listitem>
+<listitem><para>Added <xref linkend="re.nm"/> (incomplete).</para></listitem>
+<listitem><para>Added <xref linkend="re.verbose"/> (incomplete).</para></listitem>
+<listitem><para>Added <xref linkend="re.phone"/> (incomplete).</para></listitem>
+<listitem><para>Added <xref linkend="re.summary"/>.</para></listitem>
+<listitem><para>Moved <xref linkend="re.matching"/> and <xref linkend="re.roman"/> to regular expressions chapter.</para></listitem>
+<listitem><para>Added <xref linkend="fileinfo.os.glob.example"/>.</para></listitem>
+<listitem><para>Added <xref linkend="fileinfo.files.writeandappend"/>.</para></listitem>
+<listitem><para>Added <xref linkend="fileinfo.userdict.fromdict"/>.</para></listitem>
+<listitem><para>Added <xref linkend="kgp.stdio.print.example"/>.</para></listitem>
+<listitem><para>Added <xref linkend="apihelper.getattr.dispatch"/> and <xref linkend="apihelper.getattr.default"/>.</para></listitem>
+<listitem><para>Added <xref linkend="odbchelper.indenting.if"/>.</para></listitem>
+<listitem><para>Added <xref linkend="odbchelper.stringformatting.numbers"/>.</para></listitem>
+<listitem><para>Split <xref linkend="fileinfo"/> into 2 chapters: <xref linkend="fileinfo"/> and <xref linkend="filehandling"/>.</para></listitem>
+<listitem><para>Split <xref linkend="kgp"/> into 2 chapters: <xref linkend="kgp"/> and <xref linkend="streams"/>.</para></listitem>
+<listitem><para>Split <xref linkend="roman"/> into 2 chapters: <xref linkend="roman"/> and <xref linkend="roman2"/>.</para></listitem>
+<listitem><para>Renamed <function>help</function> to <function>info</function> in <xref linkend="apihelper"/>.</para></listitem>
+<listitem><para>Fixed incorrect back-reference in <xref linkend="dialect.locals"/>.</para></listitem>
+<listitem><para>Fixed broken example links in <xref linkend="dialect.divein"/>.</para></listitem>
+<listitem><para>Fixed missing line in example in <xref linkend="kgp.divein"/>.</para></listitem>
+<listitem><para>Fixed typo in <xref linkend="dialect.sgmllib"/>.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision><revision>
+<revnumber>4.4</revnumber>
+<date>2003-10-08</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Added <xref linkend="install.choosing"/>.</para></listitem>
+<listitem><para>Added <xref linkend="install.windows"/>.</para></listitem>
+<listitem><para>Added <xref linkend="install.macosx"/>.</para></listitem>
+<listitem><para>Added <xref linkend="install.macos9"/>.</para></listitem>
+<listitem><para>Added <xref linkend="install.redhat"/>.</para></listitem>
+<listitem><para>Added <xref linkend="install.debian"/>.</para></listitem>
+<listitem><para>Added <xref linkend="install.source"/>.</para></listitem>
+<listitem><para>Added <xref linkend="install.summary"/>.</para></listitem>
+<listitem><para>Removed preface.</para></listitem>
+<listitem><para>Fixed typo in <xref linkend="odbchelper.join.example"/>.</para></listitem>
+<listitem><para>Added link to PEP 257 in <xref linkend="odbchelper.docstring"/>.</para></listitem>
+<listitem><para>Fixed link to &howtothink; in <xref linkend="odbchelper.multiassign"/>.</para></listitem>
+<listitem><para>Added note about implied assert in <xref linkend="odbchelper.tuple"/>.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision><revision>
+<revnumber>4.3</revnumber>
+<date>2003-09-28</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Added <xref linkend="regression.import"/>.</para></listitem>
+<listitem><para>Added <xref linkend="regression.alltogether"/> (incomplete).</para></listitem>
+<listitem><para>Fixed links in <xref linkend="about"/>.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>4.2.1</revnumber>
+<date>2003-09-17</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Fixed links on index page.</para></listitem>
+<listitem><para>Fixed syntax highlighting.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>4.2</revnumber>
+<date>2003-09-12</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Fixed typos in <xref linkend="regression.map"/>, <xref linkend="regression.filter"/>, <xref linkend="re.matching"/>, and <xref linkend="kgp.commandline"/>.  Thanks, Doug.</para></listitem>
+<listitem><para>Fixed external link in <xref linkend="fileinfo.class"/>.  Thanks, Harry.</para></listitem>
+<listitem><para>Changed wording at the end of <xref linkend="apihelper.filter"/>.  Thanks, Paul.</para></listitem>
+<listitem><para>Added sentence in <xref linkend="roman.failure"/> to make it clearer that we're passing a function to &assertRaises;, not a function name as a string.  Thanks, Stephen.</para></listitem>
+<listitem><para>Fixed typo in <xref linkend="dialect.dialectizer"/>.  Thanks, Wellie.</para></listitem>
+<listitem><para>Fixed links to dialectized examples.</para></listitem>
+<listitem><para>Fixed external link to the history of Roman numerals.  Thanks to many concerned Roman numeral fans around the world.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision><revision>
+<revnumber>4.1</revnumber>
+<date>2002-07-28</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Added <xref linkend="kgp.cache"/>.</para></listitem>
+<listitem><para>Added <xref linkend="kgp.child"/>.</para></listitem>
+<listitem><para>Added <xref linkend="kgp.handler"/>.</para></listitem>
+<listitem><para>Added <xref linkend="kgp.commandline"/>.</para></listitem>
+<listitem><para>Added <xref linkend="kgp.alltogether"/>.</para></listitem>
+<listitem><para>Added <xref linkend="kgp.summary"/>.</para></listitem>
+<listitem><para>Fixed typo in <xref linkend="fileinfo.os"/>.  It's <function>os.getcwd()</function>, not <function>os.path.getcwd()</function>.  Thanks, Abhishek.</para></listitem>
+<listitem><para>Fixed typo in <xref linkend="odbchelper.join"/>.  When evaluated (instead of printed), the &python; &ide; will display single quotes around the output.</para></listitem>
+<listitem><para>Changed &str; example in <xref linkend="apihelper.alltogether"/> to use a user-defined function, since &python; 2.2 obsoleted the old example by defining a &docstring; for the built-in dictionary methods.  Thanks Eric.</para></listitem>
+<listitem><para>Fixed typo in <xref linkend="kgp.unicode"/>, "anyway" to "anywhere".  Thanks Frank.</para></listitem>
+<listitem><para>Fixed typo in <xref linkend="roman.sanity"/>, doubled word "accept".  Thanks Ralph.</para></listitem>
+<listitem><para>Fixed typo in <xref linkend="roman.refactoring"/>, <literal>C?C?C?</literal> matches 0 to 3 <literal>C</literal> characters, not 4.  Thanks Ralph.</para></listitem>
+<listitem><para>Clarified and expanded explanation of implied slice indices in <xref linkend="odbchelper.list.slicing.example"/>.  Thanks Petr.</para></listitem>
+<listitem><para>Added historical note in <xref linkend="fileinfo.userdict"/> now that &python; 2.2 supports subclassing built-in datatypes directly.</para></listitem>
+<listitem><para>Added explanation of &update; dictionary method in <xref linkend="fileinfo.userdict.init.example"/>.  Thanks Petr.</para></listitem>
+<listitem><para>Clarified &python;'s lack of overloading in <xref linkend="fileinfo.userdict"/>.  Thanks Petr.</para></listitem>
+<listitem><para>Fixed typo in <xref linkend="dialect.basehtml.intro"/>.  &html; comments end with two dashes and a bracket, not one.  Thanks Petr.</para></listitem>
+<listitem><para>Changed tense of note about nested scopes in <xref linkend="dialect.locals"/> now that &python; 2.2 is out.  Thanks Petr.</para></listitem>
+<listitem><para>Fixed typo in <xref linkend="dialect.unknownstarttag"/>; a space should have been a non-breaking space.  Thanks Petr.</para></listitem>
+<listitem><para>Added title to note on derived classes in <xref linkend="fileinfo.userdict"/>.  Thanks Petr.</para></listitem>
+<listitem><para>Added title to note on downloading &unittest_module; in <xref linkend="roman.refactoring"/>.  Thanks Petr.</para></listitem>
+<listitem><para>Fixed typesetting problem in <xref linkend="regression.path.cwd.example"/>; tabs should have been spaces, and the line numbers were misaligned.  Thanks Petr.</para></listitem>
+<listitem><para>Fixed capitalization typo in the tip on truth values in <xref linkend="odbchelper.list"/>.  It's <literal>True</literal> and <literal>False</literal>, not <literal>true</literal> and <literal>false</literal>.  Thanks to everyone who pointed this out.</para></listitem>
+<listitem><para>Changed section titles of <xref linkend="odbchelper.dict"/>, <xref linkend="odbchelper.list"/>, and <xref linkend="odbchelper.tuple"/>. "Dictionaries 101" was a cute way of saying that this section was an beginner's introduction to dictionaries.  American colleges tend to use this numbering scheme to indicate introductory courses with no prerequisites, but apparently this is a distinctly American tradition, and it was unnecessarily confusing my international readers.  In my defense, when I initially wrote these sections a year and a half ago, it never occurred to me that I would have international readers.</para></listitem>
+<listitem><para>Upgraded to version 1.52 of the &docbook; &xsl; stylesheets.</para></listitem>
+<listitem><para>Upgraded to version 6.52 of &saxon;.</para></listitem>
+<listitem><para>Various accessibility-related stylesheet tweaks.</para></listitem>
+<listitem><para>Somewhere between this revision and the last one, she said yes.  The wedding will be next spring.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>4.0-2</revnumber>
+<date>2002-04-26</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Fixed typo in <xref linkend="apihelper.andor.intro.example"/>.</para></listitem>
+<listitem><para>Fixed typo in <xref linkend="odbchelper.objects.sys.path"/>.</para></listitem>
+<listitem><para>Fixed Windows help file (missing table of contents due to base stylesheet changes).</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>4.0</revnumber>
+<date>2002-04-19</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Expanded <xref linkend="odbchelper.objects"/> to include more about import search paths.</para></listitem>
+<listitem><para>Fixed typo in <xref linkend="odbchelper.negative.example"/>.  Thanks to Brian for the correction.</para></listitem>
+<listitem><para>Rewrote the tip on truth values in <xref linkend="odbchelper.list"/>, now that &python; has a separate boolean datatype.</para></listitem>
+<listitem><para>Fixed typo in <xref linkend="fileinfo.fromimport"/> when comparing syntax to &java;.  Thanks to Rick for the correction.</para></listitem>
+<listitem><para>Added note in <xref linkend="fileinfo.userdict"/> about derived classes always overriding ancestor classes.</para></listitem>
+<listitem><para>Fixed typo in <xref linkend="fileinfo.classattributes.writeable.example"/>.  Thanks to Kevin for the correction.</para></listitem>
+<listitem><para>Added note in <xref linkend="fileinfo.exception"/> that you can define and raise your own exceptions.  Thanks to Rony for the suggestion.</para></listitem>
+<listitem><para>Fixed typo in <xref linkend="dialect.specifictags.example"/>.  Thanks for Rick for the correction.</para></listitem>
+<listitem><para>Added note in <xref linkend="dialect.dialectizer.example"/> about what the return codes mean.  Thanks to Howard for the suggestion.</para></listitem>
+<listitem><para>Added &str; function when creating &stringio_classname; instance in <xref linkend="kgp.openanything.example"/>.  Thanks to Ganesan for the idea.</para></listitem>
+<listitem><para>Added link in <xref linkend="roman.romantest"/> to explanation of why test cases belong in a separate file.</para></listitem>
+<listitem><para>Changed <xref linkend="regression.path"/> to use &ospathdirname; instead of <literal>os.path.split</literal>.  Thanks to Marc for the idea.</para></listitem>
+<listitem><para>Added code samples (<filename>piglatin.py</filename>, <filename>parsephone.py</filename>, and <filename>plural.py</filename>) for the upcoming regular expressions chapter.</para></listitem>
+<listitem><para>Updated and expanded list of Python distributions on home page.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>3.9</revnumber>
+<date>2002-01-01</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Added <xref linkend="kgp.unicode"/>.</para></listitem>
+<listitem><para>Added <xref linkend="kgp.search"/>.</para></listitem>
+<listitem><para>Added <xref linkend="kgp.attributes"/>.</para></listitem>
+<listitem><para>Added <xref linkend="kgp.openanything"/>.</para></listitem>
+<listitem><para>Added <xref linkend="kgp.stdio"/>.</para></listitem>
+<listitem><para>Added simple counter &for; loop examples (good usage and bad usage) in <xref linkend="fileinfo.for"/>.  Thanks to Kevin for the idea.</para></listitem>
+<listitem><para>Fixed typo in <xref linkend="odbchelper.items"/> (two elements of <literal>params.values()</literal> were reversed).</para></listitem>
+<listitem><para>Fixed mistake in <xref linkend="apihelper.builtin"/> with regards to the name of the &builtins; module.  Thanks to Denis for the correction.</para></listitem>
+<listitem><para>Added additional example in <xref linkend="regression.path"/> to show how to run unit tests in the current working directory, instead of the directory where &regression_filename; is located.</para></listitem>
+<listitem><para>Modified explanation of how to derive a negative list index from a positive list index in <xref linkend="odbchelper.negative.example"/>.  Thanks to Renauld for the suggestion.</para></listitem>
+<listitem><para>Updated links on home page for downloading latest version of &python;.</para></listitem>
+<listitem><para>Added link on home page to Bruce Eckel's preliminary draft of &thinkinginpython;, a marvelous (and advanced) book on design patterns and how to implement them in &python;.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>3.8</revnumber>
+<date>2001-11-18</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Added <xref linkend="regression.path"/>.</para></listitem>
+<listitem><para>Added <xref linkend="regression.filter"/>.</para></listitem>
+<listitem><para>Added <xref linkend="regression.map"/>.</para></listitem>
+<listitem><para>Added <xref linkend="regression.datacentric"/>.</para></listitem>
+<listitem><para>Expanded sample output in <xref linkend="regression.divein"/>.</para></listitem>
+<listitem><para>Finished <xref linkend="kgp.parse"/>.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>3.7</revnumber>
+<date>2001-09-30</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Added <xref linkend="kgp.packages"/>.</para></listitem>
+<listitem><para>Added <xref linkend="kgp.parse"/>.</para></listitem>
+<listitem><para>Cleaned up introductory paragraph in <xref linkend="kgp.divein"/>.  Thanks to Matt for this suggestion.</para></listitem>
+<listitem><para>Added &java; tip in <xref linkend="fileinfo.fromimport"/>.  Thanks to Ori for this suggestion.</para></listitem>
+<listitem><para>Fixed mistake in <xref linkend="apihelper.alltogether"/> where I implied that you could not use <literal>is None</literal> to compare to a null value in &python;.  In fact, you can, and it's faster than <literal>== None</literal>.  Thanks to Ori pointing this out.</para></listitem>
+<listitem><para>Clarified in <xref linkend="odbchelper.list"/> where I said that <literal>li = li + other</literal> was equivalent to <literal>li.extend(other)</literal>.  The result is the same, but &extend; is faster because it doesn't create a new list.  Thanks to Denis pointing this out.</para></listitem>
+<listitem><para>Fixed mistake in <xref linkend="odbchelper.list"/> where I said that <literal>li += other</literal> was equivalent to <literal>li = li + other</literal>.  In fact, it's equivalent to <literal>li.extend(other)</literal>, since it doesn't create a new list.  Thanks to Denis pointing this out.</para></listitem>
+<listitem><para>Fixed typographical laziness in <xref linkend="odbchelper"/>; when I was writing it, I had not yet standardized on putting string literals in single quotes within the text.  They were set off by typography, but this is lost in some renditions of the book (like plain text), making it difficult to read.  Thanks to Denis for this suggestion.</para></listitem>
+<listitem><para>Fixed mistake in <xref linkend="odbchelper.funcdef"/> where I said that statically typed languages always use explicit variable + datatype declarations to enforce static typing.  Most do, but there are some statically typed languages where the compiler figures out what type the variable is based on usage within the code.  Thanks to Tony for pointing this out.</para></listitem>
+<listitem><para>Added link to <ulink url="&url_diveintopythones;">Spanish translation</ulink>.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision><revision>
+<revnumber>3.6.4</revnumber>
+<date>2001-09-06</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Added code in &basehtml_classname; to handle non-&html; entity references, and added a note about it in <xref linkend="dialect.basehtml"/>.</para></listitem>
+<listitem><para>Modified <xref linkend="dialect.globals.example"/> to include &htmlentitydefs; in the output.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>3.6.3</revnumber>
+<date>2001-09-04</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Fixed typo in <xref linkend="kgp.divein"/>.</para></listitem>
+<listitem><para>Added link to <ulink url="&url_kr_read;">Korean translation</ulink>.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>3.6.2</revnumber>
+<date>2001-08-31</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Fixed typo in <xref linkend="roman.sanity"/> (the last requirement was listed twice).</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>3.6</revnumber>
+<date>2001-08-31</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Finished <xref linkend="dialect"/> with <xref linkend="dialect.alltogether"/> and <xref linkend="dialect.summary"/>.</para></listitem>
+<listitem><para>Added <xref linkend="roman.postscript"/>.</para></listitem>
+<listitem><para>Started <xref linkend="kgp"/> with <xref linkend="kgp.divein"/>.</para></listitem>
+<listitem><para>Started <xref linkend="regression"/> with <xref linkend="regression.divein"/>.</para></listitem>
+<listitem><para>Fixed long-standing bug in colorizing script that improperly colorized the examples in <xref linkend="dialect"/>.</para></listitem>
+<listitem><para>Added link to <ulink url="&url_fr_read;">French translation</ulink>.  They did the right thing and translated the source &xml;, so they can re-use all my build scripts and make their work available in six different formats.</para></listitem>
+<listitem><para>Upgraded to version 1.43 of the &docbook; &xsl; stylesheets.</para></listitem>
+<listitem><para>Upgraded to version 6.43 of &saxon;.</para></listitem>
+<listitem><para>Massive stylesheet changes, moving away from a table-based layout and towards more appropriate use of cascading style sheets.  Unfortunately, &css; has as many compatibility problems as anything else, so there are still some tables used in the header and footer.  The resulting &html; version looks worse in &netscape; 4, but better in modern browsers, including &netscape; 6, &mozilla;, &msie; 5, &opera; 5, &konqueror;, and &icab;.  And it's still completely readable in Lynx.  I love Lynx.  It was my first web browser.  You never forget your first.</para></listitem>
+<listitem><para>Moved to <ulink url="http://jakarta.apache.org/ant/">&ant;</ulink> to have better control over the build process, which is especially important now that I'm juggling six output formats and two languages.</para></listitem>
+<listitem><para>Consolidated the available downloadable archives; previously, I had different files for each platform, because the .zip files that &python;'s <filename>zipfile</filename> module creates are non-standard and can't be opened by &stuffit; on &macos;.  But the .zip files that &ant; creates are completely standard and cross-platform.  Go &ant;!</para></listitem>
+<listitem><para>Now hosting the complete &xml; source, &xsl; stylesheets, and associated scripts and libraries on SourceForge.  There's also &cvs; access for the really adventurous.</para></listitem>
+<listitem><para>Re-licensed the example code under the new-and-improved &gpl;-compatible <ulink url="http://www.python.org/2.1.1/license.html">Python 2.1.1 license</ulink>.  Thanks, Guido; people really do care, and it really does matter.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>3.5</revnumber>
+<date>2001-06-26</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Added explanation of strong/weak/static/dynamic datatypes in <xref linkend="odbchelper.funcdef"/>.</para></listitem>
+<listitem><para>Added case-sensitivity example in <xref linkend="odbchelper.dict"/>.</para></listitem>
+<listitem><para>Use <function>os.path.normcase</function> in <xref linkend="fileinfo"/> to compensate for inferior operating systems whose files aren't case-sensitive.</para></listitem>
+<listitem><para>Fixed indentation problems in code samples in &pdf; version.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>3.4</revnumber>
+<date>2001-05-31</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Added <xref linkend="roman.stage5"/>.</para></listitem>
+<listitem><para>Added <xref linkend="roman.bugs"/>.</para></listitem>
+<listitem><para>Added <xref linkend="roman.change"/>.</para></listitem>
+<listitem><para>Added <xref linkend="roman.refactoring"/>.</para></listitem>
+<listitem><para>Added <xref linkend="roman.summary"/>.</para></listitem>
+<listitem><para>Fixed yet another stylesheet bug that was dropping nested <sgmltag>&lt;/span></sgmltag> tags.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision><revision>
+<revnumber>3.3</revnumber>
+<date>2001-05-24</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Added <xref linkend="roman.divein"/>.</para></listitem>
+<listitem><para>Added <xref linkend="roman.romantest"/>.</para></listitem>
+<listitem><para>Added <xref linkend="roman.success"/>.</para></listitem>
+<listitem><para>Added <xref linkend="roman.failure"/>.</para></listitem>
+<listitem><para>Added <xref linkend="roman.sanity"/>.</para></listitem>
+<listitem><para>Added <xref linkend="roman.stage1"/>.</para></listitem>
+<listitem><para>Added <xref linkend="roman.stage2"/>.</para></listitem>
+<listitem><para>Added <xref linkend="roman.stage3"/>.</para></listitem>
+<listitem><para>Added <xref linkend="roman.stage4"/>.</para></listitem>
+<listitem><para>Tweaked stylesheets in an endless quest for complete &netscape;/&mozilla; compatibility.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision><revision>
+<revnumber>3.2</revnumber>
+<date>2001-05-03</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Added <xref linkend="dialect.dialectizer"/>.</para></listitem>
+<listitem><para>Added <xref linkend="re.matching"/>.</para></listitem>
+<listitem><para>Fixed bug in <function>handle_decl</function> method that would produce incorrect declarations (adding a space where it couldn't be).</para></listitem>
+<listitem><para>Fixed bug in <acronym>CSS</acronym> (introduced in 2.9) where body background color was missing.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision><revision>
+<revnumber>3.1</revnumber>
+<date>2001-04-18</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Added code in <link linkend="dialect.divein">&basehtml_filename;</link> to handle declarations, now that &python; 2.1 supports them.</para></listitem>
+<listitem><para>Added note about nested scopes in <xref linkend="dialect.locals"/>.</para></listitem>
+<listitem><para>Fixed obscure bug in <xref linkend="dialect.basehtml.listing"/> where attribute values with character entities would not be properly escaped.</para></listitem>
+<listitem><para>Now recommending (but not requiring) &python; 2.1, due to its support of declarations in &sgmllib_filename;.</para></listitem>
+<listitem><para>Updated download links on the <ulink url="&url_diveintopython;">home page</ulink> to point to &python; 2.1, where available.</para></listitem>
+<listitem><para>Moved to versioned filenames, to help people who redistribute the book.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>3.0</revnumber>
+<date>2001-04-16</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Fixed minor bug in code listing in <xref linkend="dialect"/>.</para></listitem>
+<listitem><para>Added link to Chinese translation on <ulink url="&url_diveintopython;">home page</ulink>.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision><revision>
+<revnumber>2.9</revnumber>
+<date>2001-04-13</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Added <xref linkend="dialect.locals"/>.</para></listitem>
+<listitem><para>Added <xref linkend="dialect.dictsub"/>.</para></listitem>
+<listitem><para>Tightened code in <xref linkend="dialect"/>, specifically <classname>ChefDialectizer</classname>, to use fewer and simpler regular expressions.</para></listitem>
+<listitem><para>Fixed a stylesheet bug that was inserting blank pages between chapters in the &pdf; version.</para></listitem>
+<listitem><para>Fixed a script bug that was stripping the <literal>DOCTYPE</literal> from the <ulink url="&url_diveintopython;">home page</ulink>.</para></listitem>
+<listitem><para>Added link to &pythoncookbook;, and added a few links to individual recipes in <xref linkend="furtherreading"/>.</para></listitem>
+<listitem><para>Switched to &google_search; for searching on &diveintopythonorg;.</para></listitem>
+<listitem><para>Upgraded to version 1.36 of the &docbook; &xsl; stylesheets, which was much more difficult than it sounds.  There may still be lingering bugs.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision><revision>
+<revnumber>2.8</revnumber>
+<date>2001-03-26</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Added <xref linkend="dialect.extract"/>.</para></listitem>
+<listitem><para>Added <xref linkend="dialect.basehtml"/>.</para></listitem>
+<listitem><para>Added <xref linkend="dialect.quoting"/>.</para></listitem>
+<listitem><para>Tightened up code in <xref linkend="apihelper"/>, using the built-in function &callable; instead of manually checking types.</para></listitem>
+<listitem><para>Moved <xref linkend="fileinfo.fromimport"/> from <xref linkend="apihelper"/> to <xref linkend="fileinfo"/>.</para></listitem>
+<listitem><para>Fixed typo in code example in <xref linkend="fileinfo.divein"/> (added colon).</para></listitem>
+<listitem><para>Added several additional downloadable example scripts.</para></listitem>
+<listitem><para>Added &winhelp; output format.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>2.7</revnumber>
+<date>2001-03-16</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Added <xref linkend="dialect.sgmllib"/>.</para></listitem>
+<listitem><para>Tightened up code in <xref linkend="dialect"/>.</para></listitem>
+<listitem><para>Changed code in <xref linkend="odbchelper"/> to use &items; method instead of &keys;.</para></listitem>
+<listitem><para>Moved <xref linkend="odbchelper.multiassign"/> section to <xref linkend="odbchelper"/>.</para></listitem>
+<listitem><para>Edited note about &join; string method, and provided a link to the new entry in &pythonfaq; that explains <ulink url="&url_pythonfaqjoin;">why &join; is a string method</ulink> instead of a list method.</para></listitem>
+<listitem><para>Rewrote <xref linkend="apihelper.andor"/> to emphasize the fundamental nature of &andfunction; and &orfunction; and de-emphasize the &andor; trick.</para></listitem>
+<listitem><para>Reorganized language comparisons into <sgmltag>note</sgmltag>s.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>2.6</revnumber>
+<date>2001-02-28</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>The &pdf; and <application>Word</application> versions now have colorized examples, an improved table of contents, and properly indented <sgmltag>tip</sgmltag>s and <sgmltag>note</sgmltag>s.</para></listitem>
+<listitem><para>The <application>Word</application> version is now in native <application>Word</application> format, compatible with <application>Word 97</application>.</para></listitem>
+<listitem><para>The &pdf; and text versions now have fewer problems with improperly converted special characters (like trademark symbols and curly quotes).</para></listitem>
+<listitem><para>Added link to download <application>Word</application> version for &unix;, in case some twisted soul wants to import it into <application>StarOffice</application> or something.</para></listitem>
+<listitem><para>Fixed several <sgmltag>note</sgmltag>s which were missing titles.</para></listitem>
+<listitem><para>Fixed stylesheets to work around bug in &msie; 5 for &macos; which caused colorized words in the examples to be displayed in the wrong font.  (Hello?!?  Microsoft?  Which part of <sgmltag>&lt;pre></sgmltag> don't you understand?)</para></listitem>
+<listitem><para>Fixed archive corruption in &macos; downloads.</para></listitem>
+<listitem><para>In first section of each chapter, added link to download examples.  (My access logs show that people skim or skip the two pages where they could have downloaded them (the <ulink url="&url_diveintopython;" type="Dive Into Python home page">home page</ulink> and preface), then scramble to find a download link once they actually start reading.)</para></listitem>
+<listitem><para>Tightened the <ulink url="&url_diveintopython;" type="Dive Into Python home page">home page</ulink> and preface even more, in the hopes that someday someone will read them.</para></listitem>
+<listitem><para>Soon I hope to get back to actually writing this book instead of debugging it.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>2.5</revnumber>
+<date>2001-02-23</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Added <xref linkend="fileinfo.modules"/>.</para></listitem>
+<listitem><para>Added <xref linkend="fileinfo.os"/>.</para></listitem>
+<listitem><para>Moved <xref linkend="splittingpathnames.example"/> from <xref linkend="odbchelper.multiassign"/> to <xref linkend="fileinfo.os"/>.</para></listitem>
+<listitem><para>Added <xref linkend="fileinfo.alltogether"/>.</para></listitem>
+<listitem><para>Added <xref linkend="fileinfo.summary"/>.</para></listitem>
+<listitem><para>Added <xref linkend="dialect.divein"/>.</para></listitem>
+<listitem><para>Fixed program listing in <xref linkend="dictionaryiter.example"/> which was missing a colon.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>2.4.1</revnumber>
+<date>2001-02-12</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Changed newsgroup links to use <quote>news:</quote> protocol, now that <systemitem class="systemname">deja.com</systemitem> is defunct.</para></listitem>
+<listitem><para>Added file sizes to download links.</para></listitem>
+</itemizedlist>
+</revdescription></revision>
+<revision>
+<revnumber>2.4</revnumber>
+<date>2001-02-12</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Added <quote>further reading</quote> links in most sections, and collated them in <xref linkend="furtherreading"/>.</para></listitem>
+<listitem><para>Added &url;s in parentheses next to external links in text version.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>2.3</revnumber>
+<date>2001-02-09</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Rewrote some of the code in <xref linkend="fileinfo"/> to use class attributes and a better example of multi-variable assignment.</para></listitem>
+<listitem><para>Reorganized <xref linkend="fileinfo"/> to put the class sections first.</para></listitem>
+<listitem><para>Added <xref linkend="fileinfo.classattributes"/>.</para></listitem>
+<listitem><para>Added <xref linkend="fileinfo.exception"/>.</para></listitem>
+<listitem><para>Added <xref linkend="fileinfo.files"/>.</para></listitem>
+<listitem><para>Merged the <quote>review</quote> section in <xref linkend="fileinfo"/> into <xref linkend="fileinfo.divein"/>.</para></listitem>
+<listitem><para>Colorized all program listings and examples.</para></listitem>
+<listitem><para>Fixed important error in <xref linkend="odbchelper.funcdef"/>: functions that do not explicitly return a value return &none;, so you <emphasis>can</emphasis> assign the return value of such a function to a variable without raising an exception.</para></listitem>
+<listitem><para>Added minor clarifications to <xref linkend="odbchelper.docstring"/>, <xref linkend="odbchelper.objects"/>, and <xref linkend="odbchelper.vardef"/>.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>2.2</revnumber>
+<date>2001-02-02</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Edited <xref linkend="apihelper.getattr"/>.</para></listitem>
+<listitem><para>Added titles to <sgmltag>xref</sgmltag> tags, so they can have their cute little tooltips too.</para></listitem>
+<listitem><para>Changed the look of the revision history page.</para></listitem>
+<listitem><para>Fixed problem I introduced yesterday in my &html; post-processing script that was causing invalid &html; character references and breaking some browsers.</para></listitem>
+<listitem><para>Upgraded to version 1.29 of the &docbook; &xsl; stylesheets.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>2.1</revnumber>
+<date>2001-02-01</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Rewrote the example code of <xref linkend="apihelper"/> to use &getattr; instead of &exec; and &eval;, and rewrote explanatory text to match.</para></listitem>
+<listitem><para>Added example of list operators in <xref linkend="odbchelper.list"/>.</para></listitem>
+<listitem><para>Added links to relevant sections in the summary lists at the end of each chapter (<xref linkend="odbchelper.summary"/> and <xref linkend="apihelper.summary"/>).</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>2.0</revnumber>
+<date>2001-01-31</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Split <xref linkend="fileinfo.specialmethods"/> into three sections, <xref linkend="fileinfo.userdict"/>, <xref linkend="fileinfo.specialmethods"/>, and <xref linkend="fileinfo.morespecial"/>.</para></listitem>
+<listitem><para>Changed notes on <link linkend="fileinfo.create">garbage collection</link> to point out that &python; 2.0 and later can handle circular references without additional coding.</para></listitem>
+<listitem><para>Fixed &unix; downloads to include all relevant files.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>1.9</revnumber>
+<date>2001-01-15</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Removed introduction to <xref linkend="odbchelper"/>.</para></listitem>
+<listitem><para>Removed introduction to <xref linkend="apihelper"/>.</para></listitem>
+<listitem><para>Removed introduction to <xref linkend="fileinfo"/>.</para></listitem>
+<listitem><para>Edited text ruthlessly.  I tend to ramble.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>1.8</revnumber>
+<date>2001-01-12</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Added more examples to <xref linkend="odbchelper.multiassign"/>.</para></listitem>
+<listitem><para>Added <xref linkend="fileinfo.class"/>.</para></listitem>
+<listitem><para>Added <xref linkend="fileinfo.create"/>.</para></listitem>
+<listitem><para>Added <xref linkend="fileinfo.specialmethods"/>.</para></listitem>
+<listitem><para>More minor stylesheet tweaks, including adding titles to <sgmltag>link</sgmltag> tags, which, if your browser is cool enough, will display a description of the link target in a cute little tooltip.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>1.71</revnumber>
+<date>2001-01-03</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Made several modifications to stylesheets to improve browser compatibility.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>1.7</revnumber>
+<date>2001-01-02</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Added introduction to <xref linkend="odbchelper"/>.</para></listitem>
+<listitem><para>Added introduction to <xref linkend="apihelper"/>.</para></listitem>
+<listitem><para>Added review section to <xref linkend="fileinfo"/> [later removed]</para></listitem>
+<listitem><para>Added <xref linkend="fileinfo.private"/>.</para></listitem>
+<listitem><para>Added <xref linkend="fileinfo.for"/>.</para></listitem>
+<listitem><para>Added <xref linkend="odbchelper.multiassign"/>.</para></listitem>
+<listitem><para>Wrote scripts to convert book to new output formats: one single &html; file, &pdf;, &msword;, and plain text.</para></listitem>
+<listitem>
+<para>Registered the <systemitem class="systemname">diveintopython.org</systemitem> domain and moved the book there, along with links to download the book in all available output formats for offline reading.</para></listitem>
+<listitem><para>Modified the &xsl; stylesheets to change the header and footer navigation that displays on each page.  The top of each page is branded with the domain name and book version, followed by a breadcrumb trail to jump back to the chapter table of contents, the main table of contents, or the site home page.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>1.6</revnumber>
+<date>2000-12-11</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Added <xref linkend="apihelper.alltogether"/>.</para></listitem>
+<listitem><para>Finished <xref linkend="apihelper"/> with <xref linkend="apihelper.summary"/>.</para></listitem>
+<listitem><para>Started <xref linkend="fileinfo"/> with <xref linkend="fileinfo.divein"/>.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>1.5</revnumber>
+<date>2000-11-22</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Added <xref linkend="apihelper.andor"/>.</para></listitem>
+<listitem><para>Added <xref linkend="apihelper.lambda"/>.</para></listitem>
+<listitem><para>Added <link linkend="abstracts">appendix that lists section abstracts</link>.</para></listitem>
+<listitem><para>Added <link linkend="tips">appendix that lists tips</link>.</para></listitem>
+<listitem><para>Added <link linkend="examples">appendix that lists examples</link>.</para></listitem>
+<listitem><para>Added <link linkend="revhistory">appendix that lists revision history</link>.</para></listitem>
+<listitem><para>Expanded example of mapping lists in <xref linkend="odbchelper.map"/>.</para></listitem>
+<listitem><para>Encapsulated several more common phrases into entities.</para></listitem>
+<listitem><para>Upgraded to version 1.25 of the &docbook; &xsl; stylesheets.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>1.4</revnumber>
+<date>2000-11-14</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Added <xref linkend="apihelper.filter"/>.</para></listitem>
+<listitem><para>Added <function>dir</function> documentation to <xref linkend="apihelper.builtin"/>.</para></listitem>
+<listitem><para>Added <function>in</function> example in <xref linkend="odbchelper.tuple"/>.</para></listitem>
+<listitem><para>Added additional note about &if; &name; trick under &macpython;.</para></listitem>
+<listitem><para>Switched to &saxon;.</para></listitem>
+<listitem><para>Upgraded to version 1.24 of the &docbook; &xsl; stylesheets.</para></listitem>
+<listitem><para>Added db-html processing instructions with explicit filenames of each chapter and section, to allow deep links to content even if I add or re-arrange sections later.</para></listitem>
+<listitem><para>Made several common phrases into entities for easier reuse.</para></listitem>
+<listitem><para>Changed several <sgmltag>literal</sgmltag> tags to <sgmltag>constant</sgmltag>.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>1.3</revnumber>
+<date>2000-11-09</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Added section on dynamic code execution.</para></listitem>
+<listitem><para>Added links to relevant section/example wherever I refer to previously covered concepts.</para></listitem>
+<listitem><para>Expanded <link linkend="apihelper.divein">introduction of chapter 2</link> to explain what the function actually does.</para></listitem>
+<listitem><para>Explicitly placed example code under the <acronym>GNU</acronym> General Public License and added appendix to display license.  [Note 8/16/2001: code has been re-licensed under &gpl;-compatible &python; license]</para></listitem>
+<listitem><para>Changed links to licenses to use <sgmltag>xref</sgmltag> tags, now that I know how to use them.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>1.2</revnumber>
+<date>2000-11-06</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Added first four sections of chapter 2.</para></listitem>
+<listitem><para>Tightened up preface even more, and added link to &macos; version of &python;.</para></listitem>
+<listitem><para>Filled out examples in "Mapping lists" and "Joining strings" to show logical progression.</para></listitem>
+<listitem><para>Added output in chapter 1 summary.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>1.1</revnumber>
+<date>2000-10-31</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Finished chapter 1 with sections on mapping and joining, and a chapter summary.</para></listitem>
+<listitem><para>Toned down the preface, added links to introductions for non-programmers.</para></listitem>
+<listitem><para>Fixed several typos.</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+<revision>
+<revnumber>1.0</revnumber>
+<date>2000-10-30</date>
+<revdescription>
+<itemizedlist>
+<listitem><para>Initial publication</para></listitem>
+</itemizedlist>
+</revdescription>
+</revision>
+</revhistory>
+<legalnotice>
+<para>Permission is granted to copy, distribute, and/or modify this document under the terms of the <acronym>GNU</acronym> Free Documentation License, Version 1.1 or any later version published by the Free Software Foundation; with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.  A copy of the license is included in <xref linkend="gfdl"/>.</para>
+<para>The example programs in this book are free software; you can redistribute and/or modify them under the terms of the &python; license as published by the &python; Software Foundation. A copy of the license is included in <xref linkend="license"/>.</para>
+</legalnotice>
+<!--
+A brief word about the licensing of this book.  This is a free (as in speech)
+book.  If you've heard of free software, this is the same idea, only with a book
+instead of a computer program.  You now own this book, and while
+you can't just do anything you want with it, you have an enormous amount of freedom,
+much more than you would ordinarily expect to get with a book.
+
+You can, for instance, make any number of copies of this book.  Give it to your friends,
+post it on your own web site, publish it in new media formats.  You can even
+add chapters to the book and republish it under a new title without my
+consent or even my awareness.  My work is always copyright to me, and your work is
+always copyright to you, and your new-and-presumably-improved version must be published
+under the same license as this one.  There are a few other obscure details that you
+can read all about in the appendix, but that's the basic idea.
+
+There are already several excellent Python books that have gone out of print,
+because their publishers decided that it was not in their best interest to continue
+publishing them.  That never has to happen to free books.  You have the freedom to keep
+this book alive.  If I choose to stop distributing it, you can distribute it yourself.
+If I move on and this book goes out of date, you can pick up where I left off and keep
+this book current and relevant.
+
+As I write this, the year is 2000, and the Internet is a battleground of intellectual
+property disputes.  Some people would like you to believe that, without proper financial
+incentives, music, literature, and computer software would disappear.  After all,
+who would make music if they can't make money on it?  Who would write?  Who would
+program?  I know the answer.  The answer is that musicians will make music, not because
+they can make money, but because musicians are the people who can't not make music.
+Writers will write because they can't not write.  I've been programming for 16 years,
+writing free software for 8.  I can't imagine not doing this.  If you can imagine yourself
+not doing what you're doing, do something else.  Do whatever it is that you can't not do.
+-->
+</bookinfo>

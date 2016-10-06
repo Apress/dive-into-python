@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!ENTITY soap '<acronym>SOAP</acronym>'>
+<!ENTITY soappy '<application>SOAPpy</application>'>
+<!ENTITY url_soappy 'http://pywebsvcs.sourceforge.net/'>
+<!ENTITY fpconst '<application>fpconst</application>'>
+<!ENTITY url_fpconst 'http://www.analytics.washington.edu/statcomp/projects/rzope/fpconst/'>
+<!ENTITY pyxml '<application>PyXML</application>'>
+<!ENTITY url_pyxml 'http://pyxml.sourceforge.net/'>
+<!ENTITY wsdl '<acronym>WSDL</acronym>'>

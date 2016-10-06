@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE project
+[
+<!ENTITY % version SYSTEM "xml/version.xml">
+%version;
+<!ENTITY common "../common">
+<!ENTITY buildcommon SYSTEM "../common/build_common.xml">
+]>
+<project name="diveintopython" default="html" basedir=".">
+
+<property name="lang" value=""/>
+<property name="ftpdir" value=""/>
+
+<target name="postprocess">
+</target>
+
+&buildcommon;
+
+</project>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+"../../common/docbook/dtd/docbookx.dtd"
+[
+<!ENTITY % entities SYSTEM "entities.xml">
+%entities;
+<!ENTITY bookinfo SYSTEM "bookinfo.xml">
+<!ENTITY chapter.install SYSTEM "install.xml">
+<!ENTITY chapter.odbchelper SYSTEM "odbchelper.xml">
+<!ENTITY chapter.apihelper SYSTEM "apihelper.xml">
+<!ENTITY chapter.fileinfo SYSTEM "fileinfo.xml">
+<!ENTITY chapter.re SYSTEM "re.xml">
+<!ENTITY chapter.dialect SYSTEM "dialect.xml">
+<!ENTITY chapter.kgp SYSTEM "kgp.xml">
+<!ENTITY chapter.openanything SYSTEM "openanything.xml">
+<!ENTITY chapter.soap SYSTEM "soap.xml">
+<!ENTITY chapter.roman SYSTEM "roman.xml">
+<!ENTITY chapter.regression SYSTEM "regression.xml">
+<!ENTITY chapter.plural SYSTEM "plural.xml">
+<!ENTITY chapter.soundex SYSTEM "soundex.xml">
+<!ENTITY appendix SYSTEM "appendix.xml">
+<!ENTITY appendix.fdl SYSTEM "fdl.xml">
+<!ENTITY appendix.license SYSTEM "license.xml">
+]>
+<book>
+<?dbhtml filename="toc/index.html"?>
+<title>&title;</title>
+&bookinfo;
+&chapter.install;
+&chapter.odbchelper;
+&chapter.apihelper;
+&chapter.fileinfo;
+&chapter.re;
+&chapter.dialect;
+&chapter.kgp;
+&chapter.openanything;
+&chapter.soap;
+&chapter.roman;
+&chapter.regression;
+&chapter.plural;
+&chapter.soundex;
+&appendix;
+&appendix.fdl;
+&appendix.license;
+</book>

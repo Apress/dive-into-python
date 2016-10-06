@@ -1,0 +1,1172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<chapter id="odbchelper">
+<?dbhtml filename="getting_to_know_python/index.html"?>
+<title>Your First &python; Program</title>
+<titleabbrev id="odbchelper.numberonly">Chapter 2</titleabbrev>
+<abstract>
+<title/>
+<para>You know how other books go on and on about programming fundamentals and finally work up to building a complete, working program?  Let's skip all that.</para>
+</abstract>
+<section id="odbchelper.divein">
+<title>Diving in</title>
+<abstract>
+<title/>
+<para>Here is a complete, working &python; program.</para>
+</abstract>
+<para>It probably makes absolutely no sense to you.  Don't worry about that, because you're going to dissect it line by line.  But read through it first and see what, if anything, you can make of it.</para>
+<example>
+<title>&odbchelper_filename;</title>
+&para_download;
+<programlisting>
+&odbchelper_full;</programlisting>
+</example>
+<para>Now run this program and see what happens.</para>
+<tip id="tip.run.windows">
+<title>Running Programs on &windows;</title>
+<para>In the &activepython; &ide; on &windows;, you can run the &python; program you're editing by choosing
+<menuchoice>
+<shortcut>
+<keycombo>
+<keycap>Ctrl</keycap>
+<keysym>R</keysym>
+</keycombo>
+</shortcut>
+<guimenu>File</guimenu>
+<guimenuitem><accel>R</accel>un...</guimenuitem>
+</menuchoice>.  Output is displayed in the interactive window.</para>
+</tip>
+<tip id="tip.run.mac">
+<title>Running Programs on &macos;</title>
+<para>In the &python; &ide; on &macos;, you can run a &python; program with
+<menuchoice>
+<shortcut>
+<keycombo>
+<keycap>Cmd</keycap>
+<keysym>R</keysym>
+</keycombo>
+</shortcut>
+<guimenu>Python</guimenu>
+<guimenuitem>Run window...</guimenuitem>
+</menuchoice>, but there is an important option you must set first.  Open the <filename>.py</filename> file in the &ide;, pop up the options menu by clicking the black triangle in the upper-right corner of the window, and make sure the <menuchoice><guimenuitem>Run as __main__</guimenuitem></menuchoice> option is checked.  This is a per-file setting, but you'll only need to do it once per file.</para>
+</tip>
+<tip id="tip.run.unix">
+<title>Running Programs in &unix;</title>
+<para>On &unix;-compatible systems (including &macosx;), you can run a &python; program from the command line: <userinput>python &odbchelper_filename;</userinput></para>
+</tip>
+<informalexample id="odbchelper.output">
+<!--<title>Output of &odbchelper_filename;</title>-->
+<para>The output of &odbchelper_filename; will look like this:</para>
+<screen><computeroutput>&odbchelper_output;</computeroutput></screen>
+</informalexample>
+</section>
+<section id="odbchelper.funcdef">
+<?dbhtml filename="getting_to_know_python/declaring_functions.html"?>
+<title>Declaring Functions</title>
+<abstract>
+<title/>
+<para>&python; has functions like most other languages, but it does not have separate header files like &cpp; or <literal>interface</literal>/<literal>implementation</literal> sections like &pascal;.  When you need a function, just declare it, like this:</para>
+</abstract>
+<informalexample>
+<!--<title>Declaring the &odbchelper_function; function</title>-->
+<programlisting>
+&odbchelper_funcdef;</programlisting>
+</informalexample>
+<para>Note that the keyword &def; starts the function declaration, followed by the function name, followed by the arguments in parentheses.  Multiple arguments (not shown here) are separated with commas.</para>
+<para>Also note that the function doesn't define a return datatype.  &python; functions do not specify the datatype of their return value; they don't even specify whether or not they return a value.  In fact, every &python; function returns a value; if the function ever executes a &return; statement, it will return that value, otherwise it will return &none;, the &python; null value.</para>
+<note id="compare.funcdef.vb" role="compare" vendor="vb">
+<title>&python; &vs; &vb;: Return Values</title>
+<para>In &vb;, functions (that return a value) start with <literal>function</literal>, and subroutines (that do not return a value) start with <literal>sub</literal>.  There are no subroutines in &python;.  Everything is a function, all functions return a value (even if it's &none;), and all functions start with &def;.</para>
+</note>
+<para>The argument, <literal>params</literal>, doesn't specify a datatype.  In &python;, variables are never explicitly typed.  &python; figures out what type a variable is and keeps track of it internally.</para>
+<note id="compare.funcdef.java" role="compare" vendor="java">
+<title>&python; &vs; &java;: Return Values</title>
+<para>In &java;, &cpp;, and other statically-typed languages, you must specify the datatype of the function return value and each function argument.  In &python;, you never explicitly specify the datatype of anything.  Based on what value you assign, &python; keeps track of the datatype internally.</para>
+</note>
+<section role="sidebar">
+<title>How &python;'s Datatypes Compare to Other Programming Languages</title>
+<para>An erudite reader sent me this explanation of how &python; compares to other programming languages:</para>
+<variablelist>
+<varlistentry>
+<term>statically typed language</term>
+<listitem><para>A language in which types are fixed at compile time.  Most statically typed languages enforce this by requiring you to declare all variables with their datatypes before using them.  &java; and &c; are statically typed languages.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>dynamically typed language</term>
+<listitem><para>A language in which types are discovered at execution time; the opposite of statically typed.  &vbscript; and &python; are dynamically typed, because they figure out what type a variable is when you first assign it a value.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>strongly typed language</term>
+<listitem><para>A language in which types are always enforced.  &java; and &python; are strongly typed.  If you have an integer, you can't treat it like a string without explicitly converting it.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>weakly typed language</term>
+<listitem><para>A language in which types may be ignored; the opposite of strongly typed.  &vbscript; is weakly typed.  In &vbscript;, you can concatenate the string <literal>'12'</literal> and the integer <literal>3</literal> to get the string <literal>'123'</literal>, then treat that as the integer <literal>123</literal>, all without any explicit conversion.</para></listitem>
+</varlistentry>
+</variablelist>
+<para>So &python; is both <emphasis>dynamically typed</emphasis> (because it doesn't use explicit datatype declarations) and <emphasis>strongly typed</emphasis> (because once a variable has a datatype, it actually matters).</para>
+</section>
+</section>
+<section id="odbchelper.docstring">
+<?dbhtml filename="getting_to_know_python/documenting_functions.html"?>
+<title>Documenting Functions</title>
+<abstract>
+<title/>
+<para>You can document a &python; function by giving it a &docstring;.</para>
+</abstract>
+<example id="odbchelper.triplequotes">
+<title>Defining the &odbchelper_function; Function's &docstring;</title>
+<programlisting>
+&odbchelper_funcdef;
+&odbchelper_doc;</programlisting>
+<para>Triple quotes signify a multi-line string.  Everything between the start and end quotes is part of a single string, including carriage returns and other quote characters.  You can use them anywhere, but you'll see them most often used when defining a &docstring;.</para>
+</example>
+<note id="compare.quoting.perl" role="compare" vendor="perl">
+<title>&python; &vs; &perl;: Quoting</title>
+<para>Triple quotes are also an easy way to define a string with both single and double quotes, like <literal>qq/.../</literal> in &perl;.</para>
+</note>
+<para>Everything between the triple quotes is the function's &docstring;, which documents what the function does.  A &docstring;, if it exists, must be the first thing defined in a function (that is, the first thing after the colon).  You don't technically need to give your function a &docstring;, but you always should.  I know you've heard this in every programming class you've ever taken, but &python; gives you an added incentive: the &docstring; is available at runtime as an attribute of the function.</para>
+<note id="tip.docstring">
+<title>Why &docstring;s are a Good Thing</title>
+<para>Many &python; &ide;s use the &docstring; to provide context-sensitive documentation, so that when you type a function name, its &docstring; appears as a tooltip.  This can be incredibly helpful, but it's only as good as the &docstring;s you write.</para>
+</note>
+<itemizedlist role="furtherreading">
+<title>Further Reading on Documenting Functions</title>
+<listitem><para><ulink url="http://www.python.org/peps/pep-0257.html">PEP 257</ulink> defines &docstring; conventions.</para></listitem>
+<listitem><para>&pythonstyleguide; discusses how to write a good &docstring;.</para></listitem>
+<listitem><para>&pythontutorial; discusses conventions for <ulink url="&url_pythontutorial;node6.html#SECTION006750000000000000000">spacing in &docstring;s</ulink>.</para></listitem>
+</itemizedlist>
+</section>
+<section id="odbchelper.objects">
+<?dbhtml filename="getting_to_know_python/everything_is_an_object.html"?>
+<title>Everything Is an Object</title>
+<para>In case you missed it, I just said that &python; functions have attributes, and that those attributes are available at runtime.</para>
+<abstract>
+<title/>
+<para>A function, like everything else in &python;, is an object.</para>
+</abstract>
+<para>Open your favorite &python; &ide; and follow along:</para>
+<example id="odbchelper.import">
+<title>Accessing the &odbchelper_function; Function's &docstring;</title>
+<screen>&prompt;<userinput>import &odbchelper_name;</userinput>                              <co id="odbchelper.objects.1.1"/>
+&prompt;<userinput>params = {"server":"mpilgrim", "database":"master", "uid":"sa", "pwd":"secret"}</userinput>
+&prompt;<userinput>print &odbchelper_name;.&odbchelper_funcname;(params)</userinput> <co id="odbchelper.objects.1.2"/>
+<computeroutput>&odbchelper_output;</computeroutput>
+&prompt;<userinput>print &odbchelper_name;.&odbchelper_funcname;.__doc__</userinput> <co id="odbchelper.objects.1.3"/>
+<computeroutput>Build a connection string from a dictionary
+
+Returns string.</computeroutput></screen>
+<calloutlist>
+<callout arearefs="odbchelper.objects.1.1">
+<para>The first line imports the <filename class="headerfile">&odbchelper_name;</filename> program as a module -- a chunk of code that you can use interactively, or from a larger &python; program.  (You'll see examples of multi-module &python; programs in <xref linkend="apihelper" endterm="apihelper.numberonly"/>.)  Once you import a module, you can reference any of its public functions, classes, or attributes.  Modules can do this to access functionality in other modules, and you can do it in the &ide; too.  This is an important concept, and you'll talk more about it later.</para>
+</callout>
+<callout arearefs="odbchelper.objects.1.2">
+<para>When you want to use functions defined in imported modules, you need to include the module name.  So you can't just say &odbchelper_function;; it must be <function>&odbchelper_name;.&odbchelper_funcname;</function>.  If you've used classes in &java;, this should feel vaguely familiar.</para>
+</callout>
+<callout arearefs="odbchelper.objects.1.3">
+<para>Instead of calling the function as you would expect to, you asked for one of the function's attributes, &doc;.</para>
+</callout>
+</calloutlist>
+</example>
+<note id="compare.import.perl" role="compare" vendor="perl">
+<title>&python; &vs; &perl;: &import;</title>
+<para>&import; in &python; is like &require; in &perl;.  Once you &import; a &python; module, you access its functions with <literal><replaceable>module</replaceable>.<replaceable>function</replaceable></literal>; once you &require; a &perl; module, you access its functions with <literal><replaceable>module</replaceable>::<replaceable>function</replaceable></literal>.</para>
+</note>
+<section>
+<title>The Import Search Path</title>
+<para>Before you go any further, I want to briefly mention the library search path.  &python; looks in several places when you try to import a module.  Specifically, it looks in all the directories defined in <varname>sys.path</varname>.  This is just a list, and you can easily view it or modify it with standard list methods.  (You'll learn more about lists later in this chapter.)</para>
+<example id="odbchelper.objects.sys.path">
+<title>Import Search Path</title>
+<screen>
+&prompt;<userinput>import sys</userinput>                 <co id="odbchelper.objects.2.1"/>
+&prompt;<userinput>sys.path</userinput>                   <co id="odbchelper.objects.2.2"/>
+<computeroutput>['', '/usr/local/lib/python2.2', '/usr/local/lib/python2.2/plat-linux2', 
+'/usr/local/lib/python2.2/lib-dynload', '/usr/local/lib/python2.2/site-packages', 
+'/usr/local/lib/python2.2/site-packages/PIL', '/usr/local/lib/python2.2/site-packages/piddle']</computeroutput>
+&prompt;<userinput>sys</userinput>                        <co id="odbchelper.objects.2.3"/>
+<computeroutput>&lt;module 'sys' (built-in)></computeroutput>
+&prompt;<userinput>sys.path.append('/my/new/path')</userinput> <co id="odbchelper.objects.2.4"/></screen>
+<calloutlist>
+<callout arearefs="odbchelper.objects.2.1">
+<para>Importing the &sys; module makes all of its functions and attributes available.</para>
+</callout>
+<callout arearefs="odbchelper.objects.2.2">
+<para>&syspath; is a list of directory names that constitute the current search path.  (Yours will look different, depending on your operating system, what version of &python; you're running, and where it was originally installed.)  &python; will look through these directories (in this order) for a <literal>.py</literal> file matching the module name you're trying to import.</para>
+</callout>
+<callout arearefs="odbchelper.objects.2.3">
+<para>Actually, I lied; the truth is more complicated than that, because not all modules are stored as <literal>.py</literal> files.  Some, like the &sys; module, are "built-in modules"; they are actually baked right into &python; itself.  Built-in modules behave just like regular modules, but their &python; source code is not available, because they are not written in &python;!  (The &sys; module is written in &c;.)</para>
+</callout>
+<callout arearefs="odbchelper.objects.2.4">
+<para>You can add a new directory to &python;'s search path at runtime by appending the directory name to &syspath;, and then &python; will look in that directory as well, whenever you try to import a module.  The effect lasts as long as &python; is running.  (You'll talk more about &append; and other list methods in <xref linkend="datatypes" endterm="datatypes.numberonly"/>.)</para>
+</callout>
+</calloutlist>
+</example>
+</section>
+<section>
+<title>What's an Object?</title>
+<para>Everything in &python; is an object, and almost everything has attributes and methods.  All functions have a built-in attribute &doc;, which returns the &docstring; defined in the function's source code.  The &sys; module is an object which has (among other things) an attribute called <varname>path</varname>.  And so forth.</para>
+<para>Still, this begs the question.  What is an object?  Different programming languages define <quote>object</quote> in different ways.  In some, it means that <emphasis>all</emphasis> objects <emphasis>must</emphasis> have attributes and methods; in others, it means that all objects are subclassable.  In &python;, the definition is looser; some objects have neither attributes nor methods (more on this in <xref linkend="datatypes" endterm="datatypes.numberonly"/>), and not all objects are subclassable (more on this in <xref linkend="fileinfo" endterm="fileinfo.numberonly"/>).  But everything is an object in the sense that it can be assigned to a variable or passed as an argument to a function (more in this in <xref linkend="apihelper" endterm="apihelper.numberonly"/>).</para>
+<para>This is so important that I'm going to repeat it in case you missed it the first few times: <emphasis>everything in &python; is an object</emphasis>.  Strings are objects.  Lists are objects.  Functions are objects.  Even modules are objects.</para>
+<itemizedlist role="furtherreading">
+<title>Further Reading on Objects</title>
+<listitem><para>&pythonlanguagereference; explains exactly what it means to say that <ulink url="&url_pythonlanguagereference;objects.html">everything in &python; is an object</ulink>, because some people are pedantic and like to discuss this sort of thing at great length.</para></listitem>
+<listitem><para>&effbot; summarizes <ulink url="&url_effbot;python-objects.htm">&python; objects</ulink>.</para></listitem>
+</itemizedlist>
+</section>
+</section>
+<section id="odbchelper.indenting">
+<?dbhtml filename="getting_to_know_python/indenting_code.html"?>
+<title>Indenting Code</title>
+<abstract>
+<title/>
+<para>&python; functions have no explicit <literal>begin</literal> or <literal>end</literal>, and no curly braces to mark where the function code starts and stops.  The only delimiter is a colon (<literal>:</literal>) and the indentation of the code itself.</para>
+</abstract>
+<example>
+<title>Indenting the &odbchelper_function; Function</title>
+<programlisting>
+&odbchelper_function_full;</programlisting>
+</example>
+<para>Code blocks are defined by their indentation.  By "code block", I mean functions, &if; statements, &for; loops, &while; loops, and so forth.  Indenting starts a block and unindenting ends it.  There are no explicit braces, brackets, or keywords.  This means that whitespace is significant, and must be consistent.  In this example, the function code (including the &docstring;) is indented four spaces.  It doesn't need to be four spaces, it just needs to be consistent.  The first line that is not indented is outside the function.</para>
+<para><xref linkend="odbchelper.indenting.if"/> shows an example of code indentation with &if; statements.</para>
+<example id="odbchelper.indenting.if">
+<title>&if; Statements</title>
+<programlisting>
+def fib(n):                   <co id="odbchelper.indenting.2.1"/>
+    print 'n =', n            <co id="odbchelper.indenting.2.2"/>
+    if n > 1:                 <co id="odbchelper.indenting.2.3"/>
+        return n * fib(n - 1)
+    else:                     <co id="odbchelper.indenting.2.4"/>
+        print 'end of the line'
+        return 1
+</programlisting>
+<calloutlist>
+<callout arearefs="odbchelper.indenting.2.1">
+<para>This is a function named <function>fib</function> that takes one argument, <varname>n</varname>.  All the code within the function is indented.</para>
+</callout>
+<callout arearefs="odbchelper.indenting.2.2">
+<para>Printing to the screen is very easy in &python;, just use &print;.  &print; statements can take any data type, including strings, integers, and other native types like dictionaries and lists that you'll learn about in the next chapter.  You can even mix and match to print several things on one line by using a comma-separated list of values.  Each value is printed on the same line, separated by spaces (the commas don't print).  So when <function>fib</function> is called with <literal>5</literal>, this will print "n = 5".</para>
+</callout>
+<callout arearefs="odbchelper.indenting.2.3">
+<para>&if; statements are a type of code block.  If the &if; expression evaluates to true, the indented block is executed, otherwise it falls to the &else; block.</para>
+</callout>
+<callout arearefs="odbchelper.indenting.2.4">
+<para>Of course &if; and &else; blocks can contain multiple lines, as long as they are all indented the same amount.  This &else; block has two lines of code in it.  There is no other special syntax for multi-line code blocks.  Just indent and get on with your life.</para>
+</callout>
+</calloutlist>
+</example>
+<para>After some initial protests and several snide analogies to &fortran;, you will make peace with this and start seeing its benefits.  One major benefit is that all &python; programs look similar, since indentation is a language requirement and not a matter of style.  This makes it easier to read and understand other people's &python; code.</para>
+<note id="compare.lineend.java" role="compare" vendor="java">
+<title>&python; &vs; &java;: Separating Statements</title>
+<para>&python; uses carriage returns to separate statements and a colon and indentation to separate code blocks.  &cpp; and &java; use semicolons to separate statements and curly braces to separate code blocks.</para>
+</note>
+<itemizedlist role="furtherreading">
+<title>Further Reading on Code Indentation</title>
+<listitem><para>&pythonlanguagereference; discusses cross-platform indentation issues and <ulink url="&url_pythonlanguagereference;indentation.html">shows various indentation errors</ulink>.</para></listitem>
+<listitem><para>&pythonstyleguide; discusses good indentation style.</para></listitem>
+</itemizedlist>
+</section>
+<section id="odbchelper.testing">
+<?dbhtml filename="getting_to_know_python/testing_modules.html"?>
+<title>Testing Modules</title>
+<abstract>
+<title/>
+<para>&python; modules are objects and have several useful attributes.  You can use this to easily test your modules as you write them.  Here's an example that uses the &if; &name; trick.</para>
+</abstract>
+<informalexample id="odbchelper.ifnametrick">
+<!--<title>The &if; &name; trick</title>-->
+<programlisting>
+&odbchelper_if;</programlisting>
+</informalexample>
+<para>Some quick observations before you get to the good stuff.  First, parentheses are not required around the &if; expression.  Second, the &if; statement ends with a colon, and is followed by <link linkend="odbchelper.indenting">indented code</link>.</para>
+<note id="compare.equals.c" role="compare" vendor="c">
+<title>&python; &vs; &c;: Comparison and Assignment</title>
+<para>Like &c;, &python; uses &comparisonequals; for comparison and &assignmentequals; for assignment.  Unlike &c;, &python; does not support in-line assignment, so there's no chance of accidentally assigning the value you thought you were comparing.</para>
+</note>
+<para>So why is this particular &if; statement a trick?  Modules are objects, and all modules have a built-in attribute &name;.  A module's &name; depends on how you're using the module.  If you &import; the module, then &name; is the module's filename, without a directory path or file extension.  But you can also run the module directly as a standalone program, in which case &name; will be a special default value, &main;.</para>
+<informalexample>
+<!--<title>An imported module's &name;</title>-->
+<screen>&prompt;<userinput>import &odbchelper_name;</userinput>
+&prompt;<userinput>&odbchelper_name;.&name;</userinput>
+<computeroutput>'&odbchelper_name;'</computeroutput></screen>
+</informalexample>
+<para>Knowing this, you can design a test suite for your module within the module itself by putting it in this &if; statement.  When you run the module directly, &name; is &main;, so the test suite executes.  When you import the module, &name; is something else, so the test suite is ignored.  This makes it easier to develop and debug new modules before integrating them into a larger program.</para>
+<tip id="tip.mac.runasmain">
+<title>&if; &name; on &macos;</title>
+<para>On &macpython;, there is an additional step to make the &if; &name; trick work.  Pop up the module's options menu by clicking the black triangle in the upper-right corner of the window, and make sure <menuchoice><guimenuitem>Run as __main__</guimenuitem></menuchoice> is checked.</para>
+</tip>
+<itemizedlist role="furtherreading">
+<title>Further Reading on Importing Modules</title>
+<listitem><para>&pythonlanguagereference; discusses the low-level details of <ulink url="&url_pythonlanguagereference;import.html">importing modules</ulink>.</para></listitem>
+</itemizedlist>
+</section>
+</chapter>
+<chapter id="datatypes">
+<?dbhtml filename="native_data_types/index.html"?>
+<title>Native Datatypes</title>
+<titleabbrev id="datatypes.numberonly">Chapter 3</titleabbrev>
+<para>You'll get back to your first &python; program in just a minute.  But first, a short digression is in order, because you need to know about dictionaries, tuples, and lists (oh my!).  If you're a &perl; hacker, you can probably skim the bits about dictionaries and lists, but you should still pay attention to tuples.</para>
+<section id="odbchelper.dict">
+<?dbhtml filename="native_data_types/dictionaries.html"?>
+<title>Introducing Dictionaries</title>
+<abstract>
+<title/>
+<para>One of &python;'s built-in datatypes is the dictionary, which defines one-to-one relationships between keys and values.</para>
+</abstract>
+<note id="compare.dict.perl" role="compare" vendor="perl">
+<title>&python; &vs; &perl;: Dictionaries</title>
+<para>A dictionary in &python; is like a hash in &perl;.  In &perl;, variables that store hashes always start with a <literal>&pct;</literal> character.  In &python;, variables can be named anything, and &python; keeps track of the datatype internally.</para>
+</note>
+<note id="compare.dict.java" role="compare" vendor="java">
+<title>&python; &vs; &java;: Dictionaries</title>
+<para>A dictionary in &python; is like an instance of the <classname>Hashtable</classname> class in &java;.</para>
+</note>
+<note id="compare.dict.vb" role="compare" vendor="vb">
+<title>&python; &vs; &vb;: Dictionaries</title>
+<para>A dictionary in &python; is like an instance of the <classname>Scripting.Dictionary</classname> object in &vb;.</para>
+</note>
+<section>
+<title>Defining Dictionaries</title>
+<example id="odbchelper.dict.define">
+<title>Defining a Dictionary</title>
+<screen>&prompt;<userinput>d = {"server":"mpilgrim", "database":"master"}</userinput> <co id="odbchelper.dict.1.1"/>
+&prompt;<userinput>d</userinput>
+<computeroutput>{'server': 'mpilgrim', 'database': 'master'}</computeroutput>
+&prompt;<userinput>d["server"]</userinput>                                    <co id="odbchelper.dict.1.2"/>
+<computeroutput>'mpilgrim'</computeroutput>
+&prompt;<userinput>d["database"]</userinput>                                  <co id="odbchelper.dict.1.3"/>
+<computeroutput>'master'</computeroutput>
+&prompt;<userinput>d["mpilgrim"]</userinput>                                  <co id="odbchelper.dict.1.4"/>
+<computeroutput role="traceback">&traceback;
+KeyError: mpilgrim</computeroutput></screen>
+<calloutlist>
+<callout arearefs="odbchelper.dict.1.1">
+<para>First, you create a new dictionary with two elements and assign it to the variable <varname>d</varname>.  Each element is a key-value pair, and the whole set of elements is enclosed in curly braces.</para>
+</callout>
+<callout arearefs="odbchelper.dict.1.2">
+<para><literal>'server'</literal> is a key, and its associated value, referenced by <literal>d["server"]</literal>, is <literal>'mpilgrim'</literal>.</para>
+</callout>
+<callout arearefs="odbchelper.dict.1.3">
+<para><literal>'database'</literal> is a key, and its associated value, referenced by <literal>d["database"]</literal>, is <literal>'master'</literal>.</para>
+</callout>
+<callout arearefs="odbchelper.dict.1.4">
+<para>You can get values by key, but you can't get keys by value.  So <literal>d["server"]</literal> is <literal>'mpilgrim'</literal>, but <literal>d["mpilgrim"]</literal> raises an exception, because <literal>'mpilgrim'</literal> is not a key.</para>
+</callout>
+</calloutlist>
+</example>
+</section>
+<section>
+<title>Modifying Dictionaries</title>
+<example id="odbchelper.dict.modify">
+<title>Modifying a Dictionary</title>
+<screen>&prompt;<userinput>d</userinput>
+<computeroutput>{'server': 'mpilgrim', 'database': 'master'}</computeroutput>
+&prompt;<userinput>d["database"] = "pubs"</userinput> <co id="odbchelper.dict.2.1"/>
+&prompt;<userinput>d</userinput>
+<computeroutput>{'server': 'mpilgrim', 'database': 'pubs'}</computeroutput>
+&prompt;<userinput>d["uid"] = "sa"</userinput>        <co id="odbchelper.dict.2.2"/>
+&prompt;<userinput>d</userinput>
+<computeroutput>{'server': 'mpilgrim', 'uid': 'sa', 'database': 'pubs'}</computeroutput></screen>
+</example>
+<calloutlist>
+<callout arearefs="odbchelper.dict.2.1">
+<para>You can not have duplicate keys in a dictionary.  Assigning a value to an existing key will wipe out the old value.</para>
+</callout>
+<callout arearefs="odbchelper.dict.2.2">
+<para>You can add new key-value pairs at any time.  This syntax is identical to modifying existing values.  (Yes, this will annoy you someday when you think you are adding new values but are actually just modifying the same value over and over because your key isn't changing the way you think it is.)</para>
+</callout>
+</calloutlist>
+<para>Note that the new element (key <literal>'uid'</literal>, value <literal>'sa'</literal>) appears to be in the middle.  In fact, it was just a coincidence that the elements appeared to be in order in the first example; it is just as much a coincidence that they appear to be out of order now.</para>
+<note id="tip.dictorder">
+<title>Dictionaries are unordered</title>
+<para>Dictionaries have no concept of order among elements.  It is incorrect to say that the elements are <quote>out of order</quote>; they are simply unordered.  This is an important distinction that will annoy you when you want to access the elements of a dictionary in a specific, repeatable order (like alphabetical order by key).  There are ways of doing this, but they're not built into the dictionary.</para>
+</note>
+<para>When working with dictionaries, you need to be aware that dictionary keys are case-sensitive.</para>
+<example id="odbchelper.dict.case">
+<title>Dictionary Keys Are Case-Sensitive</title>
+<screen>
+&prompt;<userinput>d = {}</userinput>
+&prompt;<userinput>d["key"] = "value"</userinput>
+&prompt;<userinput>d["key"] = "other value"</userinput> <co id="odbchelper.dict.5.1"/>
+&prompt;<userinput>d</userinput>
+<computeroutput>{'key': 'other value'}</computeroutput>
+&prompt;<userinput>d["Key"] = "third value"</userinput> <co id="odbchelper.dict.5.2"/>
+&prompt;<userinput>d</userinput>
+<computeroutput>{'Key': 'third value', 'key': 'other value'}</computeroutput>
+</screen>
+<calloutlist>
+<callout arearefs="odbchelper.dict.5.1">
+<para>Assigning a value to an existing dictionary key simply replaces the old value with a new one.</para>
+</callout>
+<callout arearefs="odbchelper.dict.5.2">
+<para>This is not assigning a value to an existing dictionary key, because strings in &python; are case-sensitive, so <literal>'key'</literal> is not the same as <literal>'Key'</literal>.  This creates a new key/value pair in the dictionary; it may look similar to you, but as far as &python; is concerned, it's completely different.</para>
+</callout>
+</calloutlist>
+</example>
+<example id="odbchelper.dictionarytypes">
+<title>Mixing Datatypes in a Dictionary</title>
+<screen>&prompt;<userinput>d</userinput>
+<computeroutput>{'server': 'mpilgrim', 'uid': 'sa', 'database': 'pubs'}</computeroutput>
+&prompt;<userinput>d["retrycount"] = 3</userinput> <co id="odbchelper.dict.3.1"/>
+&prompt;<userinput>d</userinput>
+<computeroutput>{'server': 'mpilgrim', 'uid': 'sa', 'database': 'master', 'retrycount': 3}</computeroutput>
+&prompt;<userinput>d[42] = "douglas"</userinput>   <co id="odbchelper.dict.3.2"/>
+&prompt;<userinput>d</userinput>
+<computeroutput>{'server': 'mpilgrim', 'uid': 'sa', 'database': 'master',
+42: 'douglas', 'retrycount': 3}</computeroutput></screen>
+</example>
+<calloutlist>
+<callout arearefs="odbchelper.dict.3.1">
+<para>Dictionaries aren't just for strings.  Dictionary values can be any datatype, including strings, integers, objects, or even other dictionaries.  And within a single dictionary, the values don't all need to be the same type; you can mix and match as needed.</para>
+</callout>
+<callout arearefs="odbchelper.dict.3.2">
+<para>Dictionary keys are more restricted, but they can be strings, integers, and a few other types.  You can also mix and match key datatypes within a dictionary.</para>
+</callout>
+</calloutlist>
+</section>
+<section>
+<title>Deleting Items From Dictionaries</title>
+<example id="odbchelper.dict.del">
+<title>Deleting Items from a Dictionary</title>
+<screen>&prompt;<userinput>d</userinput>
+<computeroutput>{'server': 'mpilgrim', 'uid': 'sa', 'database': 'master',
+42: 'douglas', 'retrycount': 3}</computeroutput>
+&prompt;<userinput>del d[42]</userinput> <co id="odbchelper.dict.4.1"/>
+&prompt;<userinput>d</userinput>
+<computeroutput>{'server': 'mpilgrim', 'uid': 'sa', 'database': 'master', 'retrycount': 3}</computeroutput>
+&prompt;<userinput>d.clear()</userinput> <co id="odbchelper.dict.4.2"/>
+&prompt;<userinput>d</userinput>
+<computeroutput>{}</computeroutput></screen>
+<calloutlist>
+<callout arearefs="odbchelper.dict.4.1">
+<para>&del; lets you delete individual items from a dictionary by key.</para>
+</callout>
+<callout arearefs="odbchelper.dict.4.2">
+<para>&clear; deletes all items from a dictionary.  Note that the set of empty curly braces signifies a dictionary without any items.</para>
+</callout>
+</calloutlist>
+</example>
+<itemizedlist role="furtherreading">
+<title>Further Reading on Dictionaries</title>
+<listitem><para>&howtothink; teaches about dictionaries and shows how to <ulink url="&url_howtothink;chap10.htm">use dictionaries to model sparse matrices</ulink>.</para></listitem>
+<listitem><para>&pythonknowledgebase; has a lot of <ulink url="&url_pythonknowledgebase;index.phtml/fid/541">example code using dictionaries</ulink>.</para></listitem>
+<listitem><para>&pythoncookbook; discusses <ulink url="&url_pythoncookbook;Recipe/52306">how to sort the values of a dictionary by key</ulink>.</para></listitem>
+<listitem><para>&pythonlibraryreference; summarizes <ulink url="&url_pythonlibs;typesmapping.html">all the dictionary methods</ulink>.</para></listitem>
+</itemizedlist>
+</section>
+</section>
+<section id="odbchelper.list">
+<?dbhtml filename="native_data_types/lists.html"?>
+<title>Introducing Lists</title>
+<abstract>
+<title></title>
+<para>Lists are &python;'s workhorse datatype.  If your only experience with lists is arrays in &vb; or (God forbid) the datastore in &powerbuilder;, brace yourself for &python; lists.</para>
+</abstract>
+<note id="compare.list.perl" role="compare" vendor="perl">
+<title>&python; &vs; &perl;: lists</title>
+<para>A list in &python; is like an array in &perl;.  In &perl;, variables that store arrays always start with the <literal>@</literal> character; in &python;, variables can be named anything, and &python; keeps track of the datatype internally.</para>
+</note>
+<note id="compare.list.java" role="compare" vendor="java">
+<title>&python; &vs; &java;: lists</title>
+<para>A list in &python; is much more than an array in &java; (although it can be used as one if that's really all you want out of life).  A better analogy would be to the <classname>ArrayList</classname> class, which can hold arbitrary objects and can expand dynamically as new items are added.</para>
+</note>
+<section>
+<title>Defining Lists</title>
+<example>
+<title>Defining a List</title>
+<screen>&prompt;<userinput>li = ["a", "b", "mpilgrim", "z", "example"]</userinput> <co id="odbchelper.list.1.1"/>
+&prompt;<userinput>li</userinput>
+<computeroutput>['a', 'b', 'mpilgrim', 'z', 'example']</computeroutput>
+&prompt;<userinput>li[0]</userinput>                                       <co id="odbchelper.list.1.2"/>
+<computeroutput>'a'</computeroutput>
+&prompt;<userinput>li[4]</userinput>                                       <co id="odbchelper.list.1.3"/>
+<computeroutput>'example'</computeroutput></screen>
+<calloutlist>
+<callout arearefs="odbchelper.list.1.1">
+<para>First, you define a list of five elements.  Note that they retain their original order.  This is not an accident.  A list is an ordered set of elements enclosed in square brackets.</para>
+</callout>
+<callout arearefs="odbchelper.list.1.2">
+<para>A list can be used like a zero-based array.  The first element of any non-empty list is always <literal>li[0]</literal>.</para>
+</callout>
+<callout arearefs="odbchelper.list.1.3">
+<para>The last element of this five-element list is <literal>li[4]</literal>, because lists are always zero-based.</para>
+</callout>
+</calloutlist>
+</example>
+<example id="odbchelper.negative.example">
+<title>Negative List Indices</title>
+<screen>&prompt;<userinput>li</userinput>
+<computeroutput>['a', 'b', 'mpilgrim', 'z', 'example']</computeroutput>
+&prompt;<userinput>li[-1]</userinput> <co id="odbchelper.list.2.1"/>
+<computeroutput>'example'</computeroutput>
+&prompt;<userinput>li[-3]</userinput> <co id="odbchelper.list.2.2"/>
+<computeroutput>'mpilgrim'</computeroutput></screen>
+<calloutlist>
+<callout arearefs="odbchelper.list.2.1">
+<para>A negative index accesses elements from the end of the list counting backwards.  The last element of any non-empty list is always <literal>li[-1]</literal>.</para>
+</callout>
+<callout arearefs="odbchelper.list.2.2">
+<para>If the negative index is confusing to you, think of it this way: <literal>li[-n] == li[len(li) - n]</literal>.  So in this list, <literal>li[-3] == li[5 - 3] == li[2]</literal>.</para>
+</callout>
+</calloutlist>
+</example>
+<example id="odbchelper.list.slice">
+<title>Slicing a List</title>
+<screen>&prompt;<userinput>li</userinput>
+<computeroutput>['a', 'b', 'mpilgrim', 'z', 'example']</computeroutput>
+&prompt;<userinput>li[1:3]</userinput>  <co id="odbchelper.list.3.1"/>
+<computeroutput>['b', 'mpilgrim']</computeroutput>
+&prompt;<userinput>li[1:-1]</userinput> <co id="odbchelper.list.3.2"/>
+<computeroutput>['b', 'mpilgrim', 'z']</computeroutput>
+&prompt;<userinput>li[0:3]</userinput>  <co id="odbchelper.list.3.3"/>
+<computeroutput>['a', 'b', 'mpilgrim']</computeroutput></screen>
+<calloutlist>
+<callout arearefs="odbchelper.list.3.1">
+<para>You can get a subset of a list, called a <quote>slice</quote>, by specifying two indices.  The return value is a new list containing all the elements of the list, in order, starting with the first slice index (in this case <literal>li[1]</literal>), up to but not including the second slice index (in this case <literal>li[3]</literal>).</para>
+</callout>
+<callout arearefs="odbchelper.list.3.2">
+<para>Slicing works if one or both of the slice indices is negative.  If it helps, you can think of it this way: reading the list from left to right, the first slice index specifies the first element you want, and the second slice index specifies the first element you don't want.  The return value is everything in between.</para>
+</callout>
+<callout arearefs="odbchelper.list.3.3">
+<para>Lists are zero-based, so <literal>li[0:3]</literal> returns the first three elements of the list, starting at <literal>li[0]</literal>, up to but not including <literal>li[3]</literal>.</para>
+</callout>
+</calloutlist>
+</example>
+<example id="odbchelper.list.slicing.example">
+<title>Slicing Shorthand</title>
+<screen>&prompt;<userinput>li</userinput>
+<computeroutput>['a', 'b', 'mpilgrim', 'z', 'example']</computeroutput>
+&prompt;<userinput>li[:3]</userinput> <co id="odbchelper.list.4.1"/>
+<computeroutput>['a', 'b', 'mpilgrim']</computeroutput>
+&prompt;<userinput>li[3:]</userinput> <co id="odbchelper.list.4.2"/> <co id="odbchelper.list.4.3"/>
+<computeroutput>['z', 'example']</computeroutput>
+&prompt;<userinput>li[:]</userinput>  <co id="odbchelper.list.4.4"/>
+<computeroutput>['a', 'b', 'mpilgrim', 'z', 'example']</computeroutput></screen>
+<calloutlist>
+<callout arearefs="odbchelper.list.4.1">
+<para>If the left slice index is 0, you can leave it out, and 0 is implied.  So <literal>li[:3]</literal> is the same as <literal>li[0:3]</literal> from <xref linkend="odbchelper.list.slice"/>.</para>
+</callout>
+<callout arearefs="odbchelper.list.4.2">
+<para>Similarly, if the right slice index is the length of the list, you can leave it out.  So <literal>li[3:]</literal> is the same as <literal>li[3:5]</literal>, because this list has five elements.</para>
+</callout>
+<callout arearefs="odbchelper.list.4.3">
+<para>Note the symmetry here.  In this five-element list, <literal>li[:3]</literal> returns the first 3 elements, and <literal>li[3:]</literal> returns the last two elements.  In fact, <literal>li[:n]</literal> will always return the first <literal>n</literal> elements, and <literal>li[n:]</literal> will return the rest, regardless of the length of the list.</para>
+</callout>
+<callout arearefs="odbchelper.list.4.4">
+<para>If both slice indices are left out, all elements of the list are included.  But this is not the same as the original <varname>li</varname> list; it is a new list that happens to have all the same elements.  <literal>li[:]</literal> is shorthand for making a complete copy of a list.</para>
+</callout>
+</calloutlist>
+</example>
+</section>
+<section>
+<title>Adding Elements to Lists</title>
+<example>
+<title>Adding Elements to a List</title>
+<screen>&prompt;<userinput>li</userinput>
+<computeroutput>['a', 'b', 'mpilgrim', 'z', 'example']</computeroutput>
+&prompt;<userinput>li.append("new")</userinput>               <co id="odbchelper.list.5.1"/>
+&prompt;<userinput>li</userinput>
+<computeroutput>['a', 'b', 'mpilgrim', 'z', 'example', 'new']</computeroutput>
+&prompt;<userinput>li.insert(2, "new")</userinput>            <co id="odbchelper.list.5.2"/>
+&prompt;<userinput>li</userinput>
+<computeroutput>['a', 'b', 'new', 'mpilgrim', 'z', 'example', 'new']</computeroutput>
+&prompt;<userinput>li.extend(["two", "elements"])</userinput> <co id="odbchelper.list.5.3"/>
+&prompt;<userinput>li</userinput>
+<computeroutput>['a', 'b', 'new', 'mpilgrim', 'z', 'example', 'new', 'two', 'elements']</computeroutput></screen>
+<calloutlist>
+<callout arearefs="odbchelper.list.5.1">
+<para><function>append</function> adds a single element to the end of the list.</para>
+</callout>
+<callout arearefs="odbchelper.list.5.2">
+<para><function>insert</function> inserts a single element into a list.  The numeric argument is the index of the first element that gets bumped out of position.  Note that list elements do not need to be unique; there are now two separate elements with the value <literal>'new'</literal>, <literal>li[2]</literal> and <literal>li[6]</literal>.</para>
+</callout>
+<callout arearefs="odbchelper.list.5.3">
+<para>&extend; concatenates lists.  Note that you do not call &extend; with multiple arguments; you call it with one argument, a list.  In this case, that list has two elements.</para>
+</callout>
+</calloutlist>
+</example>
+<example id="odbchelper.list.append.vs.extend">
+<title>The Difference between <function>extend</function> and <function>append</function></title>
+<screen>
+&prompt;<userinput>li = ['a', 'b', 'c']</userinput>
+&prompt;<userinput>li.extend(['d', 'e', 'f'])</userinput> <co id="odbchelper.list.5.4"/>
+&prompt;<userinput>li</userinput>
+<computeroutput>['a', 'b', 'c', 'd', 'e', 'f']</computeroutput>
+&prompt;<userinput>len(li)</userinput>                    <co id="odbchelper.list.5.5"/>
+<computeroutput>6</computeroutput>
+&prompt;<userinput>li[-1]</userinput>
+<computeroutput>'f'</computeroutput>
+&prompt;<userinput>li = ['a', 'b', 'c']</userinput>
+&prompt;<userinput>li.append(['d', 'e', 'f'])</userinput> <co id="odbchelper.list.5.6"/>
+&prompt;<userinput>li</userinput>
+<computeroutput>['a', 'b', 'c', ['d', 'e', 'f']]</computeroutput>
+&prompt;<userinput>len(li)</userinput>                    <co id="odbchelper.list.5.7"/>
+<computeroutput>4</computeroutput>
+&prompt;<userinput>li[-1]</userinput>
+<computeroutput>['d', 'e', 'f']</computeroutput>
+</screen>
+<calloutlist>
+<callout arearefs="odbchelper.list.5.4">
+<para>Lists have two methods, <function>extend</function> and <function>append</function>, that look like they do the same thing, but are in fact completely different.  <function>extend</function> takes a single argument, which is always a list, and adds each of the elements of that list to the original list.</para>
+</callout>
+<callout arearefs="odbchelper.list.5.5">
+<para>Here you started with a list of three elements (<literal>'a'</literal>, <literal>'b'</literal>, and <literal>'c'</literal>), and you extended the list with a list of another three elements (<literal>'d'</literal>, <literal>'e'</literal>, and <literal>'f'</literal>), so you now have a list of six elements.</para>
+</callout>
+<callout arearefs="odbchelper.list.5.6">
+<para>On the other hand, <function>append</function> takes one argument, which can be any data type, and simply adds it to the end of the list.  Here, you're calling the <function>append</function> method with a single argument, which is a list of three elements.</para>
+</callout>
+<callout arearefs="odbchelper.list.5.7">
+<para>Now the original list, which started as a list of three elements, contains four elements.  Why four?  Because the last element that you just appended <emphasis>is itself a list</emphasis>.  Lists can contain any type of data, including other lists.  That may be what you want, or maybe not.  Don't use <function>append</function> if you mean <function>extend</function>.</para>
+</callout>
+</calloutlist>
+</example>
+</section>
+<section>
+<title>Searching Lists</title>
+<example id="odbchelper.list.search">
+<title>Searching a List</title>
+<screen>&prompt;<userinput>li</userinput>
+<computeroutput>['a', 'b', 'new', 'mpilgrim', 'z', 'example', 'new', 'two', 'elements']</computeroutput>
+&prompt;<userinput>li.index("example")</userinput> <co id="odbchelper.list.6.1"/>
+<computeroutput>5</computeroutput>
+&prompt;<userinput>li.index("new")</userinput>     <co id="odbchelper.list.6.2"/>
+<computeroutput>2</computeroutput>
+&prompt;<userinput>li.index("c")</userinput>       <co id="odbchelper.list.6.3"/>
+<computeroutput role="traceback">&traceback;
+ValueError: list.index(x): x not in list</computeroutput>
+&prompt;<userinput>"c" in li</userinput>           <co id="odbchelper.list.6.4"/>
+<computeroutput>False</computeroutput></screen>
+<calloutlist>
+<callout arearefs="odbchelper.list.6.1">
+<para><function>index</function> finds the first occurrence of a value in the list and returns the index.</para>
+</callout>
+<callout arearefs="odbchelper.list.6.2">
+<para><function>index</function> finds the <emphasis>first</emphasis> occurrence of a value in the list.  In this case, <literal>'new'</literal> occurs twice in the list, in <literal>li[2]</literal> and <literal>li[6]</literal>, but <function>index</function> will return only the first index, <literal>2</literal>.</para>
+</callout>
+<callout arearefs="odbchelper.list.6.3">
+<para>If the value is not found in the list, &python; raises an exception.  This is notably different from most languages, which will return some invalid index.  While this may seem annoying, it is a good thing, because it means your program will crash at the source of the problem, rather than later on when you try to use the invalid index.</para>
+</callout>
+<callout arearefs="odbchelper.list.6.4">
+<para>To test whether a value is in the list, use <function>in</function>, which returns &true; if the value is found or &false; if it is not.</para>
+</callout>
+</calloutlist>
+</example>
+<note id="tip.boolean">
+<title>What's True in &python;?</title>
+<para>Before version 2.2.1, &python; had no separate boolean datatype.  To compensate for this, &python; accepted almost anything in a boolean context (like an &if; statement), according to the following rules:</para>
+<itemizedlist>
+<listitem><para>&zero; is false; all other numbers are true.</para></listitem>
+<listitem><para>An empty string (<literal>""</literal>) is false, all other strings are true.</para></listitem>
+<listitem><para>An empty list (<literal>[]</literal>) is false; all other lists are true.</para></listitem>
+<listitem><para>An empty tuple (<literal>()</literal>) is false; all other tuples are true.</para></listitem>
+<listitem><para>An empty dictionary (<literal>{}</literal>) is false; all other dictionaries are true.</para></listitem>
+</itemizedlist>
+<para>These rules still apply in &python; 2.2.1 and beyond, but now you can also use an actual boolean, which has a value of <literal>True</literal> or <literal>False</literal>.  Note the capitalization; these values, like everything else in &python;, are case-sensitive.</para>
+</note>
+</section>
+<section>
+<title>Deleting List Elements</title>
+<example id="odbchelper.list.removingelements">
+<title>Removing Elements from a List</title>
+<screen>&prompt;<userinput>li</userinput>
+<computeroutput>['a', 'b', 'new', 'mpilgrim', 'z', 'example', 'new', 'two', 'elements']</computeroutput>
+&prompt;<userinput>li.remove("z")</userinput>   <co id="odbchelper.list.7.1"/>
+&prompt;<userinput>li</userinput>
+<computeroutput>['a', 'b', 'new', 'mpilgrim', 'example', 'new', 'two', 'elements']</computeroutput>
+&prompt;<userinput>li.remove("new")</userinput> <co id="odbchelper.list.7.2"/>
+&prompt;<userinput>li</userinput>
+<computeroutput>['a', 'b', 'mpilgrim', 'example', 'new', 'two', 'elements']</computeroutput>
+&prompt;<userinput>li.remove("c")</userinput>   <co id="odbchelper.list.7.3"/>
+<computeroutput role="traceback">&traceback;
+ValueError: list.remove(x): x not in list</computeroutput>
+&prompt;<userinput>li.pop()</userinput>         <co id="odbchelper.list.7.4"/>
+<computeroutput>'elements'</computeroutput>
+&prompt;<userinput>li</userinput>
+<computeroutput>['a', 'b', 'mpilgrim', 'example', 'new', 'two']</computeroutput></screen>
+<calloutlist>
+<callout arearefs="odbchelper.list.7.1">
+<para><function>remove</function> removes the first occurrence of a value from a list.</para>
+</callout>
+<callout arearefs="odbchelper.list.7.2">
+<para><function>remove</function> removes <emphasis>only</emphasis> the first occurrence of a value.  In this case, <literal>'new'</literal> appeared twice in the list, but <literal>li.remove("new")</literal> removed only the first occurrence.</para>
+</callout>
+<callout arearefs="odbchelper.list.7.3">
+<para>If the value is not found in the list, &python; raises an exception.  This mirrors the behavior of the <function>index</function> method.</para>
+</callout>
+<callout arearefs="odbchelper.list.7.4">
+<para><function>pop</function> is an interesting beast.  It does two things: it removes the last element of the list, and it returns the value that it removed.  Note that this is different from <literal>li[-1]</literal>, which returns a value but does not change the list, and different from <literal>li.remove(<replaceable>value</replaceable>)</literal>, which changes the list but does not return a value.</para>
+</callout>
+</calloutlist>
+</example>
+</section>
+<section>
+<title>Using List Operators</title>
+<example id="odbchelper.list.operators">
+<title>List Operators</title>
+<screen>&prompt;<userinput>li = ['a', 'b', 'mpilgrim']</userinput>
+&prompt;<userinput>li = li + ['example', 'new']</userinput> <co id="odbchelper.list.8.1"/>
+&prompt;<userinput>li</userinput>
+<computeroutput>['a', 'b', 'mpilgrim', 'example', 'new']</computeroutput>
+&prompt;<userinput>li += ['two']</userinput>                <co id="odbchelper.list.8.2"/>
+&prompt;<userinput>li</userinput>
+<computeroutput>['a', 'b', 'mpilgrim', 'example', 'new', 'two']</computeroutput>
+&prompt;<userinput>li = [1, 2] * 3</userinput>              <co id="odbchelper.list.8.3"/>
+&prompt;<userinput>li</userinput>
+<computeroutput>[1, 2, 1, 2, 1, 2]</computeroutput></screen>
+<calloutlist>
+<callout arearefs="odbchelper.list.8.1">
+<para>Lists can also be concatenated with the <literal>+</literal> operator.  <literal><replaceable>list</replaceable> = <replaceable>list</replaceable> + <replaceable>otherlist</replaceable></literal> has the same result as <literal><replaceable>list</replaceable>.extend(<replaceable>otherlist</replaceable>)</literal>.  But the <literal>+</literal> operator returns a new (concatenated) list as a value, whereas &extend; only alters an existing list.  This means that &extend; is faster, especially for large lists.</para>
+</callout>
+<callout arearefs="odbchelper.list.8.2">
+<para>&python; supports the <literal>+=</literal> operator.  <literal>li += ['two']</literal> is equivalent to <literal>li.extend(['two'])</literal>.  The <literal>+=</literal> operator works for lists, strings, and integers, and it can be overloaded to work for user-defined classes as well.  (More on classes in <xref linkend="fileinfo" endterm="fileinfo.numberonly"/>.)</para>
+</callout>
+<callout arearefs="odbchelper.list.8.3">
+<para>The <literal>*</literal> operator works on lists as a repeater.  <literal>li = [1, 2] * 3</literal> is equivalent to <literal>li = [1, 2] + [1, 2] + [1, 2]</literal>, which concatenates the three lists into one.</para>
+</callout>
+</calloutlist>
+</example>
+<itemizedlist role="furtherreading">
+<title>Further Reading on Lists</title>
+<listitem><para>&howtothink; teaches about lists and makes an important point about <ulink url="&url_howtothink;chap08.htm">passing lists as function arguments</ulink>.</para></listitem>
+<listitem><para>&pythontutorial; shows how to <ulink url="&url_pythontutorial;node7.html#SECTION007110000000000000000">use lists as stacks and queues</ulink>.</para></listitem>
+<listitem><para>&pythonknowledgebase; answers <ulink url="&url_pythonknowledgebase;index.phtml/fid/534">common questions about lists</ulink> and has a lot of <ulink url="&url_pythonknowledgebase;index.phtml/fid/540">example code using lists</ulink>.</para></listitem>
+<listitem><para>&pythonlibraryreference; summarizes <ulink url="&url_pythonlibs;typesseq-mutable.html">all the list methods</ulink>.</para></listitem>
+</itemizedlist>
+</section>
+</section>
+<section id="odbchelper.tuple">
+<?dbhtml filename="native_data_types/tuples.html"?>
+<title>Introducing Tuples</title>
+<abstract>
+<title></title>
+<para>A tuple is an immutable list.  A tuple can not be changed in any way once it is created.</para>
+</abstract>
+<example>
+<title>Defining a tuple</title>
+<screen>&prompt;<userinput>t = ("a", "b", "mpilgrim", "z", "example")</userinput> <co id="odbchelper.tuple.1.1"/>
+&prompt;<userinput>t</userinput>
+<computeroutput>('a', 'b', 'mpilgrim', 'z', 'example')</computeroutput>
+&prompt;<userinput>t[0]</userinput>                                       <co id="odbchelper.tuple.1.2"/>
+<computeroutput>'a'</computeroutput>
+&prompt;<userinput>t[-1]</userinput>                                      <co id="odbchelper.tuple.1.3"/>
+<computeroutput>'example'</computeroutput>
+&prompt;<userinput>t[1:3]</userinput>                                     <co id="odbchelper.tuple.1.4"/>
+<computeroutput>('b', 'mpilgrim')</computeroutput></screen>
+<calloutlist>
+<callout arearefs="odbchelper.tuple.1.1">
+<para>A tuple is defined in the same way as a list, except that the whole set of elements is enclosed in parentheses instead of square brackets.</para>
+</callout>
+<callout arearefs="odbchelper.tuple.1.2">
+<para>The elements of a tuple have a defined order, just like a list.  Tuples indices are zero-based, just like a list, so the first element of a non-empty tuple is always <literal>t[0]</literal>.</para>
+</callout>
+<callout arearefs="odbchelper.tuple.1.3">
+<para>Negative indices count from the end of the tuple, just as with a list.</para>
+</callout>
+<callout arearefs="odbchelper.tuple.1.4">
+<para>Slicing works too, just like a list.  Note that when you slice a list, you get a new list; when you slice a tuple, you get a new tuple.</para>
+</callout>
+</calloutlist>
+</example>
+<example id="odbchelper.tuplemethods">
+<title>Tuples Have No Methods</title>
+<screen>&prompt;<userinput>t</userinput>
+<computeroutput>('a', 'b', 'mpilgrim', 'z', 'example')</computeroutput>
+&prompt;<userinput>t.append("new")</userinput>    <co id="odbchelper.tuple.2.1"/>
+<computeroutput role="traceback">&traceback;
+AttributeError: 'tuple' object has no attribute 'append'</computeroutput>
+&prompt;<userinput>t.remove("z")</userinput>      <co id="odbchelper.tuple.2.2"/>
+<computeroutput role="traceback">&traceback;
+AttributeError: 'tuple' object has no attribute 'remove'</computeroutput>
+&prompt;<userinput>t.index("example")</userinput> <co id="odbchelper.tuple.2.3"/>
+<computeroutput role="traceback">&traceback;
+AttributeError: 'tuple' object has no attribute 'index'</computeroutput>
+&prompt;<userinput>"z" in t</userinput>           <co id="odbchelper.tuple.2.4"/>
+<computeroutput>True</computeroutput></screen>
+<calloutlist>
+<callout arearefs="odbchelper.tuple.2.1">
+<para>You can't add elements to a tuple.  Tuples have no <function>append</function> or <function>extend</function> method.</para>
+</callout>
+<callout arearefs="odbchelper.tuple.2.2">
+<para>You can't remove elements from a tuple.  Tuples have no <function>remove</function> or <function>pop</function> method.</para>
+</callout>
+<callout arearefs="odbchelper.tuple.2.3">
+<para>You can't find elements in a tuple.  Tuples have no <function>index</function> method.</para>
+</callout>
+<callout arearefs="odbchelper.tuple.2.4">
+<para>You can, however, use <function>in</function> to see if an element exists in the tuple.</para>
+</callout>
+</calloutlist>
+</example>
+<para>So what are tuples good for?</para>
+<itemizedlist>
+<listitem><para>Tuples are faster than lists.  If you're defining a constant set of values and all you're ever going to do with it is iterate through it, use a tuple instead of a list.</para></listitem>
+<listitem><para>It makes your code safer if you <quote>write-protect</quote> data that does not need to be changed.  Using a tuple instead of a list is like having an implied <literal>assert</literal> statement that shows this data is constant, and that special thought (and a specific function) is required to override that.</para></listitem>
+<listitem><para>Remember that I said that <link linkend="odbchelper.dictionarytypes">dictionary keys</link> can be integers, strings, and <quote>a few other types</quote>?  Tuples are one of those types.  Tuples can be used as keys in a dictionary, but lists can't be used this way.</para>
+<para>Actually, it's more complicated than that.  Dictionary keys must be immutable.  Tuples themselves are immutable, but if you have a tuple of lists, that counts as mutable and isn't safe to use as a dictionary key.  Only tuples of strings, numbers, or other dictionary-safe tuples can be used as dictionary keys.</para></listitem>
+<listitem><para>Tuples are used in string formatting, as you'll see shortly.</para></listitem>
+</itemizedlist>
+<note id="tip.tuple">
+<title>Tuples into lists into tuples</title>
+<para>Tuples can be converted into lists, and vice-versa.  The built-in &tuple; function takes a list and returns a tuple with the same elements, and the &list; function takes a tuple and returns a list.  In effect, &tuple; freezes a list, and &list; thaws a tuple.</para>
+</note>
+<itemizedlist role="furtherreading">
+<title>Further Reading on Tuples</title>
+<listitem><para>&howtothink; teaches about tuples and shows how to <ulink url="&url_howtothink;chap10.htm">concatenate tuples</ulink>.</para></listitem>
+<listitem><para>&pythonknowledgebase; shows how to <ulink url="&url_pythonknowledgebase;view.phtml/aid/4553/fid/587">sort a tuple</ulink>.</para></listitem>
+<listitem><para>&pythontutorial; shows how to <ulink url="&url_pythontutorial;node7.html#SECTION007300000000000000000">define a tuple with one element</ulink>.</para></listitem>
+</itemizedlist>
+</section>
+<section id="odbchelper.vardef">
+<?dbhtml filename="native_data_types/declaring_variables.html"?>
+<title>Declaring variables</title>
+<para>Now that you know something about dictionaries, tuples, and lists (oh my!), let's get back to the sample program from <xref linkend="odbchelper" endterm="odbchelper.numberonly"/>, &odbchelper_filename;.</para>
+<abstract>
+<title/>
+<para>&python; has local and global variables like most other languages, but it has no explicit variable declarations.  Variables spring into existence by being assigned a value, and they are automatically destroyed when they go out of scope.</para>
+</abstract>
+<example id="myparamsdef">
+<title>Defining the <varname>myParams</varname> Variable</title>
+<programlisting>
+&odbchelper_if;
+&odbchelper_dict;</programlisting>
+</example>
+<para>Notice the indentation.  An &if; statement is a code block and needs to be indented just like a function.</para>
+<para>Also notice that the variable assignment is one command split over several lines, with a backslash (<quote><literal>\</literal></quote>) serving as a line-continuation marker.</para>
+<note id="tip.multiline">
+<title>Writing Multiline Commands</title>
+<para>When a command is split among several lines with the line-continuation marker (<quote><literal>\</literal></quote>), the continued lines can be indented in any manner; &python;'s normally stringent indentation rules do not apply.  If your &python; &ide; auto-indents the continued line, you should probably accept its default unless you have a burning reason not to.</para>
+</note>
+<para id="tip.implicitmultiline">Strictly speaking, expressions in parentheses, straight brackets, or curly braces (like <link linkend="myparamsdef">defining a dictionary</link>) can be split into multiple lines with or without the line continuation character (<quote><literal>\</literal></quote>).  I like to include the backslash even when it's not required because I think it makes the code easier to read, but that's a matter of style.</para>
+<para>Third, you never declared the variable <varname>myParams</varname>, you just assigned a value to it.  This is like &vbscript; without the <option>option explicit</option> option.  Luckily, unlike &vbscript;, &python; will not allow you to reference a variable that has never been assigned a value; trying to do so will raise an exception.</para>
+<section>
+<title>Referencing Variables</title>
+<example id="odbchelper.unboundvariable">
+<title>Referencing an Unbound Variable</title>
+<screen>&prompt;<userinput>x</userinput>
+<computeroutput role="traceback">&traceback;
+NameError: There is no variable named 'x'</computeroutput>
+&prompt;<userinput>x = 1</userinput>
+&prompt;<userinput>x</userinput>
+<computeroutput>1</computeroutput></screen>
+</example>
+<para>You will thank &python; for this one day.</para>
+</section>
+<section id="odbchelper.multiassign">
+<title>Assigning Multiple Values at Once</title>
+<para>One of the cooler programming shortcuts in &python; is using sequences to assign multiple values at once.</para>
+<example>
+<title>Assigning multiple values at once</title>
+<screen>&prompt;<userinput>v = ('a', 'b', 'e')</userinput>
+&prompt;<userinput>(x, y, z) = v</userinput>     <co id="odbchelper.multiassign.1.1"/>
+&prompt;<userinput>x</userinput>
+<computeroutput>'a'</computeroutput>
+&prompt;<userinput>y</userinput>
+<computeroutput>'b'</computeroutput>
+&prompt;<userinput>z</userinput>
+<computeroutput>'e'</computeroutput></screen>
+<calloutlist>
+<callout arearefs="odbchelper.multiassign.1.1">
+<para><varname>v</varname> is a tuple of three elements, and <literal>(x, y, z)</literal> is a tuple of three variables.  Assigning one to the other assigns each of the values of <varname>v</varname> to each of the variables, in order.</para>
+</callout>
+</calloutlist>
+</example>
+<para>This has all sorts of uses.  I often want to assign names to a range of values.  In &c;, you would use <literal>enum</literal> and manually list each constant and its associated value, which seems especially tedious when the values are consecutive.  In &python;, you can use the built-in &range; function with multi-variable assignment to quickly assign consecutive values.</para>
+<example id="odbchelper.multiassign.range">
+<title>Assigning Consecutive Values</title>
+<screen>&prompt;<userinput>range(7)</userinput>                                                                    <co id="odbchelper.multiassign.2.1"/>
+<computeroutput>[0, 1, 2, 3, 4, 5, 6]</computeroutput>
+&prompt;<userinput>(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY) = range(7)</userinput> <co id="odbchelper.multiassign.2.2"/>
+&prompt;<userinput>MONDAY</userinput>                                                                      <co id="odbchelper.multiassign.2.3"/>
+<computeroutput>0</computeroutput>
+&prompt;<userinput>TUESDAY</userinput>
+<computeroutput>1</computeroutput>
+&prompt;<userinput>SUNDAY</userinput>
+<computeroutput>6</computeroutput></screen>
+<calloutlist>
+<callout arearefs="odbchelper.multiassign.2.1">
+<para>The built-in &range; function returns a list of integers.  In its simplest form, it takes an upper limit and returns a zero-based list counting up to but not including the upper limit.  (If you like, you can pass other parameters to specify a base other than &zero; and a step other than &one;.  You can <literal>print range.__doc__</literal> for details.)</para>
+</callout>
+<callout arearefs="odbchelper.multiassign.2.2">
+<para><varname>MONDAY</varname>, <varname>TUESDAY</varname>, <varname>WEDNESDAY</varname>, <varname>THURSDAY</varname>, <varname>FRIDAY</varname>, <varname>SATURDAY</varname>, and <varname>SUNDAY</varname> are the variables you're defining.  (This example came from the &calendar; module, a fun little module that prints calendars, like the &unix; program <filename>cal</filename>.  The &calendar; module defines integer constants for days of the week.)</para>
+</callout>
+<callout arearefs="odbchelper.multiassign.2.3">
+<para>Now each variable has its value: <varname>MONDAY</varname> is &zero;, <varname>TUESDAY</varname> is &one;, and so forth.</para>
+</callout>
+</calloutlist>
+</example>
+<para>You can also use multi-variable assignment to build functions that return multiple values, simply by returning a tuple of all the values.  The caller can treat it as a tuple, or assign the values to individual variables.  Many standard &python; libraries do this, including the &os; module, which you'll discuss in <xref linkend="filehandling" endterm="filehandling.numberonly"/>.</para>
+<itemizedlist role="furtherreading">
+<title>Further Reading on Variables</title>
+<listitem><para>&pythonlanguagereference; shows examples of <ulink url="&url_pythonlanguagereference;implicit-joining.html">when you can skip the line continuation character</ulink> and <ulink url="&url_pythonlanguagereference;explicit-joining.html">when you need to use it</ulink>.</para></listitem>
+<listitem><para>&howtothink; shows how to use multi-variable assignment to <ulink url="&url_howtothink;chap09.htm">swap the values of two variables</ulink>.</para></listitem>
+</itemizedlist>
+</section>
+</section>
+<section id="odbchelper.stringformatting">
+<?dbhtml filename="native_data_types/formatting_strings.html"?>
+<title>Formatting Strings</title>
+<abstract>
+<title/>
+<para>&python; supports formatting values into strings.  Although this can include very complicated expressions, the most basic usage is to insert values into a string with the <literal>%s</literal> placeholder.</para>
+</abstract>
+<note id="compare.stringformatting.c" role="compare" vendor="c">
+<title>&python; &vs; &c;: String Formatting</title>
+<para>String formatting in &python; uses the same syntax as the <function>sprintf</function> function in &c;.</para>
+</note>
+<example>
+<title>Introducing String Formatting</title>
+<screen>&prompt;<userinput>k = "uid"</userinput>
+&prompt;<userinput>v = "sa"</userinput>
+&prompt;<userinput>"%s=%s" % (k, v)</userinput> <co id="odbchelper.stringformatting.1.1"/>
+<computeroutput>'uid=sa'</computeroutput></screen>
+<calloutlist>
+<callout arearefs="odbchelper.stringformatting.1.1">
+<para>The whole expression evaluates to a string.  The first <literal>%s</literal> is replaced by the value of <varname>k</varname>; the second <literal>%s</literal> is replaced by the value of <varname>v</varname>.  All other characters in the string (in this case, the equal sign) stay as they are.</para>
+</callout>
+</calloutlist>
+</example>
+<para>Note that <literal>(k, v)</literal> is a tuple.  I told you they were good for something.</para>
+<para>You might be thinking that this is a lot of work just to do simple string concatentation, and you would be right, except that string formatting isn't just concatenation.  It's not even just formatting.  It's also type coercion.</para>
+<example id="odbchelper.stringformatting.coerce">
+<title>String Formatting vs. Concatenating</title>
+<screen>&prompt;<userinput>uid = "sa"</userinput>
+&prompt;<userinput>pwd = "secret"</userinput>
+&prompt;<userinput>print pwd + " is not a good password for " + uid</userinput>      <co id="odbchelper.stringformatting.2.1"/>
+<computeroutput>secret is not a good password for sa</computeroutput>
+&prompt;<userinput>print "%s is not a good password for %s" % (pwd, uid)</userinput> <co id="odbchelper.stringformatting.2.2"/>
+<computeroutput>secret is not a good password for sa</computeroutput>
+&prompt;<userinput>userCount = 6</userinput>
+&prompt;<userinput>print "Users connected: %d" % (userCount, )</userinput>           <co id="odbchelper.stringformatting.2.3"/> <co id="odbchelper.stringformatting.2.4"/>
+<computeroutput>Users connected: 6</computeroutput>
+&prompt;<userinput>print "Users connected: " + userCount</userinput>                 <co id="odbchelper.stringformatting.2.5"/>
+<computeroutput role="traceback">&traceback;
+TypeError: cannot concatenate 'str' and 'int' objects</computeroutput></screen>
+<calloutlist>
+<callout arearefs="odbchelper.stringformatting.2.1">
+<para><literal>+</literal> is the string concatenation operator.</para>
+</callout>
+<callout arearefs="odbchelper.stringformatting.2.2">
+<para>In this trivial case, string formatting accomplishes the same result as concatentation.</para>
+</callout>
+<callout arearefs="odbchelper.stringformatting.2.3">
+<para><literal>(userCount, )</literal> is a tuple with one element.  Yes, the syntax is a little strange, but there's a good reason for it: it's unambiguously a tuple.  In fact, you can always include a comma after the last element when defining a list, tuple, or dictionary, but the comma is required when defining a tuple with one element.  If the comma weren't required, &python; wouldn't know whether <literal>(userCount)</literal> was a tuple with one element or just the value of <varname>userCount</varname>.</para>
+</callout>
+<callout arearefs="odbchelper.stringformatting.2.4">
+<para>String formatting works with integers by specifying <literal>&pct;d</literal> instead of <literal>&pct;s</literal>.</para>
+</callout>
+<callout arearefs="odbchelper.stringformatting.2.5">
+<para>Trying to concatenate a string with a non-string raises an exception.  Unlike string formatting, string concatenation works only when everything is already a string.</para>
+</callout>
+</calloutlist>
+</example>
+<para>As with <function>printf</function> in &c;, string formatting in &python; is like a Swiss Army knife.  There are options galore, and modifier strings to specially format many different types of values.</para>
+<example id="odbchelper.stringformatting.numbers">
+<title>Formatting Numbers</title>
+<screen>
+&prompt;<userinput>print "Today's stock price: %f" % 50.4625</userinput>   <co id="odbchelper.stringformatting.3.1"/>
+<computeroutput>50.462500</computeroutput>
+&prompt;<userinput>print "Today's stock price: %.2f" % 50.4625</userinput> <co id="odbchelper.stringformatting.3.2"/>
+<computeroutput>50.46</computeroutput>
+&prompt;<userinput>print "Change since yesterday: %+.2f" % 1.5</userinput> <co id="odbchelper.stringformatting.3.3"/>
+<computeroutput>+1.50</computeroutput>
+</screen>
+<calloutlist>
+<callout arearefs="odbchelper.stringformatting.3.1">
+<para>The <literal>%f</literal> string formatting option treats the value as a decimal, and prints it to six decimal places.</para>
+</callout>
+<callout arearefs="odbchelper.stringformatting.3.2">
+<para>The ".2" modifier of the <literal>%f</literal> option truncates the value to two decimal places.</para>
+</callout>
+<callout arearefs="odbchelper.stringformatting.3.3">
+<para>You can even combine modifiers.  Adding the <literal>+</literal> modifier displays a plus or minus sign before the value.   Note that the ".2" modifier is still in place, and is padding the value to exactly two decimal places.</para>
+</callout>
+</calloutlist>
+</example>
+<itemizedlist role="furtherreading">
+<title>Further Reading on String Formatting</title>
+<listitem><para>&pythonlibraryreference; summarizes <ulink url="&url_pythonlibraryreference;typesseq-strings.html">all the string formatting format characters</ulink>.</para></listitem>
+<listitem><para>&gawkmanual; discusses <ulink url="&url_gawkmanual;Control+Letters">all the format characters</ulink> and advanced string formatting techniques like <ulink url="&url_gawkmanual;Format+Modifiers">specifying width, precision, and zero-padding</ulink>.</para></listitem>
+</itemizedlist>
+</section>
+<section id="odbchelper.map">
+<?dbhtml filename="native_data_types/mapping_lists.html"?>
+<title>Mapping Lists</title>
+<abstract>
+<title></title>
+<para>One of the most powerful features of &python; is the list comprehension, which provides a compact way of mapping a list into another list by applying a function to each of the elements of the list.</para>
+</abstract>
+<example>
+<title>Introducing List Comprehensions</title>
+<screen>&prompt;<userinput>li = [1, 9, 8, 4]</userinput>
+&prompt;<userinput>[elem*2 for elem in li]</userinput>      <co id="odbchelper.map.1.1"/>
+<computeroutput>[2, 18, 16, 8]</computeroutput>
+&prompt;<userinput>li</userinput>                           <co id="odbchelper.map.1.2"/>
+<computeroutput>[1, 9, 8, 4]</computeroutput>
+&prompt;<userinput>li = [elem*2 for elem in li]</userinput> <co id="odbchelper.map.1.3"/>
+&prompt;<userinput>li</userinput>
+<computeroutput>[2, 18, 16, 8]</computeroutput></screen>
+<calloutlist>
+<callout arearefs="odbchelper.map.1.1">
+<para>To make sense of this, look at it from right to left.  <varname>li</varname> is the list you're mapping.  &python; loops through <varname>li</varname> one element at a time, temporarily assigning the value of each element to the variable <varname>elem</varname>.  &python; then applies the function <literal><varname>elem</varname>*2</literal> and appends that result to the returned list.</para>
+</callout>
+<callout arearefs="odbchelper.map.1.2">
+<para>Note that list comprehensions do not change the original list.</para>
+</callout>
+<callout arearefs="odbchelper.map.1.3">
+<para>It is safe to assign the result of a list comprehension to the variable that you're mapping.  &python; constructs the new list in memory, and when the list comprehension is complete, it assigns the result to the variable.</para>
+</callout>
+</calloutlist>
+</example>
+<informalexample>
+<!--<title>List Comprehensions in &odbchelper_function;</title>-->
+<para>Here are the list comprehensions in the &odbchelper_function; function that you declared in <xref linkend="odbchelper" endterm="odbchelper.numberonly"/>:</para>
+<programlisting>
+&odbchelper_listmapping;</programlisting>
+</informalexample>
+<para>First, notice that you're calling the <function>items</function> function of the <varname>params</varname> dictionary.  This function returns a list of tuples of all the data in the dictionary.</para>
+<example id="odbchelper.items">
+<title>The &keys;, &values;, and &items; Functions</title>
+<screen>&prompt;<userinput>params = {"server":"mpilgrim", "database":"master", "uid":"sa", "pwd":"secret"}</userinput>
+&prompt;<userinput>params.keys()</userinput>   <co id="odbchelper.map.2.1"/>
+<computeroutput>['server', 'uid', 'database', 'pwd']</computeroutput>
+&prompt;<userinput>params.values()</userinput> <co id="odbchelper.map.2.2"/>
+<computeroutput>['mpilgrim', 'sa', 'master', 'secret']</computeroutput>
+&prompt;<userinput>params.items()</userinput>  <co id="odbchelper.map.2.3"/>
+<computeroutput>[('server', 'mpilgrim'), ('uid', 'sa'), ('database', 'master'), ('pwd', 'secret')]</computeroutput></screen>
+<calloutlist>
+<callout arearefs="odbchelper.map.2.1">
+<para>The &keys; method of a dictionary returns a list of all the keys.  The list is not in the order in which the dictionary was defined (remember that elements in a dictionary are unordered), but it is a list.</para>
+</callout>
+<callout arearefs="odbchelper.map.2.2">
+<para>The &values; method returns a list of all the values.  The list is in the same order as the list returned by &keys;, so <literal>params.values()[n] == params[params.keys()[n]]</literal> for all values of <varname>n</varname>.</para>
+</callout>
+<callout arearefs="odbchelper.map.2.3">
+<para>The &items; method returns a list of tuples of the form <literal>(<replaceable>key</replaceable>, <replaceable>value</replaceable>)</literal>.  The list contains all the data in the dictionary.</para>
+</callout>
+</calloutlist>
+</example>
+<para>Now let's see what &odbchelper_function; does.  It takes a list, <literal><varname>params</varname>.&items;()</literal>, and maps it to a new list by applying string formatting to each element.  The new list will have the same number of elements as <literal><varname>params</varname>.&items;()</literal>, but each element in the new list will be a string that contains both a key and its associated value from the <varname>params</varname> dictionary.</para>
+<example>
+<title>List Comprehensions in &odbchelper_function;, Step by Step</title>
+<screen>&prompt;<userinput>params = {"server":"mpilgrim", "database":"master", "uid":"sa", "pwd":"secret"}</userinput>
+&prompt;<userinput>params.items()</userinput>
+<computeroutput>[('server', 'mpilgrim'), ('uid', 'sa'), ('database', 'master'), ('pwd', 'secret')]</computeroutput>
+&prompt;<userinput>[k for k, v in params.items()]</userinput>                <co id="odbchelper.map.3.1"/>
+<computeroutput>['server', 'uid', 'database', 'pwd']</computeroutput>
+&prompt;<userinput>[v for k, v in params.items()]</userinput>                <co id="odbchelper.map.3.2"/>
+<computeroutput>['mpilgrim', 'sa', 'master', 'secret']</computeroutput>
+&prompt;<userinput>&odbchelper_listmapping;</userinput> <co id="odbchelper.map.3.3"/>
+<computeroutput>['server=mpilgrim', 'uid=sa', 'database=master', 'pwd=secret']</computeroutput></screen>
+<calloutlist>
+<callout arearefs="odbchelper.map.3.1">
+<para>Note that you're using two variables to iterate through the <literal>params.items()</literal> list.  This is another use of <link linkend="odbchelper.multiassign">multi-variable assignment</link>.  The first element of <literal>params.items()</literal> is <literal>('server', 'mpilgrim')</literal>, so in the first iteration of the list comprehension, <varname>k</varname> will get <literal>'server'</literal> and <varname>v</varname> will get <literal>'mpilgrim'</literal>.  In this case, you're ignoring the value of <varname>v</varname> and only including the value of <varname>k</varname> in the returned list, so this list comprehension ends up being equivalent to <literal><varname>params</varname>.<function>keys</function>()</literal>.</para>
+</callout>
+<callout arearefs="odbchelper.map.3.2">
+<para>Here you're doing the same thing, but ignoring the value of <varname>k</varname>, so this list comprehension ends up being equivalent to <literal><varname>params</varname>.<function>values</function>()</literal>.</para>
+</callout>
+<callout arearefs="odbchelper.map.3.3">
+<para>Combining the previous two examples with some simple <link linkend="odbchelper.stringformatting">string formatting</link>, you get a list of strings that include both the key and value of each element of the dictionary.  This looks suspiciously like the <link linkend="odbchelper.output">output</link> of the program.  All that remains is to join the elements in this list into a single string.</para>
+</callout>
+</calloutlist>
+</example>
+<itemizedlist role="furtherreading">
+<title>Further Reading on List Comprehensions</title>
+<listitem><para>&pythontutorial; discusses another way to map lists <ulink url="&url_pythontutorial;node7.html#SECTION007130000000000000000">using the built-in <function>map</function> function</ulink>.</para></listitem>
+<listitem><para>&pythontutorial; shows how to <ulink url="&url_pythontutorial;node7.html#SECTION007140000000000000000">do nested list comprehensions</ulink>.</para></listitem>
+</itemizedlist>
+</section>
+<section id="odbchelper.join">
+<?dbhtml filename="native_data_types/joining_lists.html"?>
+<title>Joining Lists and Splitting Strings</title>
+<abstract>
+<title></title>
+<para>You have a list of key-value pairs in the form <literal><replaceable>key</replaceable>=<replaceable>value</replaceable></literal>, and you want to join them into a single string.  To join any list of strings into a single string, use the &join; method of a string object.</para>
+</abstract>
+<informalexample>
+<!--<title>Joining a List in &odbchelper_function;</title>-->
+<para>Here is an example of joining a list from the &odbchelper_function; function:</para>
+<programlisting>
+&odbchelper_code;</programlisting>
+</informalexample>
+<para>One interesting note before you continue.  I keep repeating that functions are objects, strings are objects... everything is an object.  You might have thought I meant that string <emphasis>variables</emphasis> are objects.  But no, look closely at this example and you'll see that the string <literal>";"</literal> itself is an object, and you are calling its &join; method.</para>
+<para>The &join; method joins the elements of the list into a single string, with each element separated by a semi-colon.  The delimiter doesn't need to be a semi-colon; it doesn't even need to be a single character.  It can be any string.</para>
+<caution id="tip.join">
+<title>You Can't &join; Non-Strings</title>
+<para>&join; works only on lists of strings; it does not do any type coercion.  Joining a list that has one or more non-string elements will raise an exception.</para>
+</caution>
+<example id="odbchelper.join.example">
+<title>Output of &odbchelper_filename;</title>
+<screen>&prompt;<userinput>params = {"server":"mpilgrim", "database":"master", "uid":"sa", "pwd":"secret"}</userinput>
+&prompt;<userinput>&odbchelper_listmapping;</userinput>
+<computeroutput>['server=mpilgrim', 'uid=sa', 'database=master', 'pwd=secret']</computeroutput>
+&prompt;<userinput>&odbchelper_join;</userinput>
+<computeroutput>'&odbchelper_output;'</computeroutput></screen>
+</example>
+<para>This string is then returned from the <function>odbchelper</function> function and printed by the calling block, which gives you the output that you marveled at when you started reading this chapter.</para>
+<para>You're probably wondering if there's an analogous method to split a string into a list.  And of course there is, and it's called &split;.</para>
+<example id="odbchelper.split.example">
+<title>Splitting a String</title>
+<screen>&prompt;<userinput>li = ['server=mpilgrim', 'uid=sa', 'database=master', 'pwd=secret']</userinput>
+&prompt;<userinput>s = ";".join(li)</userinput>
+&prompt;<userinput>s</userinput>
+<computeroutput>'server=mpilgrim;uid=sa;database=master;pwd=secret'</computeroutput>
+&prompt;<userinput>s.split(";")</userinput>    <co id="odbchelper.join.1.1"/>
+<computeroutput>['server=mpilgrim', 'uid=sa', 'database=master', 'pwd=secret']</computeroutput>
+&prompt;<userinput>s.split(";", 1)</userinput> <co id="odbchelper.join.1.2"/>
+<computeroutput>['server=mpilgrim', 'uid=sa;database=master;pwd=secret']</computeroutput></screen>
+<calloutlist>
+<callout arearefs="odbchelper.join.1.1">
+<para>&split; reverses &join; by splitting a string into a multi-element list.  Note that the delimiter (<quote><literal>;</literal></quote>) is stripped out completely; it does not appear in any of the elements of the returned list.</para>
+</callout>
+<callout arearefs="odbchelper.join.1.2">
+<para>&split; takes an optional second argument, which is the number of times to split.  (<quote>"Oooooh, optional arguments...</quote>  You'll learn how to do this in your own functions in the next chapter.)</para>
+</callout>
+</calloutlist>
+</example>
+<tip id="tip.split">
+<title>Searching with &split;</title>
+<para><literal><replaceable>anystring</replaceable>.&split;(<replaceable>delimiter</replaceable>, 1)</literal> is a useful technique when you want to search a string for a substring and then work with everything before the substring (which ends up in the first element of the returned list) and everything after it (which ends up in the second element).</para>
+</tip>
+<itemizedlist role="furtherreading">
+<title>Further Reading on String Methods</title>
+<listitem><para>&pythonknowledgebase; answers <ulink url="&url_pythonknowledgebase;index.phtml/fid/480">common questions about strings</ulink> and has a lot of <ulink url="&url_pythonknowledgebase;index.phtml/fid/539">example code using strings</ulink>.</para></listitem>
+<listitem><para>&pythonlibraryreference; summarizes <ulink url="&url_pythonlibraryreference;string-methods.html">all the string methods</ulink>.</para></listitem>
+<listitem><para>&pythonlibraryreference; documents the <ulink url="&url_pythonlibraryreference;module-string.html">&string; module</ulink>.</para></listitem>
+<listitem><para>&pythonfaq; explains <ulink url="&url_pythonfaqjoin;">why &join; is a string method</ulink> instead of a list method.</para></listitem>
+</itemizedlist>
+<section role="sidebar">
+<title>Historical Note on String Methods</title>
+<para>When I first learned &python;, I expected &join; to be a method of a list, which would take the delimiter as an argument.  Many people feel the same way, and there's a story behind the &join; method.  Prior to &python; 1.6, strings didn't have all these useful methods.  There was a separate &string; module that contained all the string functions; each function took a string as its first argument.  The functions were deemed important enough to put onto the strings themselves, which made sense for functions like <function>lower</function>, <function>upper</function>, and <function>split</function>.  But many hard-core &python; programmers objected to the new &join; method, arguing that it should be a method of the list instead, or that it shouldn't move at all but simply stay a part of the old &string; module (which still has a lot of useful stuff in it).  I use the new &join; method exclusively, but you will see code written either way, and if it really bothers you, you can use the old <function>string.join</function> function instead.</para>
+</section>
+</section>
+<section id="odbchelper.summary">
+<?dbhtml filename="native_data_types/summary.html"?>
+<title>Summary</title>
+<abstract>
+<title></title>
+<para>The &odbchelper_filename; program and its output should now make perfect sense.</para>
+</abstract>
+<informalexample>
+<!--<title>&odbchelper_filename;</title>-->
+<programlisting>
+&odbchelper_full;</programlisting>
+</informalexample>
+<informalexample>
+<!--<title>Output of &odbchelper_filename;</title>-->
+<para>Here is the output of &odbchelper_filename;:</para>
+<screen><computeroutput>&odbchelper_output;</computeroutput></screen>
+</informalexample>
+<highlights>
+<para>Before diving into the next chapter, make sure you're comfortable doing all of these things:</para>
+<itemizedlist>
+<listitem><para>Using the &python; &ide; to test expressions interactively</para></listitem>
+<listitem><para>Writing &python; programs and <link linkend="odbchelper.testing">running them from within your &ide;</link>, or from the command line</para></listitem>
+<listitem><para><link linkend="odbchelper.import">Importing modules</link> and calling their functions</para></listitem>
+<listitem><para><link linkend="odbchelper.funcdef">Declaring functions</link> and using <link linkend="odbchelper.docstring">&docstring;s</link>, <link linkend="odbchelper.vardef">local variables</link>, and <link linkend="odbchelper.indenting">proper indentation</link></para></listitem>
+<listitem><para>Defining <link linkend="odbchelper.dict">dictionaries</link>, <link linkend="odbchelper.tuple">tuples</link>, and <link linkend="odbchelper.list">lists</link></para></listitem>
+<listitem><para>Accessing attributes and methods of <link linkend="odbchelper.objects">any object</link>, including strings, lists, dictionaries, functions, and modules</para></listitem>
+<listitem><para>Concatenating values through <link linkend="odbchelper.stringformatting">string formatting</link></para></listitem>
+<listitem><para><link linkend="odbchelper.map">Mapping lists</link> into other lists using list comprehensions</para></listitem>
+<listitem><para><link linkend="odbchelper.join">Splitting strings</link> into lists and joining lists into strings</para></listitem>
+</itemizedlist>
+</highlights>
+</section>
+</chapter>

@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!ENTITY % entities_version SYSTEM "version.xml">
+%entities_version;
+
+<!ENTITY python "<application>Python</application>">
+<!ENTITY minversion "2.0">
+<!ENTITY recommendedversion "2.3.3">
+<!ENTITY title "Dive Into &python;">
+<!ENTITY citetitle "<citetitle pubwork='book'>&title;</citetitle>">
+
+<!ENTITY activestate "ActiveState">
+<!ENTITY activepython "<application>ActivePython</application>">
+<!ENTITY macpython "<application>MacPython</application>">
+<!ENTITY idle "<application>IDLE</application>">
+<!ENTITY gui "<acronym>GUI</acronym>">
+<!ENTITY perl "<application>Perl</application>">
+<!ENTITY vb "<application>Visual Basic</application>">
+<!ENTITY vbscript "<application>VBScript</application>">
+<!ENTITY jscript "<application>JScript</application>">
+<!ENTITY java "<application>Java</application>">
+<!ENTITY javascript "<application>JavaScript</application>">
+<!ENTITY c "<application><acronym>C</acronym></application>">
+<!ENTITY cpp "<application><acronym>C++</acronym></application>">
+<!ENTITY delphi "<application>Delphi</application>">
+<!ENTITY pascal "<application>Pascal</application>">
+<!ENTITY powerbuilder "<application>Powerbuilder</application>">
+<!ENTITY fortran "<application>Fortran</application>">
+<!ENTITY lisp "<application>Lisp</application>">
+<!ENTITY sqlserver "<application>SQL Server</application>">
+<!ENTITY tsql "Transact/<acronym>SQL</acronym>">
+<!ENTITY plsql "<acronym>PL/SQL</acronym>">
+<!ENTITY sql "<acronym>SQL</acronym>">
+<!ENTITY api "<acronym>API</acronym>">
+<!ENTITY apis "<acronym>API</acronym>s">
+<!ENTITY gpl "<acronym>GPL</acronym>">
+<!ENTITY ie "<foreignphrase><acronym>i.e.</acronym></foreignphrase>">
+<!ENTITY eg "<foreignphrase><acronym>e.g.</acronym></foreignphrase>">
+<!ENTITY vs "<foreignphrase><acronym>vs.</acronym></foreignphrase>">
+<!ENTITY etc "<foreignphrase><acronym>etc.</acronym></foreignphrase>">
+<!ENTITY oo "<acronym>OO</acronym>">
+<!ENTITY dos "<acronym>MS-DOS</acronym>">
+<!ENTITY windows "Windows">
+<!ENTITY win95 "&windows; 95">
+<!ENTITY win98 "&windows; 98">
+<!ENTITY winme "&windows; ME">
+<!ENTITY solaris "Sun Solaris">
+<!ENTITY amiga "Amiga">
+<!ENTITY beos "BeOS">
+<!ENTITY as400 "AS/400">
+<!ENTITY os2 "OS/2">
+<!ENTITY unix "<acronym>UNIX</acronym>">
+<!ENTITY linux "Linux">
+<!ENTITY redhatlinux "RedHat Linux">
+<!ENTITY redhat9 "RedHat Linux 9">
+<!ENTITY rpm "<acronym>RPM</acronym>">
+<!ENTITY debian "Debian">
+<!ENTITY debiangnulinux "Debian <acronym>GNU</acronym>/Linux">
+<!ENTITY pythonmode "<application>python-mode</application>">
+<!ENTITY macosx "<abbrev>Mac</abbrev> <acronym>OS</acronym> X">
+<!ENTITY macos "<abbrev>Mac</abbrev> <acronym>OS</acronym>">
+<!ENTITY macos9 "<abbrev>Mac</abbrev> <acronym>OS</acronym> 9">
+<!ENTITY mac "Macintosh">
+<!ENTITY docbook "<application>DocBook</application>">
+<!ENTITY pdf "<acronym>PDF</acronym>">
+<!ENTITY html "<acronym>HTML</acronym>">
+<!ENTITY msword "<application>Microsoft Word 97</application>">
+<!ENTITY winhelp "Windows Help">
+<!ENTITY xml "<acronym>XML</acronym>">
+<!ENTITY apache "<application>Apache</application>">
+<!ENTITY modpython "<application>mod_python</application>">
+<!ENTITY sax "<acronym>SAX</acronym>">
+<!ENTITY dom "<acronym>DOM</acronym>">
+<!ENTITY dtd "<acronym>DTD</acronym>">
+<!ENTITY xsl "<acronym>XSL</acronym>">
+<!ENTITY xslt "<acronym>XSLT</acronym>">
+<!ENTITY css "<acronym>CSS</acronym>">
+<!ENTITY saxon "the <application><acronym>SAXON</acronym></application> &xslt; processor from Michael Kay">
+<!ENTITY emacs "<application>Emacs</application>">
+<!ENTITY htmldoc "<application>HTMLDoc</application>">
+<!ENTITY w3m "<application>w3m</application>">
+<!ENTITY goodthing "Good Thing">
+<!ENTITY gnu "<acronym>GNU</acronym>">
+<!ENTITY faq "<acronym>FAQ</acronym>">
+<!ENTITY mp3 "<abbrev>MP3</abbrev>">
+<!ENTITY url "<acronym>URL</acronym>">
+<!ENTITY msie "<application>Internet Explorer</application>">
+<!ENTITY netscape "<application>Netscape</application>">
+<!ENTITY opera "<application>Opera</application>">
+<!ENTITY mozilla "<application>Mozilla</application>">
+<!ENTITY konqueror "<application>Konqueror</application>">
+<!ENTITY icab "<application>iCab</application>">
+<!ENTITY lynx "<application>Lynx</application>">
+<!ENTITY cvs "<acronym>CVS</acronym>">
+<!ENTITY ant "<application>Ant</application>">
+<!ENTITY stuffit "<application>Aladdin Expander</application>">
+
+<!ENTITY pubinfo SYSTEM "info.xml">
+<!ENTITY url_diveintopython "http://diveintopython.org/">
+<!ENTITY url_dipdownload "download/">
+<!ENTITY download_suffix ".zip">
+<!ENTITY url_dip_examples "&url_dipdownload;diveintopython-examples-&fileversion;&download_suffix;">
+<!ENTITY url_dip_html "&url_dipdownload;diveintopython-html-&fileversion;&download_suffix;">
+<!ENTITY url_dip_htmlflat "&url_dipdownload;diveintopython-html-flat-&fileversion;&download_suffix;">
+<!ENTITY url_dip_pdf "&url_dipdownload;diveintopython-pdf-&fileversion;&download_suffix;">
+<!ENTITY url_dip_doc "&url_dipdownload;diveintopython-word-&fileversion;&download_suffix;">
+<!ENTITY url_dip_help "&url_dipdownload;diveintopython-help-&fileversion;&download_suffix;">
+<!ENTITY url_dip_text "&url_dipdownload;diveintopython-text-&fileversion;&download_suffix;">
+<!ENTITY url_dip_xml "&url_dipdownload;diveintopython-xml-&fileversion;&download_suffix;">
+<!ENTITY url_dip_common "&url_dipdownload;diveintopython-common-&fileversion;&download_suffix;">
+<!ENTITY para_download '<para>If you have not already done so, you can <ulink url="&url_diveintopython;&url_dip_examples;" type="Download example scripts">download this and other examples</ulink> used in this book.</para>'>
+<!ENTITY diveintopythonorg '<systemitem class="systemname">&url_diveintopython;</systemitem>'>
+
+<!ENTITY url_diveintopythoncn "http://cn.diveintopython.org/">
+<!ENTITY url_cn_read "&url_diveintopythoncn;">
+<!ENTITY url_cn_download "&url_diveintopythoncn;diveintopython.zip">
+<!ENTITY url_cn_homepage "http://pythonrecord.51.net/bin/index1.php3">
+
+<!ENTITY url_diveintopythonfr "http://fr.diveintopython.org/">
+<!ENTITY url_fr_read "&url_diveintopythonfr;toc.html">
+<!ENTITY url_fr_download "&url_diveintopythonfr;index.html#download">
+<!ENTITY url_fr_homepage "&url_diveintopythonfr;">
+
+<!ENTITY url_diveintopythonkr "http://kr.diveintopython.org/">
+<!ENTITY url_kr_read "&url_diveintopythonkr;html/index.htm">
+<!ENTITY url_kr_download "&url_diveintopythonkr;diveintopython-kr.zip">
+<!ENTITY url_kr_homepage "http://home.hanmir.com/~johnsonj/diveinto/html/">
+
+<!ENTITY url_diveintopythones "http://es.diveintopython.org/">
+<!ENTITY url_es_read "&url_diveintopythones;toc.html">
+<!ENTITY url_es_download "&url_diveintopythones;index.html#download">
+<!ENTITY url_es_homepage "&url_diveintopythones;">
+
+<!ENTITY url_diveintopythonru "http://ru.diveintopython.org/">
+<!ENTITY url_ru_read "&url_diveintopythonru;toc.html">
+<!ENTITY url_ru_homepage "http://diveinto.python.ru/">
+
+<!ENTITY url_diveintopythonit "http://it.diveintopython.org/">
+<!ENTITY url_it_read "&url_diveintopythonit;toc.html">
+<!ENTITY url_fr_download "&url_diveintopythonit;index.html#download">
+<!ENTITY url_it_homepage "&url_diveintopythonit;">
+
+<!ENTITY url_google 'http://www.google.com/'>
+<!ENTITY google '<ulink url="&url_google;">Google</ulink>'>
+<!ENTITY google_search '<ulink url="&url_google;services/free.html">Google</ulink>'>
+<!ENTITY url_activestate "http://www.activestate.com/">
+<!ENTITY url_activepython "&url_activestate;Products/ActivePython/">
+<!ENTITY url_komodo "&url_activestate;Products/Komodo/">
+<!ENTITY url_pythonworks "http://www.pythonware.com/products/works/testdrive.htm">
+<!ENTITY url_pythonorg "http://www.python.org/">
+<!ENTITY pythonorg '<ulink url="&url_pythonorg;" type="Python language home page">Python.org</ulink>'>
+<!ENTITY url_vaultsofparnassus "http://www.vex.net/parnassus/">
+<!ENTITY url_faqtsbase "http://www.faqts.com/knowledge-base/">
+<!ENTITY url_faqts "&url_faqtsbase;index.phtml/fid/199/">
+<!ENTITY faqts "<ulink url='&url_faqts;'>&python; Knowledge Base</ulink>">
+<!ENTITY news_prefix 'http://groups.google.com/groups?group='>
+<!ENTITY url_clpa '&news_prefix;comp.lang.python.announce'>
+<!ENTITY url_clp '&news_prefix;comp.lang.python'>
+<!ENTITY clp '<ulink url="&url_clp;">comp.lang.python</ulink>'>
+<!ENTITY url_pythonmailinglists 'http://mail.python.org/mailman/listinfo'>
+<!ENTITY url_tutormailinglist '&url_pythonmailinglists;/tutor'>
+<!ENTITY url_pythonoreilly 'http://python.oreilly.com/'>
+<!ENTITY url_dmozpython 'http://directory.google.com/Top/Computers/Programming/Languages/Python/'>
+<!ENTITY url_dmozpythondoc '&url_dmozpython;FAQs,_Help,_and_Tutorials/'>
+<!ENTITY url_pythondownload "&url_pythonorg;ftp/python/">
+<!ENTITY url_pythondownloadrpms "&url_pythondownload;&recommendedversion;/rpms/">
+<!ENTITY url_nonprogrammer "&url_pythonorg;doc/Intros.html">
+<!ENTITY url_nonenglish "&url_pythonorg;doc/NonEnglish.html">
+<!ENTITY url_finkosx "http://people.ucsc.edu/~jacobkm/tkinter_osx_howto.html">
+<!ENTITY url_mac "http://homepages.cwi.nl/~jack/macpython/download.html">
+<!ENTITY url_other "&url_pythonorg;download/">
+<!ENTITY url_pythondocs "&url_pythonorg;doc/current/">
+<!ENTITY url_pythonlibs "&url_pythondocs;lib/">
+<!ENTITY url_docbook "http://www.oasis-open.org/docbook/">
+<!ENTITY url_docbookxsl "http://www.nwalsh.com/xsl/">
+<!ENTITY url_docbook_tdg "http://www.docbook.org/">
+<!ENTITY url_docbook_lists "http://lists.oasis-open.org/archives/">
+<!ENTITY url_emacs "http://www.gnu.org/software/emacs/">
+<!ENTITY url_pythonmode "http://www.python.org/emacs/python-mode/">
+<!ENTITY url_htmldoc "http://www.easysw.com/htmldoc/">
+<!ENTITY url_w3m "http://ei5nazha.yz.yamagata-u.ac.jp/~aito/w3m/eng/">
+<!ENTITY url_saxon "http://saxon.sourceforge.net/">
+<!ENTITY url_jython "http://www.jython.org/">
+<!ENTITY url_jythondownload "&url_jython;download.html">
+<!ENTITY url_pyfontify "http://starship.python.net/crew/just/code/PyFontify.py">
+<!ENTITY url_pythonstyleguide "&url_pythonorg;doc/essays/styleguide.html">
+<!ENTITY pythonstyleguide "<ulink url='&url_pythonstyleguide;'><citetitle>&python; Style Guide</citetitle></ulink>">
+<!ENTITY url_pythontutorial "&url_pythondocs;tut/">
+<!ENTITY pythontutorial "<ulink url='&url_pythontutorial;tut.html'><citetitle>&python; Tutorial</citetitle></ulink>">
+<!ENTITY url_howtothink "http://www.ibiblio.org/obp/thinkCSpy/">
+<!ENTITY howtothink "<ulink url='&url_howtothink;' type='Python book for computer science majors'><citetitle pubwork='book'>How to Think Like a Computer Scientist</citetitle></ulink>">
+<!ENTITY url_pythonlibraryreference "&url_pythonlibs;">
+<!ENTITY pythonlibraryreference "<ulink url='&url_pythonlibraryreference;'><citetitle>&python; Library Reference</citetitle></ulink>">
+<!ENTITY url_pythonlanguagereference "&url_pythondocs;ref/">
+<!ENTITY pythonlanguagereference "<ulink url='&url_pythonlanguagereference;'><citetitle>&python; Reference Manual</citetitle></ulink>">
+<!ENTITY url_gawkmanual "http://www-gnats.gnu.org:8080/cgi-bin/info2www?(gawk)">
+<!ENTITY gawkmanual "<ulink url='&url_gawkmanual;Top'><citetitle pubwork='book'>Effective <acronym>AWK</acronym> Programming</citetitle></ulink>">
+<!ENTITY url_effbot "http://www.effbot.org/guides/">
+<!ENTITY effbot "<ulink url='&url_effbot;'>eff-bot</ulink>">
+<!ENTITY url_pythonfaq "&url_pythonorg;doc/FAQ.html">
+<!ENTITY pythonfaq "<ulink url='&url_pythonfaq;'><citetitle>The Whole &python; &faq;</citetitle></ulink>">
+<!ENTITY url_pythonquickreference "http://www.brunningonline.net/simon/python/PQR.html">
+<!ENTITY url_pythonknowledgebase "&url_faqtsbase;">
+<!ENTITY pythonknowledgebase "&faqts;">
+<!ENTITY url_pythonpeps "http://python.sourceforge.net/peps/">
+<!ENTITY url_learningtoprogram "http://www.freenetpages.co.uk/hp/alan.gauld/">
+<!ENTITY learningtoprogram "<ulink url='&url_learningtoprogram;' type='Python book for first-time programmers'><citetitle pubwork='book'>Learning to Program</citetitle></ulink>">
+<!ENTITY url_thinkinginpython "http://www.mindview.net/Books/TIPython">
+<!ENTITY thinkinginpython "<ulink url='&url_thinkinginpython;' type='advanced book on design patterns in Python'><citetitle pubwork='book'>Thinking in Python</citetitle></ulink>">
+<!ENTITY url_pythonfaqjoin "http://www.python.org/cgi-bin/faqw.py?query=4.96&amp;querytype=simple&amp;casefold=yes&amp;req=search">
+<!ENTITY url_pythoncookbook "http://www.activestate.com/ASPN/Python/Cookbook/">
+<!ENTITY pythoncookbook "<ulink url='&url_pythoncookbook;' type='growing archive of annotated code samples'>&python; Cookbook</ulink>">
+<!ENTITY url_useless "http://www.uselesspython.com/">
+
+<!ENTITY re "<filename class='headerfile'>re</filename>">
+<!ENTITY sys "<filename class='headerfile'>sys</filename>">
+<!ENTITY syspath "<varname>sys.path</varname>">
+<!ENTITY search "<function>search</function>">
+<!ENTITY append "<function>append</function>">
+<!ENTITY remodule_link "<ulink url='&url_pythonlibraryreference;module-re.html'>&re; module</ulink>">
+<!ENTITY url_rehowto "http://py-howto.sourceforge.net/regex/regex.html">
+<!ENTITY rehowto "<ulink url='&url_rehowto;'>Regular Expression HOWTO</ulink>">
+<!ENTITY url_romannumerals "http://www.wilkiecollins.demon.co.uk/roman/front.htm">
+<!ENTITY url_romanhistory "http://www.wilkiecollins.demon.co.uk/roman/intro.htm">
+<!ENTITY url_c2 "http://www.c2.com/cgi/wiki">
+<!ENTITY url_xp "http://www.extremeprogramming.org/">
+<!ENTITY url_xpcom "http://www.xprogramming.com/">
+<!ENTITY xpcom "XProgramming.com">
+
+<!ENTITY pct "&#37;">
+<!ENTITY singquot "&#39;">
+<!ENTITY hash "&#35;">
+<!ENTITY prompt "<prompt>>>> </prompt>">
+<!ENTITY continuationprompt "<prompt>...     </prompt>">
+<!ENTITY traceback 'Traceback (innermost last):
+  File "&lt;interactive input&gt;", line 1, in ?'>
+<!ENTITY def "<literal>def</literal>">
+<!ENTITY return "<literal>return</literal>">
+<!ENTITY docstring "<literal>doc string</literal>">
+<!ENTITY doc "<literal>__doc__</literal>">
+<!ENTITY ide "<acronym>IDE</acronym>">
+<!ENTITY if "<literal>if</literal>">
+<!ENTITY else "<literal>else</literal>">
+<!ENTITY for "<literal>for</literal>">
+<!ENTITY while "<literal>while</literal>">
+<!ENTITY import "<literal>import</literal>">
+<!ENTITY require "<literal>require</literal>">
+<!ENTITY yield "<literal>yield</literal>">
+<!ENTITY name "<literal>__name__</literal>">
+<!ENTITY main "<literal>__main__</literal>">
+<!ENTITY builtins "<filename class='headerfile'>__builtin__</filename>">
+<!ENTITY comparisonequals "<literal>==</literal>">
+<!ENTITY assignmentequals "<literal>=</literal>">
+<!ENTITY functiontype "<constant>FunctionType</constant>">
+<!ENTITY classtype "<constant>ClassType</constant>">
+<!ENTITY frommoduleimport "<literal>from <replaceable>module</replaceable> import</literal>">
+<!ENTITY importmodule "<literal>import <replaceable>module</replaceable></literal>">
+<!ENTITY frommoduleimportstar "<literal>from <replaceable>module</replaceable> import *</literal>">
+<!ENTITY one "<constant>1</constant>">
+<!ENTITY zero "<constant>0</constant>">
+<!ENTITY true "<constant>True</constant>">
+<!ENTITY false "<constant>False</constant>">
+<!ENTITY lambdafunction "<literal>lambda</literal>">
+<!ENTITY andor "<literal>and-or</literal>">
+<!ENTITY candor "<literal><replaceable>bool</replaceable> ? <varname>a</varname> : <varname>b</varname></literal>">
+<!ENTITY split "<function>split</function>">
+<!ENTITY join "<function>join</function>">
+<!ENTITY info "<function>info</function>">
+<!ENTITY type "<function>type</function>">
+<!ENTITY str "<function>str</function>">
+<!ENTITY dir "<function>dir</function>">
+<!ENTITY keys "<function>keys</function>">
+<!ENTITY values "<function>values</function>">
+<!ENTITY exec "<function>exec</function>">
+<!ENTITY eval "<function>eval</function>">
+<!ENTITY getattr "<function>getattr</function>">
+<!ENTITY hasattr "<function>hasattr</function>">
+<!ENTITY pop "<function>pop</function>">
+<!ENTITY extend "<function>extend</function>">
+<!ENTITY count "<function>count</function>">
+<!ENTITY in "<literal>in</literal>">
+<!ENTITY tuple "<function>tuple</function>">
+<!ENTITY list "<function>list</function>">
+<!ENTITY none "<literal>None</literal>">
+<!ENTITY ljust "<function>ljust</function>">
+<!ENTITY getopt_module '<filename class="headerfile">getopt</filename>'>
+<!ENTITY getopt '<function>getopt</function>'>
+<!ENTITY sys '<filename class="headerfile">sys</filename>'>
+<!ENTITY sysmodules '<literal>&sys;.modules</literal>'>
+<!ENTITY string '<filename class="headerfile">string</filename>'>
+<!ENTITY types '<filename class="headerfile">types</filename>'>
+<!ENTITY os '<filename class="headerfile">os</filename>'>
+<!ENTITY glob '<filename class="headerfile">glob</filename>'>
+<!ENTITY ospath '<filename class="headerfile">os.path</filename>'>
+<!ENTITY userdict '<filename class="headerfile">UserDict</filename>'>
+<!ENTITY dict '<classname>dict</classname>'>
+<!ENTITY urllib '<filename class="headerfile">urllib</filename>'>
+<!ENTITY httplib '<filename class="headerfile">httplib</filename>'>
+<!ENTITY urllib2 '<filename class="headerfile">urllib2</filename>'>
+<!ENTITY urlparse '<filename class="headerfile">urlparse</filename>'>
+<!ENTITY gzip '<filename class="headerfile">gzip</filename>'>
+<!ENTITY urlopen '<function>urlopen</function>'>
+<!ENTITY http '<literal>http</literal>'>
+<!ENTITY userdict_classname '<classname>UserDict</classname>'>
+<!ENTITY splitext '<function>splitext</function>'>
+<!ENTITY items '<function>items</function>'>
+<!ENTITY print '<function>print</function>'>
+<!ENTITY class '<literal>class</literal>'>
+<!ENTITY pass '<literal>pass</literal>'>
+<!ENTITY init '<function>__init__</function>'>
+<!ENTITY self '<literal>self</literal>'>
+<!ENTITY this '<literal>this</literal>'>
+<!ENTITY range '<function>range</function>'>
+<!ENTITY open '<function>open</function>'>
+<!ENTITY seek '<function>seek</function>'>
+<!ENTITY tell '<function>tell</function>'>
+<!ENTITY read '<function>read</function>'>
+<!ENTITY write '<function>write</function>'>
+<!ENTITY close '<function>close</function>'>
+<!ENTITY calendar '<filename class="headerfile">calendar</filename>'>
+<!ENTITY new '<literal>new</literal>'>
+<!ENTITY create '<literal>create</literal>'>
+<!ENTITY classattr '<literal>__class__</literal>'>
+<!ENTITY moduleattr '<literal>__module__</literal>'>
+<!ENTITY clear '<function>clear</function>'>
+<!ENTITY copy '<filename class="headerfile">copy</filename>'>
+<!ENTITY getitem '<function>__getitem__</function>'>
+<!ENTITY setitem '<function>__setitem__</function>'>
+<!ENTITY del '<function>del</function>'>
+<!ENTITY delitem '<function>__delitem__</function>'>
+<!ENTITY repr '<function>repr</function>'>
+<!ENTITY reprspecial '<function>__repr__</function>'>
+<!ENTITY strspecial '<function>__str__</function>'>
+<!ENTITY cmpspecial '<function>__cmp__</function>'>
+<!ENTITY len '<function>len</function>'>
+<!ENTITY lenspecial '<function>__len__</function>'>
+<!ENTITY callspecial '<function>__call__</function>'>
+<!ENTITY tagdatamap '<varname>tagDataMap</varname>'>
+<!ENTITY getpass '<filename class="headerfile">getpass</filename>'>
+<!ENTITY importerror '<errorcode>ImportError</errorcode>'>
+<!ENTITY attributeerror '<errorcode>AttributeError</errorcode>'>
+<!ENTITY termios '<filename class="headerfile">termios</filename>'>
+<!ENTITY msvcrt '<filename class="headerfile">msvcrt</filename>'>
+<!ENTITY easydialogs '<filename class="headerfile">EasyDialogs</filename>'>
+<!ENTITY tryexcept '<literal>try...except</literal>'>
+<!ENTITY tryfinally '<literal>try...finally</literal>'>
+<!ENTITY ioerror '<errorcode>IOError</errorcode>'>
+<!ENTITY listdir '<function>listdir</function>'>
+<!ENTITY isfile '<function>isfile</function>'>
+<!ENTITY file '<function>file</function>'>
+<!ENTITY isdir '<function>isdir</function>'>
+<!ENTITY ini '<filename>.INI</filename>'>
+<!ENTITY callable '<function>callable</function>'>
+<!ENTITY readlines '<function>readlines</function>'>
+<!ENTITY locals '<function>locals</function>'>
+<!ENTITY globals '<function>globals</function>'>
+<!ENTITY andfunction "<literal>and</literal>">
+<!ENTITY orfunction "<literal>or</literal>">
+<!ENTITY raise "<literal>raise</literal>">
+<!ENTITY capitalize "<function>capitalize</function>">
+<!ENTITY ascii "<acronym>ASCII</acronym>">
+<!ENTITY update "<function>update</function>">
+
+<!ENTITY % entities_odbchelper SYSTEM "entities_odbchelper.xml">
+%entities_odbchelper;
+<!ENTITY % entities_apihelper SYSTEM "entities_apihelper.xml">
+%entities_apihelper;
+<!ENTITY % entities_fileinfo SYSTEM "entities_fileinfo.xml">
+%entities_fileinfo;
+<!ENTITY % entities_dialect SYSTEM "entities_dialect.xml">
+%entities_dialect;
+<!ENTITY % entities_kgp SYSTEM "entities_kgp.xml">
+%entities_kgp;
+<!ENTITY % entities_openanything SYSTEM "entities_openanything.xml">
+%entities_openanything;
+<!ENTITY % entities_soap SYSTEM "entities_soap.xml">
+%entities_soap;
+<!ENTITY % entities_roman SYSTEM "entities_roman.xml">
+%entities_roman;
+<!ENTITY % entities_regression SYSTEM "entities_regression.xml">
+%entities_regression;
+<!ENTITY % entities_plural SYSTEM "entities_plural.xml">
+%entities_plural;
+<!ENTITY % entities_soundex SYSTEM "entities_soundex.xml">
+%entities_soundex;

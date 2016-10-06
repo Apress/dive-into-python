@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!ENTITY basehtml_name 'BaseHTMLProcessor'>
+<!ENTITY basehtml_filename '<filename class="headerfile">&basehtml_name;.py</filename>'>
+<!ENTITY basehtml_classname '<classname>&basehtml_name;</classname>'>
+<!ENTITY dialect_filename '<filename class="headerfile">dialect.py</filename>'>
+<!ENTITY dialect_name 'Dialectizer'>
+<!ENTITY dialect_classname '<classname>&dialect_name;</classname>'>
+<!ENTITY sgmllib_filename '<filename class="headerfile">sgmllib.py</filename>'>
+<!ENTITY sgmllib_modulename '<filename class="headerfile">sgmllib</filename>'>
+<!ENTITY sgmlparser '<classname>SGMLParser</classname>'>
+<!ENTITY urllister_classname '<classname>URLLister</classname>'>
+<!ENTITY urllister_filename '<filename class="headerfile">urllister.py</filename>'>
+<!ENTITY reset '<function>reset</function>'>
+<!ENTITY selfpieces '<varname>self.pieces</varname>'>
+<!ENTITY unknown_starttag '<function>unknown_starttag</function>'>
+<!ENTITY unknown_endtag '<function>unknown_endtag</function>'>
+<!ENTITY handle_data '<function>handle_data</function>'>
+<!ENTITY handle_comment '<function>handle_comment</function>'>
+<!ENTITY handle_pi '<function>handle_pi</function>'>
+<!ENTITY handle_charref '<function>handle_charref</function>'>
+<!ENTITY handle_entityref '<function>handle_entityref</function>'>
+<!ENTITY handle_decl '<function>handle_decl</function>'>
+<!ENTITY doctype '<sgmltag>DOCTYPE</sgmltag>'>
+<!ENTITY pre_starttag '<sgmltag>&lt;pre></sgmltag>'>
+<!ENTITY pre_endtag '<sgmltag>&lt;/pre></sgmltag>'>
+<!ENTITY translate '<function>translate</function>'>
+<!ENTITY htmlentitydefs '<filename class="headerfile">htmlentitydefs</filename>'>
+<!ENTITY url_w3c 'http://www.w3.org/'>
+<!ENTITY w3c '<ulink url="&url_w3c;">W3C</ulink>'>
+
+<!ENTITY basehtml_import           'from sgmllib import SGMLParser
+import htmlentitydefs'>
+
+<!ENTITY basehtml_classdef         'class BaseHTMLProcessor(SGMLParser):'>
+<!ENTITY basehtml_resetdef         '    def reset(self):                       '>
+<!ENTITY basehtml_resetcomment     '        # extend (called by SGMLParser.__init__)'>
+<!ENTITY basehtml_resetcode        '        self.pieces = []'>
+<!ENTITY basehtml_resetcallsuper   '        SGMLParser.reset(self)'>
+
+<!ENTITY basehtml_starttagdef      '    def unknown_starttag(self, tag, attrs):'>
+<!ENTITY basehtml_starttagcomment  '        # called for each start tag
+        # attrs is a list of (attr, value) tuples
+        # e.g. for &lt;pre class="screen">, tag="pre", attrs=[("class", "screen")]
+        # Ideally we would like to reconstruct original tag and attributes, but
+        # we may end up quoting attribute values that weren&singquot;t quoted in the source
+        # document, or we may change the type of quotes around the attribute value
+        # (single to double quotes).
+        # Note that improperly embedded non-HTML code (like client-side Javascript)
+        # may be parsed incorrectly by the ancestor, causing runtime script errors.
+        # All non-HTML code must be enclosed in HTML comment tags (&lt;!-- code -->)
+        # to ensure that it will pass through this parser unaltered (in handle_comment).'>
+<!ENTITY basehtml_starttagjoin     '        strattrs = "".join([&singquot; &pct;s="&pct;s"&singquot; &pct; (key, value) for key, value in attrs])'>
+<!ENTITY basehtml_starttagcode     '        self.pieces.append("&lt;&pct;(tag)s&pct;(strattrs)s>" &pct; locals())'>
+
+<!ENTITY basehtml_endtagdef        '    def unknown_endtag(self, tag):         '>
+<!ENTITY basehtml_endtagcomment    '        # called for each end tag, e.g. for &lt;/pre>, tag will be "pre"
+        # Reconstruct the original end tag.'>
+<!ENTITY basehtml_endtagcode       '        self.pieces.append("&lt;/&pct;(tag)s>" &pct; locals())'>
+
+<!ENTITY basehtml_charrefdef       '    def handle_charref(self, ref):         '>
+<!ENTITY basehtml_charrefcomment   '        # called for each character reference, e.g. for "&amp;#160;", ref will be "160"
+        # Reconstruct the original character reference.'>
+<!ENTITY basehtml_charrefcode      '        self.pieces.append("&amp;#&pct;(ref)s;" &pct; locals())'>
+
+<!ENTITY basehtml_entityrefdef       '    def handle_entityref(self, ref):       '>
+<!ENTITY basehtml_entityrefcomment   '        # called for each entity reference, e.g. for "&amp;copy;", ref will be "copy"
+        # Reconstruct the original entity reference.'>
+<!ENTITY basehtml_entityrefcode      '        self.pieces.append("&amp;&pct;(ref)s" &pct; locals())'>
+<!ENTITY basehtml_entityrefcomment2  '        # standard HTML entities are closed with a semicolon; other entities are not'>
+<!ENTITY basehtml_entityrefif        '        if htmlentitydefs.entitydefs.has_key(ref):'>
+<!ENTITY basehtml_entityrefsemicolon '            self.pieces.append(";")'>
+
+
+<!ENTITY basehtml_dataref          '    def handle_data(self, text):           '>
+<!ENTITY basehtml_datacomment      '        # called for each block of plain text, i.e. outside of any tag and
+        # not containing any character or entity references
+        # Store the original text verbatim.'>
+<!ENTITY basehtml_datacode         '        self.pieces.append(text)'>
+
+<!ENTITY basehtml_commentdef       '    def handle_comment(self, text):        '>
+<!ENTITY basehtml_commentcomment   '        # called for each HTML comment, e.g. &lt;!-- insert Javascript code here -->
+        # Reconstruct the original comment.
+        # It is especially important that the source document enclose client-side
+        # code (like Javascript) within comments so it can pass through this
+        # processor undisturbed; see comments in unknown_starttag for details.'>
+<!ENTITY basehtml_commentcode      '        self.pieces.append("&lt;!--&pct;(text)s-->" &pct; locals())'>
+
+<!ENTITY basehtml_pidef            '    def handle_pi(self, text):             '>
+<!ENTITY basehtml_picomment        '        # called for each processing instruction, e.g. &lt;?instruction>
+        # Reconstruct original processing instruction.'>
+<!ENTITY basehtml_picode           '        self.pieces.append("&lt;?&pct;(text)s>" &pct; locals())'>
+
+<!ENTITY basehtml_decldef          '    def handle_decl(self, text):'>
+<!ENTITY basehtml_declcomment      '        # called for the DOCTYPE, if present, e.g.
+        # &lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        #     "http://www.w3.org/TR/html4/loose.dtd">
+        # Reconstruct original DOCTYPE'>
+<!ENTITY basehtml_declcode         '        self.pieces.append("&lt;!&pct;(text)s>" &pct; locals())'>
+
+<!ENTITY basehtml_outputdef        '    def output(self):              '>
+<!ENTITY basehtml_outputdoc        '        """Return processed HTML as a single string"""'>
+<!ENTITY basehtml_outputcode       '        return "".join(self.pieces)'>
+
+<!ENTITY basehtml_code '&basehtml_import;
+
+&basehtml_classdef;
+&basehtml_resetdef;
+&basehtml_resetcomment;
+&basehtml_resetcode;
+&basehtml_resetcallsuper;
+
+&basehtml_starttagdef;
+&basehtml_starttagcomment;
+&basehtml_starttagjoin;
+&basehtml_starttagcode;
+
+&basehtml_endtagdef;
+&basehtml_endtagcomment;
+&basehtml_endtagcode;
+
+&basehtml_charrefdef;
+&basehtml_charrefcomment;
+&basehtml_charrefcode;
+
+&basehtml_entityrefdef;
+&basehtml_entityrefcomment;
+&basehtml_entityrefcode;
+&basehtml_entityrefcomment2;
+&basehtml_entityrefif;
+&basehtml_entityrefsemicolon;
+
+&basehtml_dataref;
+&basehtml_datacomment;
+&basehtml_datacode;
+
+&basehtml_commentdef;
+&basehtml_commentcomment;
+&basehtml_commentcode;
+
+&basehtml_pidef;
+&basehtml_picomment;
+&basehtml_picode;
+
+&basehtml_decldef;
+&basehtml_declcomment;
+&basehtml_declcode;
+
+&basehtml_outputdef;
+&basehtml_outputdoc;
+&basehtml_outputcode;'>
+
+<!ENTITY dialect_import1   'import re'>
+<!ENTITY dialect_import2   'from BaseHTMLProcessor import BaseHTMLProcessor'>
+
+<!ENTITY dialect_classdef  'class Dialectizer(BaseHTMLProcessor):'>
+<!ENTITY dialect_classattr '    subs = ()'>
+
+<!ENTITY dialect_resetdef       '    def reset(self):'>
+<!ENTITY dialect_resetcomment   '        # extend (called from __init__ in ancestor)
+        # Reset all data attributes'>
+<!ENTITY dialect_resetcode      '        self.verbatim = 0'>
+<!ENTITY dialect_resetcallsuper '        BaseHTMLProcessor.reset(self)'>
+
+<!ENTITY dialect_startpredef     '    def start_pre(self, attrs):            '>
+<!ENTITY dialect_startprecomment '        # called for every &lt;pre> tag in HTML source
+        # Increment verbatim mode count, then handle tag like normal'>
+<!ENTITY dialect_startprecode    '        self.verbatim += 1                 '>
+<!ENTITY dialect_startprecall    '        self.unknown_starttag("pre", attrs)'>
+
+<!ENTITY dialect_endpredef       '    def end_pre(self):                     '>
+<!ENTITY dialect_endprecomment   '        # called for every &lt;/pre> tag in HTML source
+        # Decrement verbatim mode count'>
+<!ENTITY dialect_endprecall      '        self.unknown_endtag("pre")         '>
+<!ENTITY dialect_endprecode      '        self.verbatim -= 1                 '>
+
+<!ENTITY dialect_datadef     '    def handle_data(self, text):                                        '>
+<!ENTITY dialect_datacomment '        # override
+        # called for every block of text in HTML source
+        # If in verbatim mode, save text unaltered;
+        # otherwise process the text with a series of substitutions'>
+<!ENTITY dialect_datacode    '        self.pieces.append(self.verbatim and text or self.process(text))'>
+
+<!ENTITY dialect_processdef     '    def process(self, text):'>
+<!ENTITY dialect_processcomment '        # called from handle_data
+        # Process text block by performing series of regular expression
+        # substitutions (actual substitions are defined in descendant)'>
+<!ENTITY dialect_processfor     '        for fromPattern, toPattern in self.subs:'>
+<!ENTITY dialect_processsub     '            text = re.sub(fromPattern, toPattern, text)'>
+<!ENTITY dialect_processreturn  '        return text'>
+
+<!ENTITY dialect_chefdef  'class ChefDialectizer(Dialectizer):'>
+<!ENTITY dialect_chefdoc  '    """convert HTML to Swedish Chef-speak
+    
+    based on the classic chef.x, copyright (c) 1992, 1993 John Hagerman
+    """'>
+<!ENTITY dialect_chefsubs "    subs = ((r'a([nu])', r'u\1'),
+            (r'A([nu])', r'U\1'),
+            (r'a\B', r'e'),
+            (r'A\B', r'E'),
+            (r'en\b', r'ee'),
+            (r'\Bew', r'oo'),
+            (r'\Be\b', r'e-a'),
+            (r'\be', r'i'),
+            (r'\bE', r'I'),
+            (r'\Bf', r'ff'),
+            (r'\Bir', r'ur'),
+            (r'(\w*?)i(\w*?)$', r'\1ee\2'),
+            (r'\bow', r'oo'),
+            (r'\bo', r'oo'),
+            (r'\bO', r'Oo'),
+            (r'the', r'zee'),
+            (r'The', r'Zee'),
+            (r'th\b', r't'),
+            (r'\Btion', r'shun'),
+            (r'\Bu', r'oo'),
+            (r'\BU', r'Oo'),
+            (r'v', r'f'),
+            (r'V', r'F'),
+            (r'w', r'w'),
+            (r'W', r'W'),
+            (r'([a-z])[.]', r'\1.  Bork Bork Bork!'))">
+
+<!ENTITY dialect_fudddef  'class FuddDialectizer(Dialectizer):'>
+<!ENTITY dialect_fudddoc  '    """convert HTML to Elmer Fudd-speak"""'>
+<!ENTITY dialect_fuddsubs "    subs = ((r'[rl]', r'w'),
+            (r'qu', r'qw'),
+            (r'th\b', r'f'),
+            (r'th', r'd'),
+            (r'n[.]', r'n, uh-hah-hah-hah.'))">
+
+<!ENTITY dialect_oldedef 'class OldeDialectizer(Dialectizer):'>
+<!ENTITY dialect_oldedoc '    """convert HTML to mock Middle English"""'>
+<!ENTITY dialect_oldesubs "    subs = ((r'i([bcdfghjklmnpqrstvwxyz])e\b', r'y\1'),
+            (r'i([bcdfghjklmnpqrstvwxyz])e', r'y\1\1e'),
+            (r'ick\b', r'yk'),
+            (r'ia([bcdfghjklmnpqrstvwxyz])', r'e\1e'),
+            (r'e[ea]([bcdfghjklmnpqrstvwxyz])', r'e\1e'),
+            (r'([bcdfghjklmnpqrstvwxyz])y', r'\1ee'),
+            (r'([bcdfghjklmnpqrstvwxyz])er', r'\1re'),
+            (r'([aeiou])re\b', r'\1r'),
+            (r'ia([bcdfghjklmnpqrstvwxyz])', r'i\1e'),
+            (r'tion\b', r'cioun'),
+            (r'ion\b', r'ioun'),
+            (r'aid', r'ayde'),
+            (r'ai', r'ey'),
+            (r'ay\b', r'y'),
+            (r'ay', r'ey'),
+            (r'ant', r'aunt'),
+            (r'ea', r'ee'),
+            (r'oa', r'oo'),
+            (r'ue', r'e'),
+            (r'oe', r'o'),
+            (r'ou', r'ow'),
+            (r'ow', r'ou'),
+            (r'\bhe', r'hi'),
+            (r've\b', r'veth'),
+            (r'se\b', r'e'),
+            (r&quot;'s\b&quot;, r'es'),
+            (r'ic\b', r'ick'),
+            (r'ics\b', r'icc'),
+            (r'ical\b', r'ick'),
+            (r'tle\b', r'til'),
+            (r'll\b', r'l'),
+            (r'ould\b', r'olde'),
+            (r'own\b', r'oune'),
+            (r'un\b', r'onne'),
+            (r'rry\b', r'rye'),
+            (r'est\b', r'este'),
+            (r'pt\b', r'pte'),
+            (r'th\b', r'the'),
+            (r'ch\b', r'che'),
+            (r'ss\b', r'sse'),
+            (r'([wybdp])\b', r'\1e'),
+            (r'([rnt])\b', r'\1\1e'),
+            (r'from', r'fro'),
+            (r'when', r'whan'))">
+
+<!ENTITY dialect_translatedef         'def translate(url, dialectName="chef"):'>
+<!ENTITY dialect_translatedoc         '    """fetch URL and translate using dialect
+    
+    dialect in ("chef", "fudd", "olde")"""'>
+<!ENTITY dialect_translateimport      '    import urllib                      '>
+<!ENTITY dialect_translateopen        '    sock = urllib.urlopen(url)         '>
+<!ENTITY dialect_translateread        '    htmlSource = sock.read()           '>
+<!ENTITY dialect_translateclose       '    sock.close()                       '>
+<!ENTITY dialect_translateparsername  '    parserName = "&pct;sDialectizer" &pct; dialectName.capitalize()'>
+<!ENTITY dialect_translateparserclass '    parserClass = globals()[parserName]                    '>
+<!ENTITY dialect_translateinstantiate '    parser = parserClass()                                 '>
+<!ENTITY dialect_translatefeed        '    parser.feed(htmlSource)'>
+<!ENTITY dialect_translateclose2      '    parser.close()         '>
+<!ENTITY dialect_translatereturn      '    return parser.output() '>
+
+<!ENTITY dialect_testdef     'def test(url):'>
+<!ENTITY dialect_testdoc     '    """test all dialects against URL"""'>
+<!ENTITY dialect_testfor     '    for dialect in ("chef", "fudd", "olde"):'>
+<!ENTITY dialect_testoutfile '        outfile = "&pct;s.html" &pct; dialect'>
+<!ENTITY dialect_testopen    '        fsock = open(outfile, "wb")'>
+<!ENTITY dialect_testwrite   '        fsock.write(translate(url, dialect))'>
+<!ENTITY dialect_testclose   '        fsock.close()'>
+<!ENTITY dialect_testimport  '        import webbrowser'>
+<!ENTITY dialect_testopenweb '        webbrowser.open_new(outfile)'>
+
+<!ENTITY dialect_ifname 'if __name__ == "__main__":'>
+<!ENTITY dialect_ifcode '    test("http://diveintopython.org/odbchelper_list.html")'>
+
+<!ENTITY dialect_code '&dialect_import1;
+&dialect_import2;
+
+&dialect_classdef;
+&dialect_classattr;
+
+&dialect_resetdef;
+&dialect_resetcomment;
+&dialect_resetcode;
+&dialect_resetcallsuper;
+
+&dialect_startpredef;
+&dialect_startprecomment;
+&dialect_startprecode;
+&dialect_startprecall;
+
+&dialect_endpredef;
+&dialect_endprecomment;
+&dialect_endprecall;
+&dialect_endprecode;
+
+&dialect_datadef;
+&dialect_datacomment;
+&dialect_datacode;
+
+&dialect_processdef;
+&dialect_processcomment;
+&dialect_processfor;
+&dialect_processsub;
+&dialect_processreturn;
+
+&dialect_chefdef;
+&dialect_chefdoc;
+&dialect_chefsubs;
+
+&dialect_fudddef;
+&dialect_fudddoc;
+&dialect_fuddsubs;
+
+&dialect_oldedef;
+&dialect_oldedoc;
+&dialect_oldesubs;
+
+&dialect_translatedef;
+&dialect_translatedoc;
+&dialect_translateimport;
+&dialect_translateopen;
+&dialect_translateread;
+&dialect_translateclose;
+&dialect_translateparsername;
+&dialect_translateparserclass;
+&dialect_translateinstantiate;
+&dialect_translatefeed;
+&dialect_translateclose2;
+&dialect_translatereturn;
+
+&dialect_testdef;
+&dialect_testdoc;
+&dialect_testfor;
+&dialect_testoutfile;
+&dialect_testopen;
+&dialect_testwrite;
+&dialect_testclose;
+&dialect_testimport;
+&dialect_testopenweb;
+
+&dialect_ifname;
+&dialect_ifcode;'>
+
+<!ENTITY sgmlparser_starttagdef   '    def finish_starttag(self, tag, attrs):              '>
+<!ENTITY sgmlparser_starttry      '        try:                                            '>
+<!ENTITY sgmlparser_startgetattr  "            method = getattr(self, 'start_' + tag)      ">
+<!ENTITY sgmlparser_startexcept   '        except AttributeError:                          '>
+<!ENTITY sgmlparser_starttry2     '            try:                                        '>
+<!ENTITY sgmlparser_startgetattr2 "                method = getattr(self, 'do_' + tag)     ">
+<!ENTITY sgmlparser_startexcept2  '            except AttributeError:                      '>
+<!ENTITY sgmlparser_startcall     '                self.unknown_starttag(tag, attrs)       '>
+<!ENTITY sgmlparser_startreturn   '                return -1                               '>
+<!ENTITY sgmlparser_startelse     '            else:                                       '>
+<!ENTITY sgmlparser_starthandle   '                self.handle_starttag(tag, method, attrs)'>
+<!ENTITY sgmlparser_startreturn2  '                return 0                                '>
+<!ENTITY sgmlparser_startelse2    '        else:                                           '>
+<!ENTITY sgmlparser_startstack    '            self.stack.append(tag)                      '>
+<!ENTITY sgmlparser_starthandle2  '            self.handle_starttag(tag, method, attrs)    '>
+<!ENTITY sgmlparser_startreturn3  '            return 1                                    '>
+
+<!ENTITY sgmlparser_handledef     '    def handle_starttag(self, tag, method, attrs):      '>
+<!ENTITY sgmlparser_handlecode    '        method(attrs)                                   '>

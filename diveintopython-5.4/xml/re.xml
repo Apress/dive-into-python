@@ -1,0 +1,713 @@
+<?xml version="1.0" encoding="utf-8"?>
+<chapter id="re">
+<?dbhtml filename="regular_expressions/index.html"?>
+<title>Regular Expressions</title>
+<titleabbrev id="re.numberonly">Chapter 7</titleabbrev>
+<abstract>
+<title/>
+<para>Regular expressions are a powerful and standardized way of searching, replacing, and parsing text with complex patterns of characters.  If you've used regular expressions in other languages (like &perl;), the syntax will be very familiar, and you get by just reading the summary of the &remodule_link; to get an overview of the available functions and their arguments.</para>
+</abstract>
+<section id="re.intro">
+<title>Diving In</title>
+<para>Strings have methods for searching (<function>index</function>, <function>find</function>, and <function>count</function>), replacing (<function>replace</function>), and parsing (<function>split</function>), but they are limited to the simplest of cases.  The search methods look for a single, hard-coded substring, and they are always case-sensitive.  To do case-insensitive searches of a string <varname>s</varname>, you must call <function>s.lower()</function> or <function>s.upper()</function> and make sure your search strings are the appropriate case to match.  The <function>replace</function> and <function>split</function> methods have the same limitations.</para>
+<abstract>
+<title/>
+<para>If what you're trying to do can be accomplished with string functions, you should use them.  They're fast and simple and easy to read, and there's a lot to be said for fast, simple, readable code.  But if you find yourself using a lot of different string functions with &if; statements to handle special cases, or if you're combining them with &split; and &join; and list comprehensions in weird unreadable ways, you may need to move up to regular expressions.</para>
+</abstract>
+<para>Although the regular expression syntax is tight and unlike normal code, the result can end up being <emphasis>more</emphasis> readable than a hand-rolled solution that uses a long chain of string functions.  There are even ways of embedding comments within regular expressions to make them practically self-documenting.</para>
+</section>
+<section id="re.matching">
+<?dbhtml filename="regular_expressions/street_addresses.html"?>
+<title>Case Study: Street Addresses</title>
+<abstract>
+<title/>
+<para>This series of examples was inspired by a real-life problem I had in my day job several years ago, when I needed to scrub and standardize street addresses exported from a legacy system before importing them into a newer system.  (See, I don't just make this stuff up; it's actually useful.)  This example shows how I approached the problem.</para>
+</abstract>
+<example>
+<title>Matching at the End of a String</title>
+<screen>
+&prompt;<userinput>s = '100 NORTH MAIN ROAD'</userinput>
+&prompt;<userinput>s.replace('ROAD', 'RD.')</userinput>               <co id="re.matching.1.1"/>
+<computeroutput>'100 NORTH MAIN RD.'</computeroutput>
+&prompt;<userinput>s = '100 NORTH BROAD ROAD'</userinput>
+&prompt;<userinput>s.replace('ROAD', 'RD.')</userinput>               <co id="re.matching.1.2"/>
+<computeroutput>'100 NORTH BRD. RD.'</computeroutput>
+&prompt;<userinput>s[:-4] + s[-4:].replace('ROAD', 'RD.')</userinput> <co id="re.matching.1.3"/>
+<computeroutput>'100 NORTH BROAD RD.'</computeroutput>
+&prompt;<userinput>import re</userinput>                              <co id="re.matching.1.4"/>
+&prompt;<userinput>re.sub('ROAD$', 'RD.', s)</userinput>              <co id="re.matching.1.5"/> <co id="re.matching.1.6"/>
+<computeroutput>'100 NORTH BROAD RD.'</computeroutput></screen>
+<calloutlist>
+<callout arearefs="re.matching.1.1">
+<para>My goal is to standardize a street address so that <literal>'ROAD'</literal> is always abbreviated as <literal>'RD.'</literal>.  At first glance, I thought this was simple enough that I could just use the string method <function>replace</function>.  After all, all the data was already uppercase, so case mismatches would not be a problem.  And the search string, <literal>'ROAD'</literal>, was a constant.  And in this deceptively simple example, <function>s.replace</function> does indeed work.</para>
+</callout>
+<callout arearefs="re.matching.1.2">
+<para>Life, unfortunately, is full of counterexamples, and I quickly discovered this one.  The problem here is that <literal>'ROAD'</literal> appears twice in the address, once as part of the street name <literal>'BROAD'</literal> and once as its own word.  The <function>replace</function> method sees these two occurrences and blindly replaces both of them; meanwhile, I see my addresses getting destroyed.</para>
+</callout>
+<callout arearefs="re.matching.1.3">
+<para>To solve the problem of addresses with more than one <literal>'ROAD'</literal> substring, you could resort to something like this: only search and replace <literal>'ROAD'</literal> in the last four characters of the address (<literal>s[-4:]</literal>), and leave the string alone (<literal>s[:-4]</literal>).  But you can see that this is already getting unwieldy.  For example, the pattern is dependent on the length of the string you're replacing (if you were replacing <literal>'STREET'</literal> with <literal>'ST.'</literal>, you would need to use <literal>s[:-6]</literal> and <literal>s[-6:].replace(...)</literal>).  Would you like to come back in six months and debug this?  I know I wouldn't.</para>
+</callout>
+<callout arearefs="re.matching.1.4">
+<para>It's time to move up to regular expressions.  In &python;, all functionality related to regular expressions is contained in the &re; module.</para>
+</callout>
+<callout arearefs="re.matching.1.5">
+<para>Take a look at the first parameter: <literal>'ROAD$'</literal>.  This is a simple regular expression that matches <literal>'ROAD'</literal> only when it occurs at the end of a string.  The <literal>$</literal> means <quote>end of the string</quote>.  (There is a corresponding character, the caret <literal>^</literal>, which means <quote>beginning of the string</quote>.)</para>
+</callout>
+<callout arearefs="re.matching.1.6">
+<para>Using the <function>re.sub</function> function, you search the string <varname>s</varname> for the regular expression <literal>'ROAD$'</literal> and replace it with <literal>'RD.'</literal>.  This matches the <literal>ROAD</literal> at the end of the string <varname>s</varname>, but does <emphasis>not</emphasis> match the <literal>ROAD</literal> that's part of the word <literal>BROAD</literal>, because that's in the middle of <varname>s</varname>.</para>
+</callout>
+</calloutlist>
+</example>
+<para>Continuing with my story of scrubbing addresses, I soon discovered that the previous example, matching <literal>'ROAD'</literal> at the end of the address, was not good enough, because not all addresses included a street designation at all; some just ended with the street name.  Most of the time, I got away with it, but if the street name was <literal>'BROAD'</literal>, then the regular expression would match <literal>'ROAD'</literal> at the end of the string as part of the word <literal>'BROAD'</literal>, which is not what I wanted.</para>
+<example>
+<title>Matching Whole Words</title>
+<screen>
+&prompt;<userinput>s = '100 BROAD'</userinput>
+&prompt;<userinput>re.sub('ROAD$', 'RD.', s)</userinput>
+<computeroutput>'100 BRD.'</computeroutput>
+&prompt;<userinput>re.sub('\\bROAD$', 'RD.', s)</userinput>  <co id="re.matching.2.2"/>
+<computeroutput>'100 BROAD'</computeroutput>
+&prompt;<userinput>re.sub(r'\bROAD$', 'RD.', s)</userinput>  <co id="re.matching.2.3"/>
+<computeroutput>'100 BROAD'</computeroutput>
+&prompt;<userinput>s = '100 BROAD ROAD APT. 3'</userinput>
+&prompt;<userinput>re.sub(r'\bROAD$', 'RD.', s)</userinput>  <co id="re.matching.2.4"/>
+<computeroutput>'100 BROAD ROAD APT. 3'</computeroutput>
+&prompt;<userinput>re.sub(r'\bROAD\b', 'RD.', s)</userinput> <co id="re.matching.2.5"/>
+<computeroutput>'100 BROAD RD. APT 3'</computeroutput></screen>
+<calloutlist>
+<callout arearefs="re.matching.2.2">
+<para>What I <emphasis>really</emphasis> wanted was to match <literal>'ROAD'</literal> when it was at the end of the string <emphasis>and</emphasis> it was its own whole word, not a part of some larger word.  To express this in a regular expression, you use <literal>\b</literal>, which means <quote>a word boundary must occur right here</quote>.  In &python;, this is complicated by the fact that the <literal>'\'</literal> character in a string must itself be escaped.  This is sometimes referred to as the backslash plague, and it is one reason why regular expressions are easier in &perl; than in &python;.  On the down side, &perl; mixes regular expressions with other syntax, so if you have a bug, it may be hard to tell whether it's a bug in syntax or a bug in your regular expression.</para>
+</callout>
+<callout arearefs="re.matching.2.3">
+<para>To work around the backslash plague, you can use what is called a raw string, by prefixing the string with the letter <literal>r</literal>.  This tells &python; that nothing in this string should be escaped; <literal>'\t'</literal> is a tab character, but <literal>r'\t'</literal> is really the backslash character <literal>\</literal> followed by the letter <literal>t</literal>.  I recommend always using raw strings when dealing with regular expressions; otherwise, things get too confusing too quickly (and regular expressions get confusing quickly enough all by themselves).</para>
+</callout>
+<callout arearefs="re.matching.2.4">
+<para><emphasis>*sigh*</emphasis>  Unfortunately, I soon found more cases that contradicted my logic.  In this case, the street address contained the word <literal>'ROAD'</literal> as a whole word by itself, but it wasn't at the end, because the address had an apartment number after the street designation.  Because <literal>'ROAD'</literal> isn't at the very end of the string, it doesn't match, so the entire call to <function>re.sub</function> ends up replacing nothing at all, and you get the original string back, which is not what you want.</para>
+</callout>
+<callout arearefs="re.matching.2.5">
+<para>To solve this problem, I removed the <literal>$</literal> character and added another <literal>\b</literal>.  Now the regular expression reads <quote>match <literal>'ROAD'</literal> when it's a whole word by itself anywhere in the string,</quote> whether at the end, the beginning, or somewhere in the middle.</para>
+</callout>
+</calloutlist>
+</example>
+</section>
+<section id="re.roman">
+<?dbhtml filename="regular_expressions/roman_numerals.html"?>
+<title>Case Study: Roman Numerals</title>
+<abstract>
+<title/>
+<para>You've most likely seen Roman numerals, even if you didn't recognize them.  You may have seen them in copyrights of old movies and television shows (<quote>Copyright <literal>MCMXLVI</literal></quote> instead of <quote>Copyright <literal>1946</literal></quote>), or on the dedication walls of libraries or universities (<quote>established <literal>MDCCCLXXXVIII</literal></quote> instead of <quote>established <literal>1888</literal></quote>).  You may also have seen them in outlines and bibliographical references.  It's a system of representing numbers that really does date back to the ancient Roman empire (hence the name).</para>
+</abstract>
+<para>In Roman numerals, there are seven characters that are repeated and combined in various ways to represent numbers.</para>
+<itemizedlist>
+<listitem><para><literal>I</literal> = <literal>1</literal></para></listitem>
+<listitem><para><literal>V</literal> = <literal>5</literal></para></listitem>
+<listitem><para><literal>X</literal> = <literal>10</literal></para></listitem>
+<listitem><para><literal>L</literal> = <literal>50</literal></para></listitem>
+<listitem><para><literal>C</literal> = <literal>100</literal></para></listitem>
+<listitem><para><literal>D</literal> = <literal>500</literal></para></listitem>
+<listitem><para><literal>M</literal> = <literal>1000</literal></para></listitem>
+</itemizedlist>
+<para>The following are some general rules for constructing Roman numerals:</para>
+<itemizedlist>
+<listitem><para>Characters are additive.  <literal>I</literal> is &one;, <literal>II</literal> is <literal>2</literal>, and <literal>III</literal> is <literal>3</literal>.  <literal>VI</literal> is <literal>6</literal> (literally, <quote><literal>5</literal> and <literal>1</literal></quote>), <literal>VII</literal> is <literal>7</literal>, and <literal>VIII</literal> is <literal>8</literal>.</para></listitem>
+<listitem><para>The tens characters (<literal>I</literal>, <literal>X</literal>, <literal>C</literal>, and <literal>M</literal>) can be repeated up to three times.  At <literal>4</literal>, you need to subtract from the next highest fives character.  You can't represent <literal>4</literal> as <literal>IIII</literal>; instead, it is represented as <literal>IV</literal> (<quote><literal>1</literal> less than <literal>5</literal></quote>).  The number <literal>40</literal> is written as <literal>XL</literal> (<literal>10</literal> less than <literal>50</literal>), <literal>41</literal> as <literal>XLI</literal>, <literal>42</literal> as <literal>XLII</literal>, <literal>43</literal> as <literal>XLIII</literal>, and then <literal>44</literal> as <literal>XLIV</literal> (<literal>10</literal> less than <literal>50</literal>, then <literal>1</literal> less than <literal>5</literal>).</para></listitem>
+<listitem><para>Similarly, at <literal>9</literal>, you need to subtract from the next highest tens character: <literal>8</literal> is <literal>VIII</literal>, but <literal>9</literal> is <literal>IX</literal> (<literal>1</literal> less than <literal>10</literal>), not <literal>VIIII</literal> (since the <literal>I</literal> character can not be repeated four times).  The number <literal>90</literal> is <literal>XC</literal>, <literal>900</literal> is <literal>CM</literal>.</para></listitem>
+<listitem><para>The fives characters can not be repeated.  The number <literal>10</literal> is always represented as <literal>X</literal>, never as <literal>VV</literal>.  The number <literal>100</literal> is always <literal>C</literal>, never <literal>LL</literal>.</para></listitem>
+<listitem><para>Roman numerals are always written highest to lowest, and read left to right, so the order the of characters matters very much.  <literal>DC</literal> is <literal>600</literal>; <literal>CD</literal> is a completely different number (<literal>400</literal>, <literal>100</literal> less than <literal>500</literal>).  <literal>CI</literal> is <literal>101</literal>; <literal>IC</literal> is not even a valid Roman numeral (because you can't subtract <literal>1</literal> directly from <literal>100</literal>; you would need to write it as <literal>XCIX</literal>, for <literal>10</literal> less than <literal>100</literal>, then <literal>1</literal> less than <literal>10</literal>).</para></listitem>
+</itemizedlist>
+<section>
+<title>Checking for Thousands</title>
+<para>What would it take to validate that an arbitrary string is a valid Roman numeral?  Let's take it one digit at a time.  Since Roman numerals are always written highest to lowest, let's start with the highest: the thousands place.  For numbers 1000 and higher, the thousands are represented by a series of <literal>M</literal> characters.</para>
+<example>
+<title>Checking for Thousands</title>
+<screen>
+&prompt;<userinput>import re</userinput>
+&prompt;<userinput>pattern = '^M?M?M?$'</userinput>       <co id="re.roman.1.1"/>
+&prompt;<userinput>re.search(pattern, 'M')</userinput>    <co id="re.roman.1.2"/>
+<computeroutput>&lt;SRE_Match object at 0106FB58></computeroutput>
+&prompt;<userinput>re.search(pattern, 'MM')</userinput>   <co id="re.roman.1.3"/>
+<computeroutput>&lt;SRE_Match object at 0106C290></computeroutput>
+&prompt;<userinput>re.search(pattern, 'MMM')</userinput>  <co id="re.roman.1.4"/>
+<computeroutput>&lt;SRE_Match object at 0106AA38></computeroutput>
+&prompt;<userinput>re.search(pattern, 'MMMM')</userinput> <co id="re.roman.1.5"/>
+&prompt;<userinput>re.search(pattern, '')</userinput>     <co id="re.roman.1.6"/>
+<computeroutput>&lt;SRE_Match object at 0106F4A8></computeroutput></screen>
+<calloutlist>
+<callout arearefs="re.roman.1.1">
+<para>This pattern has three parts:</para>
+<itemizedlist>
+<listitem><para><literal>^</literal> to match what follows only at the beginning of the string.  If this were not specified, the pattern would match no matter where the <literal>M</literal> characters were, which is not what you want.  You want to make sure that the <literal>M</literal> characters, if they're there, are at the beginning of the string.</para></listitem>
+<listitem><para><literal>M?</literal> to optionally match a single <literal>M</literal> character.  Since this is repeated three times, you're matching anywhere from zero to three <literal>M</literal> characters in a row.</para></listitem>
+<listitem><para><literal>$</literal> to match what precedes only at the end of the string.  When combined with the <literal>^</literal> character at the beginning, this means that the pattern must match the entire string, with no other characters before or after the <literal>M</literal> characters.</para></listitem>
+</itemizedlist>
+</callout>
+<callout arearefs="re.roman.1.2">
+<para>The essence of the &re; module is the &search; function, that takes a regular expression (<varname>pattern</varname>) and a string (<literal>'M'</literal>) to try to match against the regular expression.  If a match is found, &search; returns an object which has various methods to describe the match; if no match is found, &search; returns &none;, the &python; null value.  All you care about at the moment is whether the pattern matches, which you can tell by just looking at the return value of &search;.  <literal>'M'</literal> matches this regular expression, because the first optional <literal>M</literal> matches and the second and third optional <literal>M</literal> characters are ignored.</para>
+</callout>
+<callout arearefs="re.roman.1.3">
+<para><literal>'MM'</literal> matches because the first and second optional <literal>M</literal> characters match and the third <literal>M</literal> is ignored.</para>
+</callout>
+<callout arearefs="re.roman.1.4">
+<para><literal>'MMM'</literal> matches because all three <literal>M</literal> characters match.</para>
+</callout>
+<callout arearefs="re.roman.1.5">
+<para><literal>'MMMM'</literal> does not match.  All three <literal>M</literal> characters match, but then the regular expression insists on the string ending (because of the <literal>$</literal> character), and the string doesn't end yet (because of the fourth <literal>M</literal>).  So &search; returns &none;.</para>
+</callout>
+<callout arearefs="re.roman.1.6">
+<para>Interestingly, an empty string also matches this regular expression, since all the <literal>M</literal> characters are optional.</para>
+</callout>
+</calloutlist>
+</example>
+</section>
+<section>
+<title>Checking for Hundreds</title>
+<para>The hundreds place is more difficult than the thousands, because there are several mutually exclusive ways it could be expressed, depending on its value.</para>
+<itemizedlist>
+<listitem><para><literal>100</literal> = <literal>C</literal></para></listitem>
+<listitem><para><literal>200</literal> = <literal>CC</literal></para></listitem>
+<listitem><para><literal>300</literal> = <literal>CCC</literal></para></listitem>
+<listitem><para><literal>400</literal> = <literal>CD</literal></para></listitem>
+<listitem><para><literal>500</literal> = <literal>D</literal></para></listitem>
+<listitem><para><literal>600</literal> = <literal>DC</literal></para></listitem>
+<listitem><para><literal>700</literal> = <literal>DCC</literal></para></listitem>
+<listitem><para><literal>800</literal> = <literal>DCCC</literal></para></listitem>
+<listitem><para><literal>900</literal> = <literal>CM</literal></para></listitem>
+</itemizedlist>
+<para>So there are four possible patterns:</para>
+<itemizedlist>
+<listitem><para><literal>CM</literal></para></listitem>
+<listitem><para><literal>CD</literal></para></listitem>
+<listitem><para>Zero to three <literal>C</literal> characters (zero if the hundreds place is 0)</para></listitem>
+<listitem><para><literal>D</literal>, followed by zero to three <literal>C</literal> characters</para></listitem>
+</itemizedlist>
+<para>The last two patterns can be combined:</para>
+<itemizedlist>
+<listitem><para>an optional <literal>D</literal>, followed by zero to three <literal>C</literal> characters</para></listitem>
+</itemizedlist>
+<para>This example shows how to validate the hundreds place of a Roman numeral.</para>
+<example id="re.roman.hundreds">
+<title>Checking for Hundreds</title>
+<screen>
+&prompt;<userinput>import re</userinput>
+&prompt;<userinput>pattern = '^M?M?M?(CM|CD|D?C?C?C?)$'</userinput> <co id="re.roman.2.1"/>
+&prompt;<userinput>re.search(pattern, 'MCM')</userinput>            <co id="re.roman.2.2"/>
+<computeroutput>&lt;SRE_Match object at 01070390></computeroutput>
+&prompt;<userinput>re.search(pattern, 'MD')</userinput>             <co id="re.roman.2.3"/>
+<computeroutput>&lt;SRE_Match object at 01073A50></computeroutput>
+&prompt;<userinput>re.search(pattern, 'MMMCCC')</userinput>         <co id="re.roman.2.4"/>
+<computeroutput>&lt;SRE_Match object at 010748A8></computeroutput>
+&prompt;<userinput>re.search(pattern, 'MCMC')</userinput>           <co id="re.roman.2.5"/>
+&prompt;<userinput>re.search(pattern, '')</userinput>               <co id="re.roman.2.6"/>
+<computeroutput>&lt;SRE_Match object at 01071D98></computeroutput></screen>
+<calloutlist>
+<callout arearefs="re.roman.2.1">
+<para>This pattern starts out the same as the previous one, checking for the beginning of the string (<literal>^</literal>), then the thousands place (<literal>M?M?M?</literal>).  Then it has the new part, in parentheses, which defines a set of three mutually exclusive patterns, separated by vertical bars: <literal>CM</literal>, <literal>CD</literal>, and <literal>D?C?C?C?</literal> (which is an optional <literal>D</literal> followed by zero to three optional <literal>C</literal> characters).  The regular expression parser checks for each of these patterns in order (from left to right), takes the first one that matches, and ignores the rest.</para>
+</callout>
+<callout arearefs="re.roman.2.2">
+<para><literal>'MCM'</literal> matches because the first <literal>M</literal> matches, the second and third <literal>M</literal> characters are ignored, and the <literal>CM</literal> matches (so the <literal>CD</literal> and <literal>D?C?C?C?</literal> patterns are never even considered).  <literal>MCM</literal> is the Roman numeral representation of <literal>1900</literal>.</para>
+</callout>
+<callout arearefs="re.roman.2.3">
+<para><literal>'MD'</literal> matches because the first <literal>M</literal> matches, the second and third <literal>M</literal> characters are ignored, and the <literal>D?C?C?C?</literal> pattern matches <literal>D</literal> (each of the three <literal>C</literal> characters are optional and are ignored).  <literal>MD</literal> is the Roman numeral representation of <literal>1500</literal>.</para>
+</callout>
+<callout arearefs="re.roman.2.4">
+<para><literal>'MMMCCC'</literal> matches because all three <literal>M</literal> characters match, and the <literal>D?C?C?C?</literal> pattern matches <literal>CCC</literal> (the <literal>D</literal> is optional and is ignored).  <literal>MMMCCC</literal> is the Roman numeral representation of <literal>3300</literal>.</para>
+</callout>
+<callout arearefs="re.roman.2.5">
+<para><literal>'MCMC'</literal> does not match.  The first <literal>M</literal> matches, the second and third <literal>M</literal> characters are ignored, and the <literal>CM</literal> matches, but then the <literal>$</literal> does not match because you're not at the end of the string yet (you still have an unmatched <literal>C</literal> character).  The <literal>C</literal> does <emphasis>not</emphasis> match as part of the <literal>D?C?C?C?</literal> pattern, because the mutually exclusive <literal>CM</literal> pattern has already matched.</para>
+</callout>
+<callout arearefs="re.roman.2.6">
+<para>Interestingly, an empty string still matches this pattern, because all the <literal>M</literal> characters are optional and ignored, and the empty string matches the <literal>D?C?C?C?</literal> pattern where all the characters are optional and ignored.</para>
+</callout>
+</calloutlist>
+</example>
+<para>Whew!  See how quickly regular expressions can get nasty?  And you've only covered the thousands and hundreds places of Roman numerals.  But if you followed all that, the tens and ones places are easy, because they're exactly the same pattern.  But let's look at another way to express the pattern.</para>
+</section>
+</section>
+<section id="re.nm">
+<?dbhtml filename="regular_expressions/n_m_syntax.html"?>
+<title>Using the <literal>{n,m}</literal> Syntax</title>
+<abstract>
+<title/>
+<para>In <link linkend="re.roman">the previous section</link>, you were dealing with a pattern where the same character could be repeated up to three times.  There is another way to express this in regular expressions, which some people find more readable.  First look at the method we already used in the previous example.</para>
+</abstract>
+<example>
+<title>The Old Way: Every Character Optional</title>
+<screen>
+&prompt;<userinput>import re</userinput>
+&prompt;<userinput>pattern = '^M?M?M?$'</userinput>
+&prompt;<userinput>re.search(pattern, 'M')</userinput>    <co id="re.nm.1.1"/>
+<computeroutput>&lt;_sre.SRE_Match object at 0x008EE090></computeroutput>
+&prompt;<userinput>pattern = '^M?M?M?$'</userinput>
+&prompt;<userinput>re.search(pattern, 'MM')</userinput>   <co id="re.nm.1.2"/>
+<computeroutput>&lt;_sre.SRE_Match object at 0x008EEB48></computeroutput>
+&prompt;<userinput>pattern = '^M?M?M?$'</userinput>
+&prompt;<userinput>re.search(pattern, 'MMM')</userinput>  <co id="re.nm.1.3"/>
+<computeroutput>&lt;_sre.SRE_Match object at 0x008EE090></computeroutput>
+&prompt;<userinput>re.search(pattern, 'MMMM')</userinput> <co id="re.nm.1.4"/>
+&prompt;
+</screen>
+<calloutlist>
+<callout arearefs="re.nm.1.1">
+<para>This matches the start of the string, and then the first optional <literal>M</literal>, but not the second and third <literal>M</literal> (but that's okay because they're optional), and then the end of the string.</para>
+</callout>
+<callout arearefs="re.nm.1.2">
+<para>This matches the start of the string, and then the first and second optional <literal>M</literal>, but not the third <literal>M</literal> (but that's okay because it's optional), and then the end of the string.</para>
+</callout>
+<callout arearefs="re.nm.1.3">
+<para>This matches the start of the string, and then all three optional <literal>M</literal>, and then the end of the string.</para>
+</callout>
+<callout arearefs="re.nm.1.4">
+<para>This matches the start of the string, and then all three optional <literal>M</literal>, but then does not match the the end of the string (because there is still one unmatched <literal>M</literal>), so the pattern does not match and returns &none;.</para>
+</callout>
+</calloutlist>
+</example>
+<example>
+<title>The New Way: From <literal>n</literal> o <literal>m</literal></title>
+<screen>
+&prompt;<userinput>pattern = '^M{0,3}$'</userinput>       <co id="re.nm.2.0"/>
+&prompt;<userinput>re.search(pattern, 'M')</userinput>    <co id="re.nm.2.1"/>
+<computeroutput>&lt;_sre.SRE_Match object at 0x008EEB48></computeroutput>
+&prompt;<userinput>re.search(pattern, 'MM')</userinput>   <co id="re.nm.2.2"/>
+<computeroutput>&lt;_sre.SRE_Match object at 0x008EE090></computeroutput>
+&prompt;<userinput>re.search(pattern, 'MMM')</userinput>  <co id="re.nm.2.3"/>
+<computeroutput>&lt;_sre.SRE_Match object at 0x008EEDA8></computeroutput>
+&prompt;<userinput>re.search(pattern, 'MMMM')</userinput> <co id="re.nm.2.4"/>
+&prompt;
+</screen>
+<calloutlist>
+<callout arearefs="re.nm.2.0">
+<para>This pattern says: <quote>Match the start of the string, then anywhere from zero to three <literal>M</literal> characters, then the end of the string.</quote>  The 0 and 3 can be any numbers; if you want to match at least one but no more than three <literal>M</literal> characters, you could say <literal>M{1,3}</literal>.</para>
+</callout>
+<callout arearefs="re.nm.2.1">
+<para>This matches the start of the string, then one <literal>M</literal> out of a possible three, then the end of the string.</para>
+</callout>
+<callout arearefs="re.nm.2.2">
+<para>This matches the start of the string, then two <literal>M</literal> out of a possible three, then the end of the string.</para>
+</callout>
+<callout arearefs="re.nm.2.3">
+<para>This matches the start of the string, then three <literal>M</literal> out of a possible three, then the end of the string.</para>
+</callout>
+<callout arearefs="re.nm.2.4">
+<para>This matches the start of the string, then three <literal>M</literal> out of a possible three, but then <emphasis>does not match</emphasis> the end of the string.  The regular expression allows for up to only three <literal>M</literal> characters before the end of the string, but you have four, so the pattern does not match and returns &none;.</para>
+</callout>
+</calloutlist>
+</example>
+<note>
+<!--<title>Comparing regular expressions</title>-->
+<title/>
+<para>There is no way to programmatically determine that two regular expressions are equivalent.  The best you can do is write a lot of test cases to make sure they behave the same way on all relevant inputs.  You'll talk more about writing test cases later in this book.</para>
+</note>
+<section>
+<title>Checking for Tens and Ones</title>
+<para>Now let's expand the Roman numeral regular expression to cover the tens and ones place.  This example shows the check for tens.</para>
+<example id="re.tens.example">
+<title>Checking for Tens</title>
+<screen>
+&prompt;<userinput>pattern = '^M?M?M?M?(CM|CD|D?C?C?C?)(XC|XL|L?X?X?X?)$'</userinput>
+&prompt;<userinput>re.search(pattern, 'MCMXL')</userinput>    <co id="re.nm.3.3"/>
+<computeroutput>&lt;_sre.SRE_Match object at 0x008EEB48></computeroutput>
+&prompt;<userinput>re.search(pattern, 'MCML')</userinput>     <co id="re.nm.3.4"/>
+<computeroutput>&lt;_sre.SRE_Match object at 0x008EEB48></computeroutput>
+&prompt;<userinput>re.search(pattern, 'MCMLX')</userinput>    <co id="re.nm.3.5"/>
+<computeroutput>&lt;_sre.SRE_Match object at 0x008EEB48></computeroutput>
+&prompt;<userinput>re.search(pattern, 'MCMLXXX')</userinput>  <co id="re.nm.3.7"/>
+<computeroutput>&lt;_sre.SRE_Match object at 0x008EEB48></computeroutput>
+&prompt;<userinput>re.search(pattern, 'MCMLXXXX')</userinput> <co id="re.nm.3.8"/>
+&prompt;
+</screen>
+<calloutlist>
+<callout arearefs="re.nm.3.3">
+<para>This matches the start of the string, then the first optional <literal>M</literal>, then <literal>CM</literal>, then <literal>XL</literal>, then the end of the string.  Remember, the <literal>(A|B|C)</literal> syntax means <quote>match exactly one of A, B, or C</quote>.  You match <literal>XL</literal>, so you ignore the <literal>XC</literal> and <literal>L?X?X?X?</literal> choices, and then move on to the end of the string.  <literal>MCML</literal> is the Roman numeral representation of <literal>1940</literal>.</para>
+</callout>
+<callout arearefs="re.nm.3.4">
+<para>This matches the start of the string, then the first optional <literal>M</literal>, then <literal>CM</literal>, then <literal>L?X?X?X?</literal>.  Of the <literal>L?X?X?X?</literal>, it matches the <literal>L</literal> and skips all three optional <literal>X</literal> characters.  Then you move to the end of the string.  <literal>MCML</literal> is the Roman numeral representation of <literal>1950</literal>.</para>
+</callout>
+<callout arearefs="re.nm.3.5">
+<para>This matches the start of the string, then the first optional <literal>M</literal>, then <literal>CM</literal>, then the optional <literal>L</literal> and the first optional <literal>X</literal>, skips the second and third optional <literal>X</literal>, then the end of the string.  <literal>MCMLX</literal> is the Roman numeral representation of <literal>1960</literal>.</para>
+</callout>
+<callout arearefs="re.nm.3.7">
+<para>This matches the start of the string, then the first optional <literal>M</literal>, then <literal>CM</literal>, then the optional <literal>L</literal> and all three optional <literal>X</literal> characters, then the end of the string.  <literal>MCMLXXX</literal> is the Roman numeral representation of <literal>1980</literal>.</para>
+</callout>
+<callout arearefs="re.nm.3.8">
+<para>This matches the start of the string, then the first optional <literal>M</literal>, then <literal>CM</literal>, then the optional <literal>L</literal> and all three optional <literal>X</literal> characters, then <emphasis>fails to match</emphasis> the end of the string because there is still one more <literal>X</literal> unaccounted for.  So the entire pattern fails to match, and returns &none;.  <literal>MCMLXXXX</literal> is not a valid Roman numeral.</para>
+</callout>
+</calloutlist>
+</example>
+<para>The expression for the ones place follows the same pattern.  I'll spare you the details and show you the end result.</para>
+<informalexample>
+<!--<title>The Ones Place</title>-->
+<screen>
+&prompt;<userinput>pattern = '^M?M?M?M?(CM|CD|D?C?C?C?)(XC|XL|L?X?X?X?)(IX|IV|V?I?I?I?)$'</userinput>
+</screen>
+</informalexample>
+<para>So what does that look like using this alternate <literal>{n,m}</literal> syntax?  This example shows the new syntax.</para>
+<example id="re.nm.example">
+<title>Validating Roman Numerals with <literal>{n,m}</literal></title>
+<screen>
+&prompt;<userinput>pattern = '^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$'</userinput>
+&prompt;<userinput>re.search(pattern, 'MDLV')</userinput>             <co id="re.nm.4.1"/>
+<computeroutput>&lt;_sre.SRE_Match object at 0x008EEB48></computeroutput>
+&prompt;<userinput>re.search(pattern, 'MMDCLXVI')</userinput>         <co id="re.nm.4.2"/>
+<computeroutput>&lt;_sre.SRE_Match object at 0x008EEB48></computeroutput>
+&prompt;<userinput>re.search(pattern, 'MMMMDCCCLXXXVIII')</userinput> <co id="re.nm.4.3"/>
+<computeroutput>&lt;_sre.SRE_Match object at 0x008EEB48></computeroutput>
+&prompt;<userinput>re.search(pattern, 'I')</userinput>                <co id="re.nm.4.4"/>
+<computeroutput>&lt;_sre.SRE_Match object at 0x008EEB48></computeroutput>
+</screen>
+<calloutlist>
+<callout arearefs="re.nm.4.1">
+<para>This matches the start of the string, then one of a possible four <literal>M</literal> characters, then <literal>D?C{0,3}</literal>.  Of that, it matches the optional <literal>D</literal> and zero of three possible <literal>C</literal> characters.  Moving on, it matches <literal>L?X{0,3}</literal> by matching the optional <literal>L</literal> and zero of three possible <literal>X</literal> characters.  Then it matches <literal>V?I{0,3}</literal> by matching the optional V and zero of three possible <literal>I</literal> characters, and finally the end of the string.  <literal>MDLV</literal> is the Roman numeral representation of <literal>1555</literal>.</para>
+</callout>
+<callout arearefs="re.nm.4.2">
+<para>This matches the start of the string, then two of a possible four <literal>M</literal> characters, then the <literal>D?C{0,3}</literal> with a <literal>D</literal> and one of three possible <literal>C</literal> characters; then <literal>L?X{0,3}</literal> with an <literal>L</literal> and one of three possible <literal>X</literal> characters; then <literal>V?I{0,3}</literal> with a <literal>V</literal> and one of three possible <literal>I</literal> characters; then the end of the string.  <literal>MMDCLXVI</literal> is the Roman numeral representation of <literal>2666</literal>.</para>
+</callout>
+<callout arearefs="re.nm.4.3">
+<para>This matches the start of the string, then four out of four <literal>M</literal> characters, then <literal>D?C{0,3}</literal> with a <literal>D</literal> and three out of three <literal>C</literal> characters; then <literal>L?X{0,3}</literal> with an <literal>L</literal> and three out of three <literal>X</literal> characters; then <literal>V?I{0,3}</literal> with a <literal>V</literal> and three out of three <literal>I</literal> characters; then the end of the string.  <literal>MMMMDCCCLXXXVIII</literal> is the Roman numeral representation of <literal>3888</literal>, and it's the longest Roman numeral you can write without extended syntax.</para>
+</callout>
+<callout arearefs="re.nm.4.4">
+<para>Watch closely.  (I feel like a magician.  <quote>Watch closely, kids, I'm going to pull a rabbit out of my hat.</quote>)  This matches the start of the string, then zero out of four <literal>M</literal>, then matches <literal>D?C{0,3}</literal> by skipping the optional <literal>D</literal> and matching zero out of three <literal>C</literal>, then matches <literal>L?X{0,3}</literal> by skipping the optional <literal>L</literal> and matching zero out of three <literal>X</literal>, then matches <literal>V?I{0,3}</literal> by skipping the optional <literal>V</literal> and matching one out of three <literal>I</literal>.  Then the end of the string.  Whoa.</para>
+</callout>
+</calloutlist>
+</example>
+<para>If you followed all that and understood it on the first try, you're doing better than I did.  Now imagine trying to understand someone else's regular expressions, in the middle of a critical function of a large program.  Or even imagine coming back to your own regular expressions a few months later.  I've done it, and it's not a pretty sight.</para>
+<para>In the next section you'll explore an alternate syntax that can help keep your expressions maintainable.</para>
+</section>
+</section>
+<section id="re.verbose">
+<?dbhtml filename="regular_expressions/verbose.html"?>
+<title>Verbose Regular Expressions</title>
+<abstract>
+<title/>
+<para>So far you've just been dealing with what I'll call <quote>compact</quote> regular expressions.  As you've seen, they are difficult to read, and even if you figure out what one does, that's no guarantee that you'll be able to understand it six months later.  What you really need is inline documentation.</para>
+</abstract>
+<para>&python; allows you to do this with something called <emphasis>verbose regular expressions</emphasis>.  A verbose regular expression is different from a compact regular expression in two ways:</para>
+<itemizedlist>
+<listitem><para>Whitespace is ignored.  Spaces, tabs, and carriage returns are not matched as spaces, tabs, and carriage returns.  They're not matched at all.  (If you want to match a space in a verbose regular expression, you'll need to escape it by putting a backslash in front of it.)</para></listitem>
+<listitem><para>Comments are ignored.  A comment in a verbose regular expression is just like a comment in Python code: it starts with a <literal>#</literal> character and goes until the end of the line.  In this case it's a comment within a multi-line string instead of within your source code, but it works the same way.</para></listitem>
+</itemizedlist>
+<para>This will be more clear with an example.  Let's revisit the compact regular expression you've been working with, and make it a verbose regular expression.  This example shows how.</para>
+<example>
+<title>Regular Expressions with Inline Comments</title>
+<screen>
+&prompt;<userinput>pattern = """
+    ^                   # beginning of string
+    M{0,4}              # thousands - 0 to 4 M's
+    (CM|CD|D?C{0,3})    # hundreds - 900 (CM), 400 (CD), 0-300 (0 to 3 C's),
+                        #            or 500-800 (D, followed by 0 to 3 C's)
+    (XC|XL|L?X{0,3})    # tens - 90 (XC), 40 (XL), 0-30 (0 to 3 X's),
+                        #        or 50-80 (L, followed by 0 to 3 X's)
+    (IX|IV|V?I{0,3})    # ones - 9 (IX), 4 (IV), 0-3 (0 to 3 I's),
+                        #        or 5-8 (V, followed by 0 to 3 I's)
+    $                   # end of string
+    """</userinput>
+&prompt;<userinput>re.search(pattern, 'M', re.VERBOSE)</userinput>                <co id="re.verbose.1.1"/>
+<computeroutput>&lt;_sre.SRE_Match object at 0x008EEB48></computeroutput>
+&prompt;<userinput>re.search(pattern, 'MCMLXXXIX', re.VERBOSE)</userinput>        <co id="re.verbose.1.2"/>
+<computeroutput>&lt;_sre.SRE_Match object at 0x008EEB48></computeroutput>
+&prompt;<userinput>re.search(pattern, 'MMMMDCCCLXXXVIII', re.VERBOSE)</userinput> <co id="re.verbose.1.3"/>
+<computeroutput>&lt;_sre.SRE_Match object at 0x008EEB48></computeroutput>
+&prompt;<userinput>re.search(pattern, 'M')</userinput>                            <co id="re.verbose.1.4"/>
+</screen>
+<calloutlist>
+<callout arearefs="re.verbose.1.1">
+<para>The most important thing to remember when using verbose regular expressions is that you need to pass an extra argument when working with them: <literal>re.VERBOSE</literal> is a constant defined in the &re; module that signals that the pattern should be treated as a verbose regular expression.  As you can see, this pattern has quite a bit of whitespace (all of which is ignored), and several comments (all of which are ignored).  Once you ignore the whitespace and the comments, this is exactly the same regular expression as you saw in <link linkend="re.nm">the previous section</link>, but it's a lot more readable.</para>
+</callout>
+<callout arearefs="re.verbose.1.2">
+<para>This matches the start of the string, then one of a possible four <literal>M</literal>, then <literal>CM</literal>, then <literal>L</literal> and three of a possible three <literal>X</literal>, then <literal>IX</literal>, then the end of the string.</para>
+</callout>
+<callout arearefs="re.verbose.1.3">
+<para>This matches the start of the string, then four of a possible four <literal>M</literal>, then <literal>D</literal> and three of a possible three <literal>C</literal>, then <literal>L</literal> and three of a possible three <literal>X</literal>, then <literal>V</literal> and three of a possible three <literal>I</literal>, then the end of the string.</para>
+</callout>
+<callout arearefs="re.verbose.1.4">
+<para>This does not match.  Why?  Because it doesn't have the <literal>re.VERBOSE</literal> flag, so the <function>re.search</function> function is treating the pattern as a compact regular expression, with significant whitespace and literal hash marks.  &python; can't auto-detect whether a regular expression is verbose or not.  &python; assumes every regular expression is compact unless you explicitly state that it is verbose.</para>
+</callout>
+</calloutlist>
+</example>
+</section>
+<section id="re.phone">
+<?dbhtml filename="regular_expressions/phone_numbers.html"?>
+<title>Case study: Parsing Phone Numbers</title>
+<abstract>
+<title/>
+<para>So far you've concentrated on matching whole patterns.  Either the pattern matches, or it doesn't.  But regular expressions are much more powerful than that.  When a regular expression <emphasis>does</emphasis> match, you can pick out specific pieces of it.  You can find out what matched where.</para>
+</abstract>
+<para>This example came from another real-world problem I encountered, again from a previous day job.  The problem: parsing an American phone number.  The client wanted to be able to enter the number free-form (in a single field), but then wanted to store the area code, trunk, number, and optionally an extension separately in the company's database.  I scoured the Web and found many examples of regular expressions that purported to do this, but none of them were permissive enough.</para>
+<para>Here are the phone numbers I needed to be able to accept:</para>
+<itemizedlist>
+<listitem><para><literal>800-555-1212</literal></para></listitem>
+<listitem><para><literal>800 555 1212</literal></para></listitem>
+<listitem><para><literal>800.555.1212</literal></para></listitem>
+<listitem><para><literal>(800) 555-1212</literal></para></listitem>
+<listitem><para><literal>1-800-555-1212</literal></para></listitem>
+<listitem><para><literal>800-555-1212-1234</literal></para></listitem>
+<listitem><para><literal>800-555-1212x1234</literal></para></listitem>
+<listitem><para><literal>800-555-1212 ext. 1234</literal></para></listitem>
+<listitem><para><literal>work 1-(800) 555.1212 #1234</literal></para></listitem>
+</itemizedlist>
+<para>Quite a variety!  In each of these cases, I need to know that the area code was <literal>800</literal>, the trunk was <literal>555</literal>, and the rest of the phone number was <literal>1212</literal>.  For those with an extension, I need to know that the extension was <literal>1234</literal>.</para>
+<para>Let's work through developing a solution for phone number parsing.  This example shows the first step.</para>
+<example id="re.phone.example">
+<title>Finding Numbers</title>
+<screen>
+&prompt;<userinput>phonePattern = re.compile(r'^(\d{3})-(\d{3})-(\d{4})$')</userinput> <co id="re.phone.1.1"/>
+&prompt;<userinput>phonePattern.search('800-555-1212').groups()</userinput>            <co id="re.phone.1.2"/>
+<computeroutput>('800', '555', '1212')</computeroutput>
+&prompt;<userinput>phonePattern.search('800-555-1212-1234')</userinput>                <co id="re.phone.1.3"/>
+&prompt;
+</screen>
+<calloutlist>
+<callout arearefs="re.phone.1.1">
+<para>Always read regular expressions from left to right.  This one matches the beginning of the string, and then <literal>(\d{3})</literal>.  What's <literal>\d{3}</literal>?  Well, the <literal>{3}</literal> means <quote>match exactly three numeric digits</quote>; it's a variation on the <link linkend="re.nm"><literal>{n,m} syntax</literal></link> you saw earlier.  <literal>\d</literal> means <quote>any numeric digit</quote> (<literal>0</literal> through <literal>9</literal>).  Putting it in parentheses means <quote>match exactly three numeric digits, <emphasis>and then remember them as a group that I can ask for later</emphasis></quote>.  Then match a literal hyphen.  Then match another group of exactly three digits.  Then another literal hyphen.  Then another group of exactly four digits.  Then match the end of the string.</para>
+</callout>
+<callout arearefs="re.phone.1.2">
+<para>To get access to the groups that the regular expression parser remembered along the way, use the <function>groups()</function> method on the object that the <function>search</function> function returns.  It will return a tuple of however many groups were defined in the regular expression.  In this case, you defined three groups, one with three digits, one with three digits, and one with four digits.</para>
+</callout>
+<callout arearefs="re.phone.1.3">
+<para>This regular expression is not the final answer, because it doesn't handle a phone number with an extension on the end.  For that, you'll need to expand the regular expression.</para>
+</callout>
+</calloutlist>
+</example>
+<example>
+<title>Finding the Extension</title>
+<screen>
+&prompt;<userinput>phonePattern = re.compile(r'^(\d{3})-(\d{3})-(\d{4})-(\d+)$')</userinput> <co id="re.phone.2.1"/>
+&prompt;<userinput>phonePattern.search('800-555-1212-1234').groups()</userinput>             <co id="re.phone.2.2"/>
+<computeroutput>('800', '555', '1212', '1234')</computeroutput>
+&prompt;<userinput>phonePattern.search('800 555 1212 1234')</userinput>                      <co id="re.phone.2.3"/>
+&prompt;
+&prompt;<userinput>phonePattern.search('800-555-1212')</userinput>                           <co id="re.phone.2.4"/>
+&prompt;
+</screen>
+<calloutlist>
+<callout arearefs="re.phone.2.1">
+<para>This regular expression is almost identical to the previous one.  Just as before, you match the beginning of the string, then a remembered group of three digits, then a hyphen, then a remembered group of three digits, then a hyphen, then a remembered group of four digits.  What's new is that you then match another hyphen, and a remembered group of one or more digits, then the end of the string.</para>
+</callout>
+<callout arearefs="re.phone.2.2">
+<para>The <function>groups()</function> method now returns a tuple of four elements, since the regular expression now defines four groups to remember.</para>
+</callout>
+<callout arearefs="re.phone.2.3">
+<para>Unfortunately, this regular expression is not the final answer either, because it assumes that the different parts of the phone number are separated by hyphens.  What if they're separated by spaces, or commas, or dots?  You need a more general solution to match several different types of separators.</para>
+</callout>
+<callout arearefs="re.phone.2.4">
+<para>Oops!  Not only does this regular expression not do everything you want, it's actually a step backwards, because now you can't parse phone numbers <emphasis>without</emphasis> an extension.  That's not what you wanted at all; if the extension is there, you want to know what it is, but if it's not there, you still want to know what the different parts of the main number are.</para>
+</callout>
+</calloutlist>
+</example>
+<para>The next example shows the regular expression to handle separators between the different parts of the phone number.</para>
+<example>
+<title>Handling Different Separators</title>
+<screen>
+&prompt;<userinput>phonePattern = re.compile(r'^(\d{3})\D+(\d{3})\D+(\d{4})\D+(\d+)$')</userinput> <co id="re.phone.3.1"/>
+&prompt;<userinput>phonePattern.search('800 555 1212 1234').groups()</userinput>                   <co id="re.phone.3.2"/>
+<computeroutput>('800', '555', '1212', '1234')</computeroutput>
+&prompt;<userinput>phonePattern.search('800-555-1212-1234').groups()</userinput>                   <co id="re.phone.3.3"/>
+<computeroutput>('800', '555', '1212', '1234')</computeroutput>
+&prompt;<userinput>phonePattern.search('80055512121234')</userinput>                               <co id="re.phone.3.4"/>
+&prompt;
+&prompt;<userinput>phonePattern.search('800-555-1212')</userinput>                                 <co id="re.phone.3.5"/>
+&prompt;
+</screen>
+<calloutlist>
+<callout arearefs="re.phone.3.1">
+<para>Hang on to your hat.  You're matching the beginning of the string, then a group of three digits, then <literal>\D+</literal>.  What the heck is that?  Well, <literal>\D</literal> matches any character <emphasis>except</emphasis> a numeric digit, and <literal>+</literal> means <quote>1 or more</quote>.  So <literal>\D+</literal> matches one or more characters that are not digits.  This is what you're using instead of a literal hyphen, to try to match different separators.</para>
+</callout>
+<callout arearefs="re.phone.3.2">
+<para>Using <literal>\D+</literal> instead of <literal>-</literal> means you can now match phone numbers where the parts are separated by spaces instead of hyphens.</para>
+</callout>
+<callout arearefs="re.phone.3.3">
+<para>Of course, phone numbers separated by hyphens still work too.</para>
+</callout>
+<callout arearefs="re.phone.3.4">
+<para>Unfortunately, this is still not the final answer, because it assumes that there is a separator at all.  What if the phone number is entered without any spaces or hyphens at all?</para>
+</callout>
+<callout arearefs="re.phone.3.4">
+<para>Oops!  This still hasn't fixed the problem of requiring extensions.  Now you have two problems, but you can solve both of them with the same technique.</para>
+</callout>
+</calloutlist>
+</example>
+<para>The next example shows the regular expression for handling phone numbers <emphasis>without</emphasis> separators.</para>
+<example>
+<title>Handling Numbers Without Separators</title>
+<screen>
+&prompt;<userinput>phonePattern = re.compile(r'^(\d{3})\D*(\d{3})\D*(\d{4})\D*(\d*)$')</userinput> <co id="re.phone.4.1"/>
+&prompt;<userinput>phonePattern.search('80055512121234').groups()</userinput>                      <co id="re.phone.4.2"/>
+<computeroutput>('800', '555', '1212', '1234')</computeroutput>
+&prompt;<userinput>phonePattern.search('800.555.1212 x1234').groups()</userinput>                  <co id="re.phone.4.3"/>
+<computeroutput>('800', '555', '1212', '1234')</computeroutput>
+&prompt;<userinput>phonePattern.search('800-555-1212').groups()</userinput>                        <co id="re.phone.4.4"/>
+<computeroutput>('800', '555', '1212', '')</computeroutput>
+&prompt;<userinput>phonePattern.search('(800)5551212 x1234')</userinput>                           <co id="re.phone.4.5"/>
+&prompt;
+</screen>
+<calloutlist>
+<callout arearefs="re.phone.4.1">
+<para>The only change you've made since that last step is changing all the <literal>+</literal> to <literal>*</literal>.  Instead of <literal>\D+</literal> between the parts of the phone number, you now match on <literal>\D*</literal>.  Remember that <literal>+</literal> means <quote>1 or more</quote>?  Well, <literal>*</literal> means <quote>zero or more</quote>.  So now you should be able to parse phone numbers even when there is no separator character at all.</para>
+</callout>
+<callout arearefs="re.phone.4.2">
+<para>Lo and behold, it actually works.  Why?  You matched the beginning of the string, then a remembered group of three digits (<literal>800</literal>), then zero non-numeric characters, then a remembered group of three digits (<literal>555</literal>), then zero non-numeric characters, then a remembered group of four digits (<literal>1212</literal>), then zero non-numeric characters, then a remembered group of an arbitrary number of digits (<literal>1234</literal>), then the end of the string.</para>
+</callout>
+<callout arearefs="re.phone.4.3">
+<para>Other variations work now too: dots instead of hyphens, and both a space and an <literal>x</literal> before the extension.</para>
+</callout>
+<callout arearefs="re.phone.4.4">
+<para>Finally, you've solved the other long-standing problem: extensions are optional again.  If no extension is found, the <function>groups()</function> method still returns a tuple of four elements, but the fourth element is just an empty string.</para>
+</callout>
+<callout arearefs="re.phone.4.5">
+<para>I hate to be the bearer of bad news, but you're not finished yet.  What's the problem here?  There's an extra character before the area code, but the regular expression assumes that the area code is the first thing at the beginning of the string.  No problem, you can use the same technique of <quote>zero or more non-numeric characters</quote> to skip over the leading characters before the area code.</para>
+</callout>
+</calloutlist>
+</example>
+<para>The next example shows how to handle leading characters in phone numbers.</para>
+<example>
+<title>Handling Leading Characters</title>
+<screen>
+&prompt;<userinput>phonePattern = re.compile(r'^\D*(\d{3})\D*(\d{3})\D*(\d{4})\D*(\d*)$')</userinput> <co id="re.phone.5.1"/>
+&prompt;<userinput>phonePattern.search('(800)5551212 ext. 1234').groups()</userinput>                 <co id="re.phone.5.2"/>
+<computeroutput>('800', '555', '1212', '1234')</computeroutput>
+&prompt;<userinput>phonePattern.search('800-555-1212').groups()</userinput>                           <co id="re.phone.5.3"/>
+<computeroutput>('800', '555', '1212', '')</computeroutput>
+&prompt;<userinput>phonePattern.search('work 1-(800) 555.1212 #1234')</userinput>                     <co id="re.phone.5.4"/>
+&prompt;
+</screen>
+<calloutlist>
+<callout arearefs="re.phone.5.1">
+<para>This is the same as in the previous example, except now you're matching <literal>\D*</literal>, zero or more non-numeric characters, before the first remembered group (the area code).  Notice that you're not remembering these non-numeric characters (they're not in parentheses).  If you find them, you'll just skip over them and then start remembering the area code whenever you get to it.</para>
+</callout>
+<callout arearefs="re.phone.5.2">
+<para>You can successfully parse the phone number, even with the leading left parenthesis before the area code.  (The right parenthesis after the area code is already handled; it's treated as a non-numeric separator and matched by the <literal>\D*</literal> after the first remembered group.)</para>
+</callout>
+<callout arearefs="re.phone.5.3">
+<para>Just a sanity check to make sure you haven't broken anything that used to work.  Since the leading characters are entirely optional, this matches the beginning of the string, then zero non-numeric characters, then a remembered group of three digits (<literal>800</literal>), then one non-numeric character (the hyphen), then a remembered group of three digits (<literal>555</literal>), then one non-numeric character (the hyphen), then a remembered group of four digits (<literal>1212</literal>), then zero non-numeric characters, then a remembered group of zero digits, then the end of the string.</para>
+</callout>
+<callout arearefs="re.phone.5.4">
+<para>This is where regular expressions make me want to gouge my eyes out with a blunt object.  Why doesn't this phone number match?  Because there's a <literal>1</literal> before the area code, but you assumed that all the leading characters before the area code were non-numeric characters (<literal>\D*</literal>).  Aargh.</para>
+</callout>
+</calloutlist>
+</example>
+<para>Let's back up for a second.  So far the regular expressions have all matched from the beginning of the string.  But now you see that there may be an indeterminate amount of stuff at the beginning of the string that you want to ignore.  Rather than trying to match it all just so you can skip over it, let's take a different approach: don't explicitly match the beginning of the string at all.  This approach is shown in the next example.</para>
+<example>
+<title>Phone Number, Wherever I May Find Ye</title>
+<screen>
+&prompt;<userinput>phonePattern = re.compile(r'(\d{3})\D*(\d{3})\D*(\d{4})\D*(\d*)$')</userinput> <co id="re.phone.6.1"/>
+&prompt;<userinput>phonePattern.search('work 1-(800) 555.1212 #1234').groups()</userinput>        <co id="re.phone.6.2"/>
+<computeroutput>('800', '555', '1212', '1234')</computeroutput>
+&prompt;<userinput>phonePattern.search('800-555-1212')</userinput>                                <co id="re.phone.6.3"/>
+<computeroutput>('800', '555', '1212', '')</computeroutput>
+&prompt;<userinput>phonePattern.search('80055512121234')</userinput>                              <co id="re.phone.6.4"/>
+<computeroutput>('800', '555', '1212', '1234')</computeroutput>
+</screen>
+<calloutlist>
+<callout arearefs="re.phone.6.1">
+<para>Note the lack of <literal>^</literal> in this regular expression.  You are not matching the beginning of the string anymore.  There's nothing that says you need to match the entire input with your regular expression.  The regular expression engine will do the hard work of figuring out where the input string starts to match, and go from there.</para>
+</callout>
+<callout arearefs="re.phone.6.2">
+<para>Now you can successfully parse a phone number that includes leading characters and a leading digit, plus any number of any kind of separators around each part of the phone number.</para>
+</callout>
+<callout arearefs="re.phone.6.3">
+<para>Sanity check.  this still works.</para>
+</callout>
+<callout arearefs="re.phone.6.4">
+<para>That still works too.</para>
+</callout>
+</calloutlist>
+</example>
+<para>See how quickly a regular expression can get out of control?  Take a quick glance at any of the previous iterations.  Can you tell the difference between one and the next?</para>
+<para>While you still understand the final answer (and it is the final answer; if you've discovered a case it doesn't handle, I don't want to know about it), let's write it out as a verbose regular expression, before you forget why you made the choices you made.</para>
+<example>
+<title>Parsing Phone Numbers (Final Version)</title>
+<screen>
+&prompt;<userinput>phonePattern = re.compile(r'''
+                # don't match beginning of string, number can start anywhere
+    (\d{3})     # area code is 3 digits (e.g. '800')
+    \D*         # optional separator is any number of non-digits
+    (\d{3})     # trunk is 3 digits (e.g. '555')
+    \D*         # optional separator
+    (\d{4})     # rest of number is 4 digits (e.g. '1212')
+    \D*         # optional separator
+    (\d*)       # extension is optional and can be any number of digits
+    $           # end of string
+    ''', re.VERBOSE)</userinput>
+&prompt;<userinput>phonePattern.search('work 1-(800) 555.1212 #1234').groups()</userinput>        <co id="re.phone.7.1"/>
+<computeroutput>('800', '555', '1212', '1234')</computeroutput>
+&prompt;<userinput>phonePattern.search('800-555-1212')</userinput>                                <co id="re.phone.7.2"/>
+<computeroutput>('800', '555', '1212', '')</computeroutput>
+</screen>
+<calloutlist>
+<callout arearefs="re.phone.7.1">
+<para>Other than being spread out over multiple lines, this is exactly the same regular expression as the last step, so it's no surprise that it parses the same inputs.</para>
+</callout>
+<callout arearefs="re.phone.7.2">
+<para>Final sanity check.  Yes, this still works.  You're done.</para>
+</callout>
+</calloutlist>
+</example>
+<itemizedlist role="furtherreading">
+<title>Further Reading on Regular Expressions</title>
+<listitem><para>&rehowto; teaches about regular expressions and how to use them in &python;.</para></listitem>
+<listitem><para>&pythonlibraryreference; summarizes the &remodule_link;.</para></listitem>
+</itemizedlist>
+</section>
+<section id="re.summary">
+<?dbhtml filename="regular_expressions/summary.html"?>
+<title>Summary</title>
+<abstract>
+<title/>
+<para>This is just the tiniest tip of the iceberg of what regular expressions can do.  In other words, even though you're completely overwhelmed by them now, believe me, you ain't seen nothing yet.</para>
+</abstract>
+<para>You should now be familiar with the following techniques:</para>
+<itemizedlist>
+<listitem><para><literal>^</literal> matches the beginning of a string.</para></listitem>
+<listitem><para><literal>$</literal> matches the end of a string.</para></listitem>
+<listitem><para><literal>\b</literal> matches a word boundary.</para></listitem>
+<listitem><para><literal>\d</literal> matches any numeric digit.</para></listitem>
+<listitem><para><literal>\D</literal> matches any non-numeric character.</para></listitem>
+<listitem><para><literal>x?</literal> matches an optional <literal>x</literal> character (in other words, it matches an <literal>x</literal> zero or one times).</para></listitem>
+<listitem><para><literal>x*</literal> matches <literal>x</literal> zero or more times.</para></listitem>
+<listitem><para><literal>x+</literal> matches <literal>x</literal> one or more times.</para></listitem>
+<listitem><para><literal>x{n,m}</literal> matches an <literal>x</literal> character at least <literal>n</literal> times, but not more than <literal>m</literal> times.</para></listitem>
+<listitem><para><literal>(a|b|c)</literal> matches either <literal>a</literal> or <literal>b</literal> or <literal>c</literal>.</para></listitem>
+<listitem><para><literal>(x)</literal> in general is a <emphasis>remembered group</emphasis>.  You can get the value of what matched by using the <function>groups()</function> method of the object returned by <function>re.search</function>.</para></listitem>
+</itemizedlist>
+<para>Regular expressions are extremely powerful, but they are not the correct solution for every problem.  You should learn enough about them to know when they are appropriate, when they will solve your problems, and when they will cause more problems than they solve.</para>
+<blockquote><attribution>Jamie Zawinski, <ulink url="http://groups.google.com/groups?selm=33F0C496.370D7C45%40netscape.com">in comp.emacs.xemacs</ulink></attribution><para>Some people, when confronted with a problem, think <quote>I know, I'll use regular expressions.</quote>  Now they have two problems.</para></blockquote>
+</section>
+</chapter>
+
+<!--
+* Intro/Diving in
+  * This chapter is for Python programmers who have read the first three chapters of this book, but have never used regular expressions.  If you have used regular expressions in some other language (such as Perl), this chapter is not for you; go read some other document [link, find "Python RE for Perl programmers", or write it] and get on with your life.
+  * Jamie Zawinski (comp.lang.emacs): "Some people, when confronted with a problem, think 'I know, I'll use regular expressions.'  Now they have two problems."
+* Case study: normalizing addresses
+  * Use dialect.re section
+  * Patterns:
+    $  Match at end
+    \b Match at word boundary
+    ^  Match at beginning (add mention)
+- Case study: validating Roman numerals
+  * Roman numeral pattern (storyboard)
+  * Storyboard:
+    steal most of roman.stage5
+    '^M?M?M?(CM|CD|D?C?C?C?)(XC|XL|L?X?X?X?)(IX|IV|V?I?I?I?)$'
+    '^M{0,3}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$')
+
+  * Patterns:
+    .   Match any character
+    ?   Match previous 0 or 1 times (optional)
+    |   or
+    {n,m} Match previous anywhere from n to m times
+
+  * Verbose regular expressions
+
+- Case study: extracting parts of an American phone number
+  - Use phone number validation example
+  - "grouping"
+  - re.search(r'\D*(\d{3})\D*(\d{3})\D*(\d{4})\D*(\d*)$', s).groups()
+  - Patterns:
+    () define group which can be accessed later (really saw it in last section, but didn't fully utilize it)
+    \d Match any digit
+    \D Match any non-digit
+    *  Match previous as many times as possible, 0 or more times
+    +  Match previous as many times as possible, at least once
+    *? Match previous as few times as possible, 0 or more times
+    +? Match previous as few times as possible, at least once
+-->

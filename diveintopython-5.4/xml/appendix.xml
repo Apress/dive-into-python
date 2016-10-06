@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appendix id="furtherreading">
+<?dbhtml filename="appendix/furtherreading.html"?>
+<title>Further reading</title>
+<para>
+</para>
+</appendix>
+<appendix id="abstracts">
+<?dbhtml filename="appendix/abstracts.html"?>
+<title>A 5-minute review</title>
+<para>
+</para>
+</appendix>
+<appendix id="tips">
+<?dbhtml filename="appendix/tips.html"?>
+<title>Tips and tricks</title>
+<para>
+</para>
+</appendix>
+<appendix id="examples">
+<?dbhtml filename="appendix/examples.html"?>
+<title>List of examples</title>
+<para>
+</para>
+</appendix>
+<appendix id="revhistory">
+<?dbhtml filename="appendix/history.html"?>
+<title>Revision history</title>
+<para>
+</para>
+</appendix>
+<appendix id="about">
+<?dbhtml filename="appendix/about.html"?>
+<title>About the book</title>
+<para>This book was written in <ulink url="&url_docbook;" type="DocBook home page">&docbook; &xml;</ulink> using <ulink url="&url_emacs;" type="The One True Editor">&emacs;</ulink>, and converted to &html; using <ulink url="&url_saxon;" type="SAXON home page">&saxon;</ulink> with a customized version of <ulink url="&url_docbookxsl;" type="DocBook XSL home page">Norman Walsh's &xsl; stylesheets</ulink>.  From there, it was converted to &pdf; using <ulink url="&url_htmldoc;" type="HTMLDOC home page">&htmldoc;</ulink>, and to plain text using <ulink url="&url_w3m;" type="w3m home page">&w3m;</ulink>.  Program listings and examples were colorized using an updated version of Just van Rossum's <filename class="headerfile">pyfontify.py</filename>, which is included in the example scripts.</para>
+<para>If you're interested in learning more about &docbook; for technical writing, you can <ulink url="&url_diveintopython;&url_dip_xml;" type="Download XML source files">download the &xml; source</ulink> and the <ulink url="&url_diveintopython;&url_dip_common;" type="Download build scripts and auxiliary files">build scripts</ulink>, which include the customized &xsl; stylesheets used to create all the different formats of the book.  You should also read the canonical book, <ulink url="&url_docbook_tdg;" type="Read DocBook: TDG online"><citetitle pubwork="book">&docbook;: The Definitive Guide</citetitle></ulink>.  If you're going to do any serious writing in &docbook;, I would recommend subscribing to the <ulink url="&url_docbook_lists;" type="Subscribe to DocBook and/or DocBook-Apps">&docbook; mailing lists</ulink>.</para>
+</appendix>

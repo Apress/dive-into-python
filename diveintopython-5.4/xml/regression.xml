@@ -1,0 +1,633 @@
+<?xml version="1.0" encoding="utf-8"?>
+<chapter id="regression">
+<?dbhtml filename="functional_programming/index.html"?>
+<title>Functional Programming</title>
+<titleabbrev id="regression.numberonly">Chapter 16</titleabbrev>
+<section id="regression.divein">
+<title>Diving in</title>
+<abstract>
+<title/>
+<para>In <xref linkend="roman"/>, you learned about the philosophy of unit testing.  In <xref linkend="roman1.5"/>, you stepped through the implementation of basic unit tests in &python;.  In <xref linkend="roman2"/>, you saw how unit testing makes large-scale refactoring easier.  This chapter will build on those sample programs, but here we will focus more on advanced &python;-specific techniques, rather than on unit testing itself.</para>
+</abstract>
+<para>The following is a complete &python; program that acts as a cheap and simple regression testing framework.  It takes unit tests that you've written for individual modules, collects them all into one big test suite, and runs them all at once.  I actually use this script as part of the build process for this book; I have unit tests for several of the example programs (not just the &roman_filename; module featured in <xref linkend="roman"/>), and the first thing my automated build script does is run this program to make sure all my examples still work.  If this regression test fails, the build immediately stops.  I don't want to release non-working examples any more than you want to download them and sit around scratching your head and yelling at your monitor and wondering why they don't work.</para>
+<example>
+<title>&regression_filename;</title>
+&para_download;
+<programlisting>
+&regression_doc;
+
+&regression_import;
+
+&regression_testdef;
+&regression_path;
+&regression_listdir;
+&regression_compile;
+&regression_filter;
+&regression_lambda;
+&regression_map;
+&regression_mapimport;
+&regression_load;
+&regression_testsuite;
+
+&regression_ifmain;
+&regression_main;
+</programlisting>
+</example>
+<para>Running this script in the same directory as the rest of the example scripts that come with this book will find all the unit tests, named <filename><replaceable>module</replaceable>test.py</filename>, run them as a single test, and pass or fail them all at once.</para>
+<example>
+<title>Sample output of &regression_filename;</title>
+<screen>
+<prompt>[you@localhost py]$ </prompt><userinput>python regression.py -v</userinput>
+<computeroutput>help should fail with no object ... ok                             </computeroutput><co id="regression.divein.1.1"/><computeroutput>
+help should return known result for apihelper ... ok
+help should honor collapse argument ... ok
+help should honor spacing argument ... ok
+buildConnectionString should fail with list input ... ok           </computeroutput><co id="regression.divein.1.2"/><computeroutput>
+buildConnectionString should fail with string input ... ok
+buildConnectionString should fail with tuple input ... ok
+buildConnectionString handles empty dictionary ... ok
+buildConnectionString returns known result with known input ... ok
+fromRoman should only accept uppercase input ... ok                </computeroutput><co id="regression.divein.1.3"/><computeroutput>
+toRoman should always return uppercase ... ok
+fromRoman should fail with blank string ... ok
+fromRoman should fail with malformed antecedents ... ok
+fromRoman should fail with repeated pairs of numerals ... ok
+fromRoman should fail with too many repeated numerals ... ok
+fromRoman should give known result with known input ... ok
+toRoman should give known result with known input ... ok
+fromRoman(toRoman(n))==n for all n ... ok
+toRoman should fail with non-integer input ... ok
+toRoman should fail with negative input ... ok
+toRoman should fail with large input ... ok
+toRoman should fail with 0 input ... ok
+kgp a ref test ... ok
+kgp b ref test ... ok
+kgp c ref test ... ok
+kgp d ref test ... ok
+kgp e ref test ... ok
+kgp f ref test ... ok
+kgp g ref test ... ok
+
+----------------------------------------------------------------------
+Ran 29 tests in 2.799s
+
+OK</computeroutput></screen>
+<calloutlist>
+<callout arearefs="regression.divein.1.1">
+<para>The first 5 tests are from <filename>apihelpertest.py</filename>, which tests the example script from <xref linkend="apihelper"/>.</para>
+</callout>
+<callout arearefs="regression.divein.1.2">
+<para>The next 5 tests are from <filename>odbchelpertest.py</filename>, which tests the example script from <xref linkend="odbchelper"/>.</para>
+</callout>
+<callout arearefs="regression.divein.1.3">
+<para>The rest are from <filename>romantest.py</filename>, which you studied in depth in <xref linkend="roman"/>.</para>
+</callout>
+</calloutlist>
+</example>
+</section>
+<section id="regression.path">
+<?dbhtml filename="functional_programming/finding_the_path.html"?>
+<title>Finding the path</title>
+<abstract>
+<title/>
+<para>When running &python; scripts from the command line, it is sometimes useful to know where the currently running script is located on disk.</para>
+</abstract>
+<para>This is one of those obscure little tricks that is virtually impossible to figure out on your own, but simple to remember once you see it.  The key to it is <literal>sys.argv</literal>.  As you saw in <xref linkend="kgp"/>, this is a list that holds the list of command-line arguments.  However, it also holds the name of the running script, exactly as it was called from the command line, and this is enough information to determine its location.</para>
+<example>
+<title><filename>fullpath.py</filename></title>
+&para_download;
+<programlisting>
+import sys, os
+
+print 'sys.argv[0] =', sys.argv[0]             <co id="regression.path.1.1"/>
+pathname = os.path.dirname(sys.argv[0])        <co id="regression.path.1.2"/>
+print 'path =', pathname
+print 'full path =', os.path.abspath(pathname) <co id="regression.path.1.3"/></programlisting>
+<calloutlist>
+<callout arearefs="regression.path.1.1">
+<para>Regardless of how you run a script, &sysargv0; will always contain the name of the script, exactly as it appears on the command line.  This may or may not include any path information, as you'll see shortly.</para>
+</callout>
+<callout arearefs="regression.path.1.2">
+<para>&ospathdirname; takes a filename as a string and returns the directory path portion.  If the given filename does not include any path information, &ospathdirname; returns an empty string.</para>
+</callout>
+<callout arearefs="regression.path.1.3">
+<para>&ospathabspath; is the key here.  It takes a pathname, which can be partial or even blank, and returns a fully qualified pathname.</para>
+</callout>
+</calloutlist>
+</example>
+<para>&ospathabspath; deserves further explanation.  It is very flexible; it can take any kind of pathname.</para>
+<example>
+<title>Further explanation of &ospathabspath;</title>
+<screen>
+&prompt;<userinput>import os</userinput>
+&prompt;<userinput>os.getcwd()</userinput>                        <co id="regression.path.2.1"/>
+<computeroutput>/home/you</computeroutput>
+&prompt;<userinput>os.path.abspath('')</userinput>                <co id="regression.path.2.2"/>
+<computeroutput>/home/you</computeroutput>
+&prompt;<userinput>os.path.abspath('.ssh')</userinput>            <co id="regression.path.2.3"/>
+<computeroutput>/home/you/.ssh</computeroutput>
+&prompt;<userinput>os.path.abspath('/home/you/.ssh')</userinput> <co id="regression.path.2.4"/>
+<computeroutput>/home/you/.ssh</computeroutput>
+&prompt;<userinput>os.path.abspath('.ssh/../foo/')</userinput>    <co id="regression.path.2.5"/>
+<computeroutput>/home/you/foo</computeroutput></screen>
+<calloutlist>
+<callout arearefs="regression.path.2.1">
+<para><function>os.getcwd()</function> returns the current working directory.</para>
+</callout>
+<callout arearefs="regression.path.2.2">
+<para>Calling &ospathabspath; with an empty string returns the current working directory, same as <function>os.getcwd()</function>.</para>
+</callout>
+<callout arearefs="regression.path.2.3">
+<para>Calling &ospathabspath; with a partial pathname constructs a fully qualified pathname out of it, based on the current working directory.</para>
+</callout>
+<callout arearefs="regression.path.2.4">
+<para>Calling &ospathabspath; with a full pathname simply returns it.</para>
+</callout>
+<callout arearefs="regression.path.2.5">
+<para>&ospathabspath; also <emphasis>normalizes</emphasis> the pathname it returns.  Note that this example worked even though I don't actually have a 'foo' directory.  &ospathabspath; never checks your actual disk; this is all just string manipulation.</para>
+</callout>
+</calloutlist>
+</example>
+<note id="os.path.abspath.exist.note">
+<title>&ospathabspath; does not validate pathnames</title>
+<para>The pathnames and filenames you pass to &ospathabspath; do not need to exist.</para>
+</note>
+<note id="os.path.normpath.note">
+<title>Normalizing pathnames</title>
+<para>&ospathabspath; not only constructs full path names, it also normalizes them.  That means that if you are in the <filename>/usr/</filename> directory, <literal>os.path.abspath('bin/../local/bin')</literal> will return <filename>/usr/local/bin</filename>.  It normalizes the path by making it as simple as possible.  If you just want to normalize a pathname like this without turning it into a full pathname, use <function>os.path.normpath</function> instead.</para>
+</note>
+<example>
+<title>Sample output from <filename>fullpath.py</filename></title>
+<screen>
+<prompt>[you@localhost py]$ </prompt><userinput>python /home/you/diveintopython/common/py/fullpath.py</userinput> <co id="regression.path.3.1"/>
+<computeroutput>sys.argv[0] = /home/you/diveintopython/common/py/fullpath.py
+path = /home/you/diveintopython/common/py
+full path = /home/you/diveintopython/common/py</computeroutput>
+<prompt>[you@localhost diveintopython]$ </prompt><userinput>python common/py/fullpath.py</userinput>               <co id="regression.path.3.2"/>
+<computeroutput>sys.argv[0] = common/py/fullpath.py
+path = common/py
+full path = /home/you/diveintopython/common/py</computeroutput>
+<prompt>[you@localhost diveintopython]$ </prompt><userinput>cd common/py</userinput>
+<prompt>[you@localhost py]$ </prompt><userinput>python fullpath.py</userinput>                                     <co id="regression.path.3.3"/>
+<computeroutput>sys.argv[0] = fullpath.py
+path = 
+full path = /home/you/diveintopython/common/py</computeroutput></screen>
+<calloutlist>
+<callout arearefs="regression.path.3.1">
+<para>In the first case, &sysargv0; includes the full path of the script.  You can then use the &ospathdirname; function to strip off the script name and return the full directory name, and &ospathabspath; simply returns what you give it.</para>
+</callout>
+<callout arearefs="regression.path.3.2">
+<para>If the script is run by using a partial pathname, &sysargv0; will still contain exactly what appears on the command line.  &ospathdirname; will then give you a partial pathname (relative to the current directory), and &ospathabspath; will construct a full pathname from the partial pathname.</para>
+</callout>
+<callout arearefs="regression.path.3.3">
+<para>If the script is run from the current directory without giving any path, &ospathdirname; will simply return an empty string.  Given an empty string, &ospathabspath; returns the current directory, which is what you want, since the script was run from the current directory.</para>
+</callout>
+</calloutlist>
+</example>
+<note id="os.path.abspath.crossplatform.note">
+<title>&ospathabspath; is cross-platform</title>
+<para>Like the other functions in the &os; and &ospath; modules, &ospathabspath; is cross-platform.  Your results will look slightly different than my examples if you're running on &windows; (which uses backslash as a path separator) or &macos; (which uses colons), but they'll still work.  That's the whole point of the &os; module.</para>
+</note>
+<formalpara><title>Addendum</title><para>One reader was dissatisfied with this solution, and wanted to be able to run all the unit tests in the current directory, not the directory where &regression_filename; is located.  He suggests this approach instead:</para></formalpara>
+<example id="regression.path.cwd.example">
+<title>Running scripts in the current directory</title>
+<programlisting>import sys, os, re, unittest
+
+def regressionTest():
+    path = os.getcwd()       <co id="regression.path.4.1"/>
+    sys.path.append(path)    <co id="regression.path.4.2"/>
+    files = os.listdir(path) <co id="regression.path.4.3"/>
+</programlisting>
+<calloutlist>
+<callout arearefs="regression.path.4.1">
+<para>Instead of setting <varname>path</varname> to the directory where the currently running script is located, you set it to the current working directory instead.  This will be whatever directory you were in before you ran the script, which is not necessarily the same as the directory the script is in. (Read that sentence a few times until you get it.)</para>
+</callout>
+<callout arearefs="regression.path.4.2">
+<para>Append this directory to the &python; library search path, so that when you dynamically import the unit test modules later, &python; can find them.  You didn't need to do this when <varname>path</varname> was the directory of the currently running script, because &python; always looks in that directory.</para>
+</callout>
+<callout arearefs="regression.path.4.3">
+<para>The rest of the function is the same.</para>
+</callout>
+</calloutlist>
+<para>This technique will allow you to re-use this &regression_filename; script on multiple projects.  Just put the script in a common directory, then change to the project's directory before running it.  All of that project's unit tests will be found and tested, instead of the unit tests in the common directory where &regression_filename; is located.</para>
+</example>
+</section>
+<section id="regression.filter">
+<?dbhtml filename="functional_programming/filtering_lists.html"?>
+<title>Filtering lists revisited</title>
+<abstract>
+<title/>
+<para>You're already familiar with <link linkend="apihelper.filter">using list comprehensions to filter lists</link>.  There is another way to accomplish this same thing, which some people feel is more expressive.</para>
+</abstract>
+<para>&python; has a built-in &filter_function; function which takes two arguments, a function and a list, and returns a list.<footnote><para>Technically, the second argument to &filter_function; can be any sequence, including lists, tuples, and custom classes that act like lists by defining the <function>__getitem__</function> special method.  If possible, &filter_function; will return the same datatype as you give it, so filtering a list returns a list, but filtering a tuple returns a tuple.</para></footnote>  The function passed as the first argument to &filter_function; must itself take one argument, and the list that &filter_function; returns will contain all the elements from the list passed to &filter_function; for which the function passed to &filter_function; returns true.</para>
+<para>Got all that?  It's not as difficult as it sounds.</para>
+<example>
+<title>Introducing &filter_function;</title>
+<screen>
+&prompt;<userinput>def odd(n):</userinput>                 <co id="regression.filter.1.1"/>
+&continuationprompt;<userinput>return n % 2</userinput>
+&continuationprompt;
+&prompt;<userinput>li = [1, 2, 3, 5, 9, 10, 256, -3]</userinput>
+&prompt;<userinput>filter(odd, li)</userinput>             <co id="regression.filter.1.2"/>
+<computeroutput>[1, 3, 5, 9, -3]</computeroutput>
+&prompt;<userinput>[e for e in li if odd(e)]</userinput>   <co id="regression.filter.1.3"/>
+&prompt;<userinput>filteredList = []</userinput>
+&prompt;<userinput>for n in li:</userinput>                <co id="regression.filter.1.4"/>
+&continuationprompt;<userinput>if odd(n):</userinput>
+&continuationprompt;<userinput>    filteredList.append(n)</userinput>
+&continuationprompt;
+&prompt;<userinput>filteredList</userinput>
+<computeroutput>[1, 3, 5, 9, -3]</computeroutput></screen>
+<calloutlist>
+<callout arearefs="regression.filter.1.1">
+<para><function>odd</function> uses the built-in mod function <quote><literal>%</literal></quote> to return &true; if <varname>n</varname> is odd and &false; if <varname>n</varname> is even.</para>
+</callout>
+<callout arearefs="regression.filter.1.2">
+<para>&filter_function; takes two arguments, a function (<function>odd</function>) and a list (<varname>li</varname>).  It loops through the list and calls <function>odd</function> with each element.  If <function>odd</function> returns a true value (remember, any non-zero value is true in &python;), then the element is included in the returned list, otherwise it is filtered out.  The result is a list of only the odd numbers from the original list, in the same order as they appeared in the original.</para>
+</callout>
+<callout arearefs="regression.filter.1.3">
+<para>You could accomplish the same thing using list comprehensions, as you saw in <xref linkend="apihelper.filter"/>.</para>
+</callout>
+<callout arearefs="regression.filter.1.4">
+<para>You could also accomplish the same thing with a &for; loop.  Depending on your programming background, this may seem more <quote>straightforward</quote>, but functions like &filter_function; are much more expressive.  Not only is it easier to write, it's easier to read, too.  Reading the &for; loop is like standing too close to a painting; you see all the details, but it may take a few seconds to be able to step back and see the bigger picture: <quote>Oh, you're just filtering the list!</quote></para>
+</callout>
+</calloutlist>
+</example>
+<example>
+<title>&filter_function; in &regression_filename;</title>
+<programlisting>
+&regression_listdir; <co id="regression.filter.2.1"/>
+&regression_compile; <co id="regression.filter.2.2"/>
+&regression_filter; <co id="regression.filter.2.3"/></programlisting>
+<calloutlist>
+<callout arearefs="regression.filter.2.1">
+<para>As you saw in <xref linkend="regression.path"/>, <varname>path</varname> may contain the full or partial pathname of the directory of the currently running script, or it may contain an empty string if the script is being run from the current directory.  Either way, <varname>files</varname> will end up with the names of the files in the same directory as this script you're running.</para>
+</callout>
+<callout arearefs="regression.filter.2.2">
+<para>This is a compiled regular expression.  As you saw in <xref linkend="roman.refactoring"/>, if you're going to use the same regular expression over and over, you should compile it for faster performance.  The compiled object has a <function>search</function> method which takes a single argument, the string to search.  If the regular expression matches the string, the <function>search</function> method returns a <classname>Match</classname> object containing information about the regular expression match; otherwise it returns &none;, the &python; null value.</para>
+</callout>
+<callout arearefs="regression.filter.2.3">
+<para>For each element in the <varname>files</varname> list, you're going to call the <function>search</function> method of the compiled regular expression object, <varname>test</varname>.  If the regular expression matches, the method will return a <classname>Match</classname> object, which &python; considers to be true, so the element will be included in the list returned by &filter_function;.  If the regular expression does not match, the <function>search</function> method will return &none;, which &python; considers to be false, so the element will not be included.</para>
+</callout>
+</calloutlist>
+</example>
+<formalpara>
+<title>Historical note</title>
+<para>Versions of &python; prior to 2.0 did not have <link linkend="odbchelper.map">list comprehensions</link>, so you couldn't <link linkend="apihelper.filter">filter using list comprehensions</link>; the &filter_function; function was the only game in town.  Even with the introduction of list comprehensions in 2.0, some people still prefer the old-style &filter_function; (and its companion function, &map_function;, which you'll see later in this chapter).  Both techniques work at the moment, so which one you use is a matter of style.  There is discussion that &map_function; and &filter_function; might be deprecated in a future version of &python;, but no decision has been made.</para>
+</formalpara>
+<example>
+<title>Filtering using list comprehensions instead</title>
+<programlisting>
+&regression_listdir;
+&regression_compile;
+    files = [f for f in files if test.search(f)] <co id="regression.filter.3.1"/></programlisting>
+<calloutlist>
+<callout arearefs="regression.filter.3.1">
+<para>This will accomplish exactly the same result as using the &filter_function; function.  Which way is more expressive?  That's up to you.</para>
+</callout>
+</calloutlist>
+</example>
+</section>
+<section id="regression.map">
+<?dbhtml filename="functional_programming/mapping_lists.html"?>
+<title>Mapping lists revisited</title>
+<abstract>
+<title/>
+<para>You're already familiar with using <link linkend="odbchelper.map">list comprehensions</link> to map one list into another.  There is another way to accomplish the same thing, using the built-in &map_function; function.  It works much the same way as the <link linkend="regression.filter">&filter_function;</link> function.</para>
+</abstract>
+<example>
+<title>Introducing &map_function;</title>
+<screen>
+&prompt;<userinput>def double(n):</userinput>
+&continuationprompt;return n*2
+&continuationprompt;
+&prompt;<userinput>li = [1, 2, 3, 5, 9, 10, 256, -3]</userinput>
+&prompt;<userinput>map(double, li)</userinput>                       <co id="regression.map.1.1"/>
+<computeroutput>[2, 4, 6, 10, 18, 20, 512, -6]</computeroutput>
+&prompt;<userinput>[double(n) for n in li]</userinput>               <co id="regression.map.1.2"/>
+<computeroutput>[2, 4, 6, 10, 18, 20, 512, -6]</computeroutput>
+&prompt;<userinput>newlist = []</userinput>
+&prompt;<userinput>for n in li:</userinput>                          <co id="regression.map.1.3"/>
+&continuationprompt;<userinput>newlist.append(double(n))</userinput>
+&continuationprompt;
+&prompt;<userinput>newlist</userinput>
+<computeroutput>[2, 4, 6, 10, 18, 20, 512, -6]</computeroutput></screen>
+<calloutlist>
+<callout arearefs="regression.map.1.1">
+<para>&map_function; takes a function and a list<footnote><para>Again, I should point out that &map_function; can take a list, a tuple, or any object that acts like a sequence.  See previous footnote about &filter_function;.</para></footnote> and returns a new list by calling the function with each element of the list in order.  In this case, the function simply multiplies each element by 2.</para>
+</callout>
+<callout arearefs="regression.map.1.2">
+<para>You could accomplish the same thing with a list comprehension.  List comprehensions were first introduced in &python; 2.0; &map_function; has been around forever.</para>
+</callout>
+<callout arearefs="regression.map.1.3">
+<para>You could, if you insist on thinking like a &vb; programmer, use a &for; loop to accomplish the same thing.</para>
+</callout>
+</calloutlist>
+</example>
+<example>
+<title>&map_function; with lists of mixed datatypes</title>
+<screen>
+&prompt;<userinput>li = [5, 'a', (2, 'b')]</userinput>
+&prompt;<userinput>map(double, li)</userinput>                       <co id="regression.map.2.1"/>
+<computeroutput>[10, 'aa', (2, 'b', 2, 'b')]</computeroutput></screen>
+<calloutlist>
+<callout arearefs="regression.map.2.1">
+<para>As a side note, I'd like to point out that &map_function; works just as well with lists of mixed datatypes, as long as the function you're using correctly handles each type.  In this case, the <function>double</function> function simply multiplies the given argument by 2, and &python; Does The Right Thing depending on the datatype of the argument.  For integers, this means actually multiplying it by 2; for strings, it means concatenating the string with itself; for tuples, it means making a new tuple that has all of the elements of the original, then all of the elements of the original again.</para>
+</callout>
+</calloutlist>
+</example>
+<para>All right, enough play time.  Let's look at some real code.</para>
+<example>
+<title>&map_function; in &regression_filename;</title>
+<programlisting>
+&regression_lambda; <co id="regression.map.3.1"/>
+&regression_map; <co id="regression.map.3.2"/></programlisting>
+<calloutlist>
+<callout arearefs="regression.map.3.1">
+<para>As you saw in <xref linkend="apihelper.lambda"/>, &lambdafunction; defines an inline function.  And as you saw in <xref linkend="splittingpathnames.example"/>, &ospathsplitext; takes a filename and returns a tuple <literal>(<replaceable>name</replaceable>, <replaceable>extension</replaceable>)</literal>.  So <function>filenameToModuleName</function> is a function which will take a filename and strip off the file extension, and return just the name.</para>
+</callout>
+<callout arearefs="regression.map.3.2">
+<para>Calling &map_function; takes each filename listed in <varname>files</varname>, passes it to the function <function>filenameToModuleName</function>, and returns a list of the return values of each of those function calls.  In other words, you strip the file extension off of each filename, and store the list of all those stripped filenames in <varname>moduleNames</varname>.</para>
+</callout>
+</calloutlist>
+</example>
+<para>As you'll see in the rest of the chapter, you can extend this type of data-centric thinking all the way to the final goal, which is to define and execute a single test suite that contains the tests from all of those individual test suites.</para>
+</section>
+<section id="regression.datacentric">
+<?dbhtml filename="functional_programming/data_centric.html"?>
+<title>Data-centric programming</title>
+<abstract>
+<title/>
+<para>By now you're probably scratching your head wondering why this is better than using &for; loops and straight function calls.  And that's a perfectly valid question.  Mostly, it's a matter of perspective.  Using &map_function; and &filter_function; forces you to center your thinking around your data.</para>
+</abstract>
+<para>In this case, you started with no data at all; the first thing you did was <link linkend="regression.path">get the directory path</link> of the current script, and got a list of files in that directory.  That was the bootstrap, and it gave you real data to work with: a list of filenames.</para>
+<para>However, you knew you didn't care about all of those files, only the ones that were actually test suites.  You had <emphasis>too much data</emphasis>, so you needed to &filter_function; it.  How did you know which data to keep?  You needed a test to decide, so you defined one and passed it to the &filter_function; function.  In this case you used a regular expression to decide, but the concept would be the same regardless of how you constructed the test.</para>
+<para>Now you had the filenames of each of the test suites (and only the test suites, since everything else had been filtered out), but you really wanted module names instead.  You had the right amount of data, but it was <emphasis>in the wrong format</emphasis>.  So you defined a function that would transform a single filename into a module name, and you mapped that function onto the entire list.  From one filename, you can get a module name; from a list of filenames, you can get a list of module names.</para>
+<para>Instead of &filter_function;, you could have used a &for; loop with an &if; statement.  Instead of &map_function;, you could have used a &for; loop with a function call.  But using &for; loops like that is busywork.  At best, it simply wastes time; at worst, it introduces obscure bugs.  For instance, you need to figure out how to test for the condition <quote>is this file a test suite?</quote> anyway; that's the application-specific logic, and no language can write that for us.  But once you've figured that out, do you really want go to all the trouble of defining a new empty list and writing a &for; loop and an &if; statement and manually calling <function>append</function> to add each element to the new list if it passes the condition and then keeping track of which variable holds the new filtered data and which one holds the old unfiltered data?  Why not just define the test condition, then let &python; do the rest of that work for us?</para>
+<para>Oh sure, you could try to be fancy and delete elements in place without creating a new list.  But you've been burned by that before.  Trying to modify a data structure that you're looping through can be tricky.  You delete an element, then loop to the next element, and suddenly you've skipped one.  Is &python; one of the languages that works that way?  How long would it take you to figure it out?  Would you remember for certain whether it was safe the next time you tried?  Programmers spend so much time and make so many mistakes dealing with purely technical issues like this, and it's all pointless.  It doesn't advance your program at all; it's just busywork.</para>
+<para>I resisted list comprehensions when I first learned &python;, and I resisted &filter_function; and &map_function; even longer.  I insisted on making my life more difficult, sticking to the familiar way of &for; loops and &if; statements and step-by-step code-centric programming.  And my &python; programs looked a lot like &vb; programs, detailing every step of every operation in every function.  And they had all the same types of little problems and obscure bugs.  And it was all pointless.</para>
+<para>Let it all go.  Busywork code is not important.  Data is important.  And data is not difficult.  It's only data.  If you have too much, filter it.  If it's not what you want, map it.  Focus on the data; leave the busywork behind.</para>
+</section>
+<section id="regression.import">
+<?dbhtml filename="functional_programming/dynamic_import.html"?>
+<title>Dynamically importing modules</title>
+<abstract>
+<title/>
+<para>OK, enough philosophizing.  Let's talk about dynamically importing modules.</para>
+</abstract>
+<para>First, let's look at how you normally import modules.  The &importmodule; syntax looks in the search path for the named module and imports it by name.  You can even import multiple modules at once this way, with a comma-separated list.  You did this on the very first line of this chapter's script.</para>
+<example>
+<title>Importing multiple modules at once</title>
+<programlisting>
+&regression_import; <co id="regression.import.1.1"/>
+</programlisting>
+<calloutlist>
+<callout arearefs="regression.import.1.1">
+<para>This imports four modules at once: <filename class="headerfile">sys</filename> (for system functions and access to the command line parameters), <filename class="headerfile">os</filename> (for operating system functions like directory listings), <filename class="headerfile">re</filename> (for regular expressions), and <filename class="headerfile">unittest</filename> (for unit testing).</para>
+</callout>
+</calloutlist>
+</example>
+<para>Now let's do the same thing, but with dynamic imports.</para>
+<example>
+<title>Importing modules dynamically</title>
+<screen>
+&prompt;<userinput>sys = __import__('sys')</userinput>           <co id="regression.import.2.1"/>
+&prompt;<userinput>os = __import__('os')</userinput>
+&prompt;<userinput>re = __import__('re')</userinput>
+&prompt;<userinput>unittest = __import__('unittest')</userinput>
+&prompt;<userinput>sys</userinput>                               <co id="regression.import.2.2"/>
+&prompt;<computeroutput>&lt;module 'sys' (built-in)></computeroutput>
+&prompt;<userinput>os</userinput>
+&prompt;<computeroutput>&lt;module 'os' from '/usr/local/lib/python2.2/os.pyc'></computeroutput>
+</screen>
+<calloutlist>
+<callout arearefs="regression.import.2.1">
+<para>The built-in &importfunction; function accomplishes the same goal as using the &import; statement, but it's an actual function, and it takes a string as an argument.</para>
+</callout>
+<callout arearefs="regression.import.2.2">
+<para>The variable <varname>sys</varname> is now the <filename class="headerfile">sys</filename> module, just as if you had said <literal>import sys</literal>.  The variable <varname>os</varname> is now the <filename class="headerfile">os</filename> module, and so forth.</para>
+</callout>
+</calloutlist>
+</example>
+<para>So &importfunction; imports a module, but takes a string argument to do it.  In this case the module you imported was just a hard-coded string, but it could just as easily be a variable, or the result of a function call.  And the variable that you assign the module to doesn't need to match the module name, either.  You could import a series of modules and assign them to a list.</para>
+<example>
+<title>Importing a list of modules dynamically</title>
+<screen>
+&prompt;<userinput>moduleNames = ['sys', 'os', 're', 'unittest']</userinput> <co id="regression.import.3.1"/>
+&prompt;<userinput>moduleNames</userinput>
+<computeroutput>['sys', 'os', 're', 'unittest']</computeroutput>
+&prompt;<userinput>modules = map(__import__, moduleNames)</userinput>        <co id="regression.import.3.2"/>
+&prompt;<userinput>modules</userinput>                                       <co id="regression.import.3.3"/>
+<computeroutput>[&lt;module 'sys' (built-in)>,
+&lt;module 'os' from 'c:\Python22\lib\os.pyc'>,
+&lt;module 're' from 'c:\Python22\lib\re.pyc'>,
+&lt;module 'unittest' from 'c:\Python22\lib\unittest.pyc'>]</computeroutput>
+&prompt;<userinput>modules[0].version</userinput>                            <co id="regression.import.3.4"/>
+<computeroutput>'2.2.2 (#37, Nov 26 2002, 10:24:37) [MSC 32 bit (Intel)]'</computeroutput>
+&prompt;<userinput>import sys</userinput>
+&prompt;<userinput>sys.version</userinput>
+<computeroutput>'2.2.2 (#37, Nov 26 2002, 10:24:37) [MSC 32 bit (Intel)]'</computeroutput>
+</screen>
+<calloutlist>
+<callout arearefs="regression.import.3.1">
+<para><varname>moduleNames</varname> is just a list of strings.  Nothing fancy, except that the strings happen to be names of modules that you could import, if you wanted to.</para>
+</callout>
+<callout arearefs="regression.import.3.2">
+<para>Surprise, you wanted to import them, and you did, by mapping the &importfunction; function onto the list.  Remember, this takes each element of the list (<varname>moduleNames</varname>) and calls the function (&importfunction;) over and over, once with each element of the list, builds a list of the return values, and returns the result.</para>
+</callout>
+<callout arearefs="regression.import.3.3">
+<para>So now from a list of strings, you've created a list of actual modules.  (Your paths may be different, depending on your operating system, where you installed Python, the phase of the moon, etc.)</para>
+</callout>
+<callout arearefs="regression.import.3.4">
+<para>To drive home the point that these are real modules, let's look at some module attributes.  Remember, <varname>modules[0]</varname> <emphasis>is</emphasis> the &sys; module, so <varname>modules[0].version</varname> <emphasis>is</emphasis> <varname>sys.version</varname>.  All the other attributes and methods of these modules are also available.  There's nothing magic about the &import; statement, and there's nothing magic about modules.  Modules are objects.  Everything is an object.</para>
+</callout>
+</calloutlist>
+</example>
+<para>Now you should be able to put this all together and figure out what most of this chapter's code sample is doing.</para>
+</section>
+<section id="regression.alltogether">
+<?dbhtml filename="functional_programming/all_together.html"?>
+<title>Putting it all together</title>
+<abstract>
+<title/>
+<para>You've learned enough now to deconstruct the first seven lines of this chapter's code sample: reading a directory and importing selected modules within it.</para>
+</abstract>
+<example>
+<title>The &regressiontestfunction; function</title>
+<programlisting>
+&regression_testdef;
+&regression_path;
+&regression_listdir;
+&regression_compile;
+&regression_filter;
+&regression_lambda;
+&regression_map;
+&regression_mapimport;
+&regression_load1;
+&regression_testsuite1;
+</programlisting>
+</example>
+<para>Let's look at it line by line, interactively.  Assume that the current directory is <filename>c:\diveintopython\py</filename>, which contains the examples that come with this book, including this chapter's script.  As you saw in <xref linkend="regression.path"/>, the script directory will end up in the <varname>path</varname> variable, so let's start hard-code that and go from there.</para>
+<example>
+<title>Step 1: Get all the files</title>
+<screen>
+&prompt;<userinput>&regression_import;</userinput>
+&prompt;<userinput>path = r'c:\diveintopython\py'</userinput>
+&prompt;<userinput>&regression_listdir1;</userinput>
+&prompt;<userinput>files</userinput> <co id="regression.alltogether.1.1"/>
+<computeroutput>['BaseHTMLProcessor.py', 'LICENSE.txt', 'apihelper.py', 'apihelpertest.py',
+'argecho.py', 'autosize.py', 'builddialectexamples.py', 'dialect.py',
+'fileinfo.py', 'fullpath.py', 'kgptest.py', 'makerealworddoc.py',
+'odbchelper.py', 'odbchelpertest.py', 'parsephone.py', 'piglatin.py',
+'plural.py', 'pluraltest.py', 'pyfontify.py', 'regression.py', 'roman.py', 'romantest.py',
+'uncurly.py', 'unicode2koi8r.py', 'urllister.py', 'kgp', 'plural', 'roman',
+'colorize.py']</computeroutput>
+</screen>
+<calloutlist>
+<callout arearefs="regression.alltogether.1.1">
+<para><varname>files</varname> is a list of all the files and directories in the script's directory.  (If you've been running some of the examples already, you may also see some <filename>.pyc</filename> files in there as well.)</para>
+</callout>
+</calloutlist>
+</example>
+<example>
+<title>Step 2: Filter to find the files you care about</title>
+<screen>
+&prompt;<userinput>&regression_compile1;</userinput> <co id="regression.alltogether.2.1"/>
+&prompt;<userinput>&regression_filter1;</userinput> <co id="regression.alltogether.2.2"/>
+&prompt;<userinput>files</userinput>                                                   <co id="regression.alltogether.2.3"/>
+<computeroutput>['apihelpertest.py', 'kgptest.py', 'odbchelpertest.py', 'pluraltest.py', 'romantest.py']</computeroutput>
+</screen>
+<calloutlist>
+<callout arearefs="regression.alltogether.2.1">
+<para>This regular expression will match any string that ends with <literal>test.py</literal>.  Note that you need to escape the period, since a period in a regular expression usually means <quote>match any single character</quote>, but you actually want to match a literal period instead.</para>
+</callout>
+<callout arearefs="regression.alltogether.2.2">
+<para>The compiled regular expression acts like a function, so you can use it to filter the large list of files and directories, to find the ones that match the regular expression.</para>
+</callout>
+<callout arearefs="regression.alltogether.2.3">
+<para>And you're left with the list of unit testing scripts, because they were the only ones named <filename>SOMETHINGtest.py</filename>.</para>
+</callout>
+</calloutlist>
+</example>
+<example>
+<title>Step 3: Map filenames to module names</title>
+<screen>
+&prompt;<userinput>&regression_lambda1;</userinput> <co id="regression.alltogether.3.1"/>
+&prompt;<userinput>filenameToModuleName('romantest.py')</userinput>                    <co id="regression.alltogether.3.2"/>
+<computeroutput>'romantest'</computeroutput>
+&prompt;<userinput>filenameToModuleName('odchelpertest.py')</userinput>
+<computeroutput>'odbchelpertest'</computeroutput>
+&prompt;<userinput>&regression_map1;</userinput> <co id="regression.alltogether.3.3"/>
+&prompt;<userinput>moduleNames</userinput>                                             <co id="regression.alltogether.3.4"/>
+<computeroutput>['apihelpertest', 'kgptest', 'odbchelpertest', 'pluraltest', 'romantest']</computeroutput>
+</screen>
+<calloutlist>
+<callout arearefs="regression.alltogether.3.1">
+<para>As you saw in <xref linkend="apihelper.lambda"/>, &lambdafunction; is a quick-and-dirty way of creating an inline, one-line function.  This one takes a filename with an extension and returns just the filename part, using the standard library function <function>os.path.splitext</function> that you saw in <xref linkend="splittingpathnames.example"/>.</para>
+</callout>
+<callout arearefs="regression.alltogether.3.2">
+<para><varname>filenameToModuleName</varname> is a function.  There's nothing magic about &lambdafunction; functions as opposed to regular functions that you define with a <literal>def</literal> statement.  You can call the <varname>filenameToModuleName</varname> function like any other, and it does just what you wanted it to do: strips the file extension off of its argument.</para>
+</callout>
+<callout arearefs="regression.alltogether.3.3">
+<para>Now you can apply this function to each file in the list of unit test files, using &map_function;.</para>
+</callout>
+<callout arearefs="regression.alltogether.3.4">
+<para>And the result is just what you wanted: a list of modules, as strings.</para>
+</callout>
+</calloutlist>
+</example>
+<example>
+<title>Step 4: Mapping module names to modules</title>
+<screen>
+&prompt;<userinput>&regression_mapimport1;</userinput> <co id="regression.alltogether.4.1"/>
+&prompt;<userinput>modules</userinput>                                                 <co id="regression.alltogether.4.2"/>
+<computeroutput>[&lt;module 'apihelpertest' from 'apihelpertest.py'>,
+&lt;module 'kgptest' from 'kgptest.py'>,
+&lt;module 'odbchelpertest' from 'odbchelpertest.py'>,
+&lt;module 'pluraltest' from 'pluraltest.py'>,
+&lt;module 'romantest' from 'romantest.py'>]</computeroutput>
+&prompt;<userinput>modules[-1]</userinput>                                             <co id="regression.alltogether.4.3"/>
+<computeroutput>&lt;module 'romantest' from 'romantest.py'></computeroutput>
+</screen>
+<calloutlist>
+<callout arearefs="regression.alltogether.4.1">
+<para>As you saw in <xref linkend="regression.import"/>, you can use a combination of &map_function; and &importfunction; to map a list of module names (as strings) into actual modules (which you can call or access like any other module).
+</para>
+</callout>
+<callout arearefs="regression.alltogether.4.2">
+<para><varname>modules</varname> is now a list of modules, fully accessible like any other module.</para>
+</callout>
+<callout arearefs="regression.alltogether.4.3">
+<para>The last module in the list <emphasis>is</emphasis> the &romantest_module; module, just as if you had said <literal>import romantest</literal>.</para>
+</callout>
+</calloutlist>
+</example>
+<example>
+<title>Step 5: Loading the modules into a test suite</title>
+<screen>
+&prompt;<userinput>&regression_load1;</userinput>
+&prompt;<userinput>map(load, modules)</userinput>                     <co id="regression.alltogether.5.1"/>
+<computeroutput>[&lt;unittest.TestSuite tests=[
+  &lt;unittest.TestSuite tests=[&lt;apihelpertest.BadInput testMethod=testNoObject>]>,
+  &lt;unittest.TestSuite tests=[&lt;apihelpertest.KnownValues testMethod=testApiHelper>]>,
+  &lt;unittest.TestSuite tests=[
+    &lt;apihelpertest.ParamChecks testMethod=testCollapse>, 
+    &lt;apihelpertest.ParamChecks testMethod=testSpacing>]>, 
+    ...
+  ]
+]</computeroutput>
+&prompt;<userinput>unittest.TestSuite(map(load, modules))</userinput> <co id="regression.alltogether.5.2"/>
+</screen>
+<calloutlist>
+<callout arearefs="regression.alltogether.5.1">
+<para>These are real module objects.  Not only can you access them like any other module, instantiate classes and call functions, you can also introspect into the module to figure out which classes and functions it has in the first place.  That's what the <function>loadTestsFromModule</function> method does: it introspects into each module and returns a <literal>unittest.TestSuite</literal> object for each module.  Each <literal>TestSuite</literal> object actually contains a list of <literal>TestSuite</literal> objects, one for each <literal>TestCase</literal> class in your module, and each of those <literal>TestSuite</literal> objects contains a list of tests, one for each test method in your module.</para>
+</callout>
+<callout arearefs="regression.alltogether.5.2">
+<para>Finally, you wrap the list of <literal>TestSuite</literal> objects into one big test suite.  The &unittest_modulename; module has no problem traversing this tree of nested test suites within test suites; eventually it gets down to an individual test method and executes it, verifies that it passes or fails, and moves on to the next one.</para>
+</callout>
+</calloutlist>
+</example>
+<para>This introspection process is what the &unittest_modulename; module usually does for us.  Remember that magic-looking <literal>unittest.main()</literal> function that our individual test modules called to kick the whole thing off?  <function>unittest.main()</function> actually creates an instance of <literal>unittest.TestProgram</literal>, which in turn creates an instance of a <literal>unittest.defaultTestLoader</literal> and loads it up with the module that called it.  (How does it get a reference to the module that called it if you don't give it one?  By using the equally-magic <literal>__import__('__main__')</literal> command, which dynamically imports the currently-running module.  I could write a book on all the tricks and techniques used in the &unittest_modulename; module, but then I'd never finish this one.)</para>
+<example>
+<title>Step 6: Telling &unittest_modulename; to use your test suite</title>
+<programlisting>
+&regression_ifmain;
+&regression_main; <co id="regression.alltogether.6.1"/>
+</programlisting>
+</example>
+<calloutlist>
+<callout arearefs="regression.alltogether.6.1">
+<para>Instead of letting the &unittest_modulename; module do all its magic for us, you've done most of it yourself.  You've created a function (<function>regressionTest</function>) that imports the modules yourself, calls <literal>unittest.defaultTestLoader</literal> yourself, and wraps it all up in a test suite.  Now all you need to do is tell &unittest_modulename; that, instead of looking for tests and building a test suite in the usual way, it should just call the <function>regressionTest</function> function, which returns a ready-to-use <literal>TestSuite</literal>.</para>
+</callout>
+</calloutlist>
+</section>
+<section id="regression.summary">
+<?dbhtml filename="functional_programming/summary.html"?>
+<title>Summary</title>
+<abstract>
+<title/>
+<para>The &regression_filename; program and its output should now make perfect sense.</para>
+</abstract>
+<para>You should now feel comfortable doing all of these things:</para>
+<itemizedlist>
+<listitem><para>Manipulating <link linkend="regression.path">path information</link> from the command line.</para></listitem>
+<listitem><para>Filtering lists <link linkend="regression.filter">using &filter_function;</link> instead of list comprehensions.</para></listitem>
+<listitem><para>Mapping lists <link linkend="regression.map">using &map_function;</link> instead of list comprehensions.</para></listitem>
+<listitem><para>Dynamically <link linkend="regression.import">importing modules</link>.</para></listitem>
+</itemizedlist>
+</section>
+</chapter>
+<!--
+* dynamic module import using __import__
+* putting it all together, part 1: getting a list of modules in a directory
+- a little bit about how PyUnit works (defaultTestLoader.loadTestsFromModule)
+  - defaultTestLoader is an instance of TestLoader class
+  - loadTestsFromModule is a method of this class [code listing]
+  - uses dir to list contents of module [xref to apihelper.builtin]
+  - uses getattr to get reference to each thing [xref to apihelper.getattr]
+  - uses isinstance and issubclass to determine whether this thing is a class, and whether it is a subclass of unittest.TestCase [no xref, want to add this to apihelper.builtin?]
+  - if so, introspects *again* into the class to find all the test methods
+  - this is how unittest.main() worked in the original unit testing example [xref to roman], but now you're doing the work manually so you can iterate over multiple modules that you've manually loaded from external files
+- putting it all together, part 2
+- summary
+-->

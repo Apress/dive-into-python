@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!ENTITY openanything_module "<filename class='headerfile'>openanything</filename>">
+<!ENTITY openanything_filename "<filename>openanything.py</filename>">
+<!ENTITY useragent "<literal>User-Agent</literal>">
+<!ENTITY etag "<literal>ETag</literal>">
+<!ENTITY lastmodified "<literal>Last-Modified</literal>">
+<!ENTITY ifnonematch "<literal>If-None-Match</literal>">
+<!ENTITY ifmodifiedsince "<literal>If-Modified-Since</literal>">
+
+<!ENTITY oa_import "import urllib2, urlparse, gzip">
+<!ENTITY oa_importstringio "from StringIO import StringIO">
+
+<!ENTITY oa_useragent "USER_AGENT = 'OpenAnything/1.0 +http://diveintopython.org/http_web_services/'">
+
+<!ENTITY oa_smartredirect   "class SmartRedirectHandler(urllib2.HTTPRedirectHandler):    ">
+<!ENTITY oa_301_def         "    def http_error_301(self, req, fp, code, msg, headers):  ">
+<!ENTITY oa_301_result      "        result = urllib2.HTTPRedirectHandler.http_error_301(">
+<!ENTITY oa_301_result2     "            self, req, fp, code, msg, headers)              ">
+<!ENTITY oa_301_status      "        result.status = code                                ">
+<!ENTITY oa_301_return      "        return result                                       ">
+
+<!ENTITY oa_302_def         "    def http_error_302(self, req, fp, code, msg, headers):  ">
+<!ENTITY oa_302_result      "        result = urllib2.HTTPRedirectHandler.http_error_302(">
+<!ENTITY oa_302_result2     "            self, req, fp, code, msg, headers)              ">
+<!ENTITY oa_302_status      "        result.status = code                                ">
+<!ENTITY oa_302_return      "        return result                                       ">
+
+<!ENTITY oa_defaulthandler  "class DefaultErrorHandler(urllib2.HTTPDefaultErrorHandler):   ">
+<!ENTITY oa_default_def     "    def http_error_default(self, req, fp, code, msg, headers):">
+<!ENTITY oa_default_result  "        result = urllib2.HTTPError(                           ">
+<!ENTITY oa_default_result2 "            req.get_full_url(), code, msg, headers, fp)       ">
+<!ENTITY oa_default_status  "        result.status = code                                  ">
+<!ENTITY oa_default_return2 "        return result                                         ">
+
+<!ENTITY oa_def "def openAnything(source, etag=None, lastmodified=None, agent=USER_AGENT):">
+<!ENTITY oa_doc "    '''URL, filename, or string --> stream
+
+    This function lets you define parsers that take any input source
+    (URL, pathname to local or network file, or actual data as a string)
+    and deal with it in a uniform manner.  Returned object is guaranteed
+    to have all the basic stdio read methods (read, readline, readlines).
+    Just .close() the object when you're done with it.
+
+    If the etag argument is supplied, it will be used as the value of an
+    If-None-Match request header.
+
+    If the lastmodified argument is supplied, it must be a formatted
+    date/time string in GMT (as returned in the Last-Modified header of
+    a previous request).  The formatted date/time will be used
+    as the value of an If-Modified-Since request header.
+
+    If the agent argument is supplied, it will be used as the value of a
+    User-Agent request header.
+    '''">
+
+<!ENTITY oa_hasattr          "    if hasattr(source, 'read'):">
+<!ENTITY oa_hasattr_return   "        return source">
+
+<!ENTITY oa_stdin            "    if source == '-':">
+<!ENTITY oa_stdin_return     "        return sys.stdin">
+
+<!ENTITY oa_urlparse         "    if urlparse.urlparse(source)[0] == 'http':                                      ">
+<!ENTITY oa_urlparse_comment "        # open URL with urllib2                                                     ">
+<!ENTITY oa_request          "        request = urllib2.Request(source)                                           ">
+<!ENTITY oa_add_useragent    "        request.add_header('User-Agent', agent)                                     ">
+<!ENTITY of_if_lastmodified  "        if lastmodified:                                                            ">
+<!ENTITY oa_add_lastmodified "            request.add_header('If-Modified-Since', lastmodified)                   ">
+<!ENTITY oa_if_etag          "        if etag:                                                                    ">
+<!ENTITY oa_add_etag         "            request.add_header('If-None-Match', etag)                               ">
+<!ENTITY oa_add_gzip         "        request.add_header('Accept-encoding', 'gzip')                               ">
+<!ENTITY oa_build_opener     "        opener = urllib2.build_opener(SmartRedirectHandler(), DefaultErrorHandler())">
+<!ENTITY oa_open_open        "        return opener.open(request)                                                 ">
+    
+<!ENTITY oa_local_comment    "    # try to open with native open function (if source is a filename)">
+<!ENTITY oa_local_try        "    try:">
+<!ENTITY oa_local_return     "        return open(source)">
+<!ENTITY oa_local_except     "    except (IOError, OSError):">
+<!ENTITY oa_local_pass       "        pass">
+
+<!ENTITY oa_string_comment   "    # treat source as string">
+<!ENTITY oa_string_return    "    return StringIO(str(source))">
+
+<!ENTITY oa_fetch_def                  "def fetch(source, etag=None, last_modified=None, agent=USER_AGENT):  ">
+<!ENTITY oa_fetch_doc                  "    '''Fetch data and metadata from a URL, file, stream, or string'''">
+<!ENTITY oa_fetch_result               "    result = {}                                                      ">
+<!ENTITY oa_fetch_openanything         "    f = openAnything(source, etag, last_modified, agent)             ">
+<!ENTITY oa_fetch_read                 "    result['data'] = f.read()                                        ">
+<!ENTITY oa_fetch_headers              "    if hasattr(f, 'headers'):                                        ">
+<!ENTITY oa_fetch_save_etag_comment    "        # save ETag, if the server sent one                          ">
+<!ENTITY oa_fetch_get_etag             "        result['etag'] = f.headers.get('ETag')                       ">
+<!ENTITY oa_fetch_lastmodified_comment "        # save Last-Modified header, if the server sent one          ">
+<!ENTITY oa_fetch_get_lastmodified     "        result['lastmodified'] = f.headers.get('Last-Modified')      ">
+<!ENTITY oa_fetch_if_gzip              "        if f.headers.get('content-encoding', '') == 'gzip':          ">
+<!ENTITY oa_fetch_gzip_comment         "            # data came back gzip-compressed, decompress it          ">
+<!ENTITY oa_fetch_gzip                 "            result['data'] = gzip.GzipFile(fileobj=StringIO(result['data']])).read()">
+<!ENTITY oa_fetch_if_url               "    if hasattr(f, 'url'):                                            ">
+<!ENTITY oa_fetch_save_url             "        result['url'] = f.url                                        ">
+<!ENTITY oa_fetch_default_status       "        result['status'] = 200                                       ">
+<!ENTITY oa_fetch_if_status            "    if hasattr(f, 'status'):                                         ">
+<!ENTITY oa_fetch_save_status          "        result['status'] = f.status                                  ">
+<!ENTITY oa_fetch_close                "    f.close()                                                        ">
+<!ENTITY oa_fetch_return               "    return result                                                    ">

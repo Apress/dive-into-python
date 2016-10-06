@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!ENTITY apihelper_name "apihelper">
+<!ENTITY apihelper_filename '<filename class="headerfile">&apihelper_name;.py</filename>'>
+<!ENTITY apihelper_funcdef 'def info(object, spacing=10, collapse=1):'>
+<!ENTITY apihelper_docstring  '    """Print methods and doc strings.'>
+<!ENTITY apihelper_docstring2 '    '>
+<!ENTITY apihelper_docstring3 '    Takes module, class, list, dictionary, or string."""'>
+<!ENTITY apihelper_getattr    'getattr(object, method)'>
+<!ENTITY apihelper_methods    '    methodList = [method for method in dir(object) if callable(&apihelper_getattr;)]'>
+<!ENTITY apihelper_lambda     '    processFunc = collapse and (lambda s: " ".join(s.split())) or (lambda s: s)'>
+<!ENTITY apihelper_main       '    print "\n".join(["&pct;s &pct;s" &pct;
+                      (method.ljust(spacing),
+                       processFunc(str(getattr(object, method).__doc__)))
+                     for method in methodList])'>
+<!ENTITY apihelper_ifname     'if __name__ == "__main__":'>
+<!ENTITY apihelper_printdoc   '    print info.__doc__'>
+<!ENTITY apihelper_output '&prompt;<userinput>from apihelper import info</userinput>
+&prompt;<userinput>li = []</userinput>
+&prompt;<userinput>info(li)</userinput>
+<computeroutput>append     L.append(object) -- append object to end
+count      L.count(value) -> integer -- return number of occurrences of value
+extend     L.extend(list) -- extend list by appending list elements
+index      L.index(value) -> integer -- return index of first occurrence of value
+insert     L.insert(index, object) -- insert object before index
+pop        L.pop([index]) -> item -- remove and return item at index (default last)
+remove     L.remove(value) -- remove first occurrence of value
+reverse    L.reverse() -- reverse *IN PLACE*
+sort       L.sort([cmpfunc]) -- sort *IN PLACE*; if given, cmpfunc(x, y) -> -1, 0, 1</computeroutput>'>

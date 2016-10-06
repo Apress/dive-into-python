@@ -1,0 +1,132 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!ENTITY plural_module "<filename class='headerfile'>plural</filename>">
+<!ENTITY plural_filename "<filename>plural.py</filename>">
+
+<!-- plural common -->
+<!ENTITY importre       "import re">
+<!ENTITY plural_ifmain  "if __name__ == '__main__':
+    import sys
+    if sys.argv[1:]:
+        print plural(sys.argv[1])
+    else:
+        print __doc__">
+
+<!-- plural1.py -->
+<!ENTITY p1_defplural   "def plural(noun):                            ">
+<!ENTITY p1_if1         "    if re.search('[sxz]$', noun):            ">
+<!ENTITY p1_return1     "        return re.sub('$', 'es', noun)       ">
+<!ENTITY p1_if2         "    elif re.search('[^aeioudgkprt]h$', noun):">
+<!ENTITY p1_return2     "        return re.sub('$', 'es', noun)       ">
+<!ENTITY p1_if3         "    elif re.search('[^aeiou]y$', noun):      ">
+<!ENTITY p1_return3     "        return re.sub('y$', 'ies', noun)     ">
+<!ENTITY p1_else        "    else:                                    ">
+<!ENTITY p1_return4     "        return noun + 's'                    ">
+
+<!-- plural2.py -->
+
+<!ENTITY p2_defmatch1 "def match_sxz(noun):                          ">
+<!ENTITY p2_return1m  "    return re.search('[sxz]$', noun)          ">
+
+<!ENTITY p2_defapply1 "def apply_sxz(noun):                          ">
+<!ENTITY p2_return1a  "    return re.sub('$', 'es', noun)            ">
+
+<!ENTITY p2_defmatch2 "def match_h(noun):                            ">
+<!ENTITY p2_return2m  "    return re.search('[^aeioudgkprt]h$', noun)">
+
+<!ENTITY p2_defapply2 "def apply_h(noun):                            ">
+<!ENTITY p2_return2a  "    return re.sub('$', 'es', noun)            ">
+
+<!ENTITY p2_defmatch3 "def match_y(noun):                            ">
+<!ENTITY p2_return3m  "    return re.search('[^aeiou]y$', noun)      ">
+        
+<!ENTITY p2_defapply3 "def apply_y(noun):                            ">
+<!ENTITY p2_return3a  "    return re.sub('y$', 'ies', noun)          ">
+
+<!ENTITY p2_defmatch4 "def match_default(noun):                      ">
+<!ENTITY p2_return4m  "    return 1                                  ">
+
+<!ENTITY p2_defapply4 "def apply_default(noun):                      ">
+<!ENTITY p2_return4a  "    return noun + 's'                         ">
+
+<!ENTITY p2_rules     "rules = ((match_sxz, apply_sxz),
+         (match_h, apply_h),
+         (match_y, apply_y),
+         (match_default, apply_default)
+         )                                    ">
+
+<!ENTITY p2_defplural "def plural(noun):                             ">
+<!ENTITY p2_for       "    for matchesRule, applyRule in rules:      ">
+<!ENTITY p2_if        "        if matchesRule(noun):                 ">
+<!ENTITY p2_return    "            return applyRule(noun)            ">
+
+<!-- plural3.py -->
+<!ENTITY p3_rules     "rules = \
+  (
+    (
+     lambda word: re.search('[sxz]$', word),
+     lambda word: re.sub('$', 'es', word)
+    ),
+    (
+     lambda word: re.search('[^aeioudgkprt]h$', word),
+     lambda word: re.sub('$', 'es', word)
+    ),
+    (
+     lambda word: re.search('[^aeiou]y$', word),
+     lambda word: re.sub('y$', 'ies', word)
+    ),
+    (
+     lambda word: re.search('$', word),
+     lambda word: re.sub('$', 's', word)
+    )
+   )                                          ">
+
+<!ENTITY p3_defplural "def plural(noun):                             ">
+<!ENTITY p3_for       "    for matchesRule, applyRule in rules:      ">
+<!ENTITY p3_if        "        if matchesRule(noun):                 ">
+<!ENTITY p3_return    "            return applyRule(noun)            ">
+
+<!-- plural4.py -->
+<!ENTITY p4_defbuild  "def buildMatchAndApplyFunctions((pattern, search, replace)):  ">
+<!ENTITY p4_match     "    matchFunction = lambda word: re.search(pattern, word)     ">
+<!ENTITY p4_apply     "    applyFunction = lambda word: re.sub(search, replace, word)">
+<!ENTITY p4_return    "    return (matchFunction, applyFunction)                     ">
+
+<!ENTITY p4_patterns  "patterns = \
+  (
+    ('[sxz]$', '$', 'es'),
+    ('[^aeioudgkprt]h$', '$', 'es'),
+    ('(qu|[^aeiou])y$', 'y$', 'ies'),
+    ('$', '$', 's')
+  )                                                ">
+<!ENTITY p4_rules     "rules = map(buildMatchAndApplyFunctions, patterns) ">
+
+<!ENTITY p4_defplural "def plural(noun):                                  ">
+<!ENTITY p4_for       "    for matchesRule, applyRule in rules:           ">
+<!ENTITY p4_if        "        if matchesRule(noun):                      ">
+<!ENTITY p4_return2   "            return applyRule(noun)                 ">
+
+<!-- plural5.py -->
+<!ENTITY p5_import    "import string                                                                     ">
+
+<!ENTITY p5_defbuild  "def buildRule((pattern, search, replace)):                                        ">
+<!ENTITY p5_return    "    return lambda word: re.search(pattern, word) and re.sub(search, replace, word)">
+
+<!ENTITY p5_defplural "def plural(noun, language='en'):                            ">
+<!ENTITY p5_lines     "    lines = file('rules.&#37;s' &#37; language).readlines()         ">
+<!ENTITY p5_patterns  "    patterns = map(string.split, lines)                     ">
+<!ENTITY p5_rules     "    rules = map(buildRule, patterns)                        ">
+<!ENTITY p5_for       "    for rule in rules:                                      ">
+<!ENTITY p5_apply     "        result = rule(noun)                                 ">
+<!ENTITY p5_if        "        if result: return result                            ">
+
+<!-- plural6.py -->
+<!ENTITY p6_defrules  "def rules(language):                                                                 ">
+<!ENTITY p6_forline   "    for line in file('rules.&#37;s' &#37; language):                                         ">
+<!ENTITY p6_split     "        pattern, search, replace = line.split()                                      ">
+<!ENTITY p6_yield     "        yield lambda word: re.search(pattern, word) and re.sub(search, replace, word)">
+
+<!ENTITY p6_defplural "def plural(noun, language='en'):      ">
+<!ENTITY p6_for       "    for applyRule in rules(language): ">
+<!ENTITY p6_apply     "        result = applyRule(noun)      ">
+<!ENTITY p6_return    "        if result: return result      ">
+

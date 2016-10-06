@@ -1,0 +1,1742 @@
+<?xml version="1.0" encoding="utf-8"?>
+<chapter id="fileinfo">
+<?dbhtml filename="object_oriented_framework/index.html"?>
+<title>Objects and Object-Orientation</title>
+<titleabbrev id="fileinfo.numberonly">Chapter 5</titleabbrev>
+<abstract>
+<title/>
+<para>This chapter, and pretty much every chapter after this, deals with object-oriented &python; programming.</para>
+</abstract>
+<section id="fileinfo.divein">
+<title>Diving In</title>
+<abstract>
+<title/>
+<para>Here is a complete, working &python; program.  Read the <link linkend="odbchelper.docstring">&docstring;s</link> of the module, the classes, and the functions to get an overview of what this program does and how it works.  As usual, don't worry about the stuff you don't understand; that's what the rest of the chapter is for.</para>
+</abstract>
+<example>
+<title>&fileinfo_filename;</title>
+&para_download;
+<programlisting>
+&fileinfo_doc;
+&fileinfo_import;
+
+&fileinfo_stripnullsdef;
+&fileinfo_stripnullsdoc;
+&fileinfo_stripnullscode;
+
+&fileinfo_filedef;
+&fileinfo_filedoc;
+&fileinfo_fileinit;
+&fileinfo_filecallsuper;
+&fileinfo_fileinitcode;
+
+&fileinfo_mp3def;
+&fileinfo_mp3doc;
+&fileinfo_mp3classvar;
+
+&fileinfo_mp3parsedef;
+&fileinfo_mp3parsedoc;
+&fileinfo_mp3parseclear;
+&fileinfo_mp3parsetryexcepttry;
+&fileinfo_mp3parseopen;
+&fileinfo_mp3parsetryfinallytry;
+&fileinfo_mp3parseseek;
+&fileinfo_mp3parseread;
+&fileinfo_mp3parsetryfinallyfinally;
+&fileinfo_mp3parseclose;
+&fileinfo_mp3parseiftag;
+&fileinfo_mp3parsefor;
+&fileinfo_mp3parsecode;
+&fileinfo_mp3parsetryexceptexcept;
+&fileinfo_mp3parsepass;
+
+&fileinfo_mp3setitemdef;
+&fileinfo_mp3setitemif;
+&fileinfo_mp3setitemparse;
+&fileinfo_mp3setitemcallsuper;
+
+&fileinfo_listdef;
+&fileinfo_listdoc;
+&fileinfo_listupper;
+&fileinfo_listcode;
+&fileinfo_getdef;
+&fileinfo_getdoc;
+&fileinfo_getcode;
+&fileinfo_getreturn;
+&fileinfo_listreturn;
+
+&fileinfo_ifname;
+&fileinfo_for; <co id="fileinfo_divein.1.1"/>
+&fileinfo_print;
+&fileinfo_printblank;</programlisting>
+<calloutlist>
+<callout arearefs="fileinfo_divein.1.1">
+<para>This program's output depends on the files on your hard drive.  To get meaningful output, you'll need to change the directory path to point to a directory of MP3 files on your own machine.</para>
+</callout>
+</calloutlist>
+</example>
+<informalexample>
+<!--<title>Output of &fileinfo_filename;</title>-->
+<para>This is the output I got on my machine.  Your output will be different, unless, by some startling coincidence, you share my exact taste in music.</para>
+<screen><computeroutput>album=
+artist=Ghost in the Machine
+title=A Time Long Forgotten (Concept
+genre=31
+name=/music/_singles/a_time_long_forgotten_con.mp3
+year=1999
+comment=http://mp3.com/ghostmachine
+
+album=Rave Mix
+artist=***DJ MARY-JANE***
+title=HELLRAISER****Trance from Hell
+genre=31
+name=/music/_singles/hellraiser.mp3
+year=2000
+comment=http://mp3.com/DJMARYJANE
+
+album=Rave Mix
+artist=***DJ MARY-JANE***
+title=KAIRO****THE BEST GOA
+genre=31
+name=/music/_singles/kairo.mp3
+year=2000
+comment=http://mp3.com/DJMARYJANE
+
+album=Journeys
+artist=Masters of Balance
+title=Long Way Home
+genre=31
+name=/music/_singles/long_way_home1.mp3
+year=2000
+comment=http://mp3.com/MastersofBalan
+
+album=
+artist=The Cynic Project
+title=Sidewinder
+genre=18
+name=/music/_singles/sidewinder.mp3
+year=2000
+comment=http://mp3.com/cynicproject
+
+album=Digitosis@128k
+artist=VXpanded
+title=Spinning
+genre=255
+name=/music/_singles/spinning.mp3
+year=2000
+comment=http://mp3.com/artists/95/vxp</computeroutput></screen>
+</informalexample>
+</section>
+<section id="fileinfo.fromimport">
+<?dbhtml filename="object_oriented_framework/importing_modules.html"?>
+<title>Importing Modules Using &frommoduleimport;</title>
+<abstract>
+<title/>
+<para>&python; has two ways of importing modules.  Both are useful, and you should know when to use each.  One way, &importmodule;, you've already seen in <xref linkend="odbchelper.objects"/>.  The other way accomplishes the same thing, but it has subtle and important differences.</para>
+</abstract>
+<informalexample>
+<!--<title>Basic &frommoduleimport; Syntax</title>-->
+<para>Here is the basic &frommoduleimport; syntax:</para>
+<programlisting>
+&fileinfo_importuserdict;
+</programlisting>
+</informalexample>
+<para>This is similar to the <link linkend="odbchelper.import">&importmodule;</link> syntax that you know and love, but with an important difference: the attributes and methods of the imported module &types; are imported directly into the local namespace, so they are available directly, without qualification by module name.  You can import individual items or use &frommoduleimportstar; to import everything.</para>
+<note id="compare.fromimport.perl" role="compare" vendor="perl">
+<title>&python; &vs; &perl;: &frommoduleimport;</title>
+<para>&frommoduleimportstar; in &python; is like <literal>use <replaceable>module</replaceable></literal> in &perl;; &importmodule; in &python; is like <literal>require <replaceable>module</replaceable></literal> in &perl;.</para>
+</note>
+<note id="compare.fromimport.java" role="compare" vendor="java">
+<title>&python; &vs; &java;: &frommoduleimport;</title>
+<para>&frommoduleimportstar; in &python; is like <literal>import <replaceable>module</replaceable>.*</literal> in &java;; &importmodule; in &python; is like <literal>import <replaceable>module</replaceable></literal> in &java;.</para>
+</note>
+<example>
+<title>&importmodule; &vs; &frommoduleimport;</title>
+<screen>&prompt;<userinput>import types</userinput>
+&prompt;<userinput>types.FunctionType</userinput>             <co id="fileinfo.import.1.1"/>
+<computeroutput>&lt;type 'function'&gt;</computeroutput>
+&prompt;<userinput>FunctionType</userinput>                   <co id="fileinfo.import.1.2"/>
+<computeroutput role="traceback">&traceback;
+NameError: There is no variable named 'FunctionType'</computeroutput>
+&prompt;<userinput>from types import FunctionType</userinput> <co id="fileinfo.import.1.3"/>
+&prompt;<userinput>FunctionType</userinput>                   <co id="fileinfo.import.1.4"/>
+<computeroutput>&lt;type 'function'&gt;</computeroutput></screen>
+<calloutlist>
+<callout arearefs="fileinfo.import.1.1">
+<para>The <filename class="headerfile">types</filename> module contains no methods; it just has attributes for each &python; object type.  Note that the attribute, &functiontype;, must be qualified by the module name, <filename class="headerfile">types</filename>.</para>
+</callout>
+<callout arearefs="fileinfo.import.1.2">
+<para>&functiontype; by itself has not been defined in this namespace; it exists only in the context of <filename class="headerfile">types</filename>.</para>
+</callout>
+<callout arearefs="fileinfo.import.1.3">
+<para>This syntax imports the attribute &functiontype; from the <filename class="headerfile">types</filename> module directly into the local namespace.</para>
+</callout>
+<callout arearefs="fileinfo.import.1.4">
+<para>Now &functiontype; can be accessed directly, without reference to <filename class="headerfile">types</filename>.</para>
+</callout>
+</calloutlist>
+</example>
+<para>When should you use &frommoduleimport;?</para>
+<itemizedlist>
+<listitem><para>If you will be accessing attributes and methods often and don't want to type the module name over and over, use &frommoduleimport;.</para></listitem>
+<listitem><para>If you want to selectively import some attributes and methods but not others, use &frommoduleimport;.</para></listitem>
+<listitem><para>If the module contains attributes or functions with the same name as ones in your module, you must use &importmodule; to avoid name conflicts.</para></listitem>
+</itemizedlist>
+<para>Other than that, it's just a matter of style, and you will see &python; code written both ways.</para>
+<caution>
+<title/>
+<para>Use <literal>from module import *</literal> sparingly, because it makes it difficult to determine where a particular function or attribute came from, and that makes debugging and refactoring more difficult.</para>
+</caution>
+
+<itemizedlist role="furtherreading">
+<title>Further Reading on Module Importing Techniques</title>
+<listitem><para>&effbot; has more to say on <ulink url="&url_effbot;import-confusion.htm">&importmodule; &vs; &frommoduleimport;</ulink>.</para></listitem>
+<listitem><para>&pythontutorial; discusses advanced import techniques, including <ulink url="&url_pythontutorial;node8.html#SECTION008410000000000000000">&frommoduleimportstar;</ulink>.</para></listitem>
+</itemizedlist>
+</section>
+<section id="fileinfo.class">
+<?dbhtml filename="object_oriented_framework/defining_classes.html"?>
+<title>Defining Classes</title>
+<abstract>
+<title/>
+<para>&python; is fully object-oriented: you can define your own classes, inherit from your own or built-in classes, and instantiate the classes you've defined.</para>
+</abstract>
+<para>Defining a class in &python; is simple.  As with functions, there is no separate interface definition.  Just define the class and start coding.  A &python; class starts with the reserved word &class;, followed by the class name.  Technically, that's all that's required, since a class doesn't need to inherit from any other class.</para>
+<example id="fileinfo.class.simplest">
+<title>The Simplest &python; Class</title>
+<programlisting>
+class Loaf: <co id="fileinfo.class.1.1"/>
+    pass    <co id="fileinfo.class.1.2"/> <co id="fileinfo.class.1.3"/></programlisting>
+<calloutlist>
+<callout arearefs="fileinfo.class.1.1">
+<para>The name of this class is <classname>Loaf</classname>, and it doesn't inherit from any other class.  Class names are usually capitalized, <classname>EachWordLikeThis</classname>, but this is only a convention, not a requirement.</para>
+</callout>
+<callout arearefs="fileinfo.class.1.2">
+<para>This class doesn't define any methods or attributes, but syntactically, there needs to be something in the definition, so you use &pass;.  This is a &python; reserved word that just means <quote>move along, nothing to see here</quote>.  It's a statement that does nothing, and it's a good placeholder when you're stubbing out functions or classes.</para>
+</callout>
+<callout arearefs="fileinfo.class.1.3">
+<para>You probably guessed this, but everything in a class is indented, just like the code within a function, &if; statement, &for; loop, and so forth.  The first thing not indented is not in the class.</para>
+</callout>
+</calloutlist>
+</example>
+<note id="compare.pass.java" role="compare" vendor="java">
+<title>&python; &vs; &java;: &pass;</title>
+<para>The &pass; statement in &python; is like an empty set of braces (<literal>{}</literal>) in &java; or &c;.</para>
+</note>
+<para>Of course, realistically, most classes will be inherited from other classes, and they will define their own class methods and attributes.  But as you've just seen, there is nothing that a class absolutely must have, other than a name.  In particular, &cpp; programmers may find it odd that &python; classes don't have explicit constructors and destructors.  &python; classes do have something similar to a constructor: the &init; method.</para>
+<example id="fileinfo.class.example">
+<title>Defining the &fileinfo_classname; Class</title>
+<programlisting>
+&fileinfo_importuserdict;
+
+&fileinfo_filedef; <co id="fileinfo.class.2.1"/></programlisting>
+<calloutlist>
+<callout arearefs="fileinfo.class.2.1">
+<para>In &python;, the ancestor of a class is simply listed in parentheses immediately after the class name.  So the <classname>FileInfo</classname> class is inherited from the <classname>UserDict</classname> class (which was <link linkend="fileinfo.fromimport">imported from the <filename class="headerfile">UserDict</filename> module</link>).  <classname>UserDict</classname> is a class that acts like a dictionary, allowing you to essentially subclass the dictionary datatype and add your own behavior.  (There are similar classes <classname>UserList</classname> and <classname>UserString</classname> which allow you to subclass lists and strings.)  There is a bit of black magic behind this, which you will demystify later in this chapter when you explore the <classname>UserDict</classname> class in more depth.</para>
+</callout>
+</calloutlist>
+</example>
+<note id="compare.extends.java" role="compare" vendor="java">
+<title>&python; &vs; &java;: Ancestors</title>
+<para>In &python;, the ancestor of a class is simply listed in parentheses immediately after the class name.  There is no special keyword like <literal>extends</literal> in &java;.</para>
+</note>
+<para>&python; supports multiple inheritance.  In the parentheses following the class name, you can list as many ancestor classes as you like, separated by commas.</para>
+<section>
+<title>Initializing and Coding Classes</title>
+<para>This example shows the initialization of the &fileinfo_classname; class using the &init; method.</para>
+<example id="fileinfo.init.example">
+<title>Initializing the &fileinfo_classname; Class</title>
+<programlisting>
+&fileinfo_filedef;
+&fileinfo_filedoc;              <co id="fileinfo.class.2.2"/>
+&fileinfo_fileinit; <co id="fileinfo.class.2.3"/> <co id="fileinfo.class.2.4"/> <co id="fileinfo.class.2.5"/></programlisting>
+<calloutlist>
+<callout arearefs="fileinfo.class.2.2">
+<para>Classes can (and <link linkend="tip.docstring">should</link>) have &docstring;s too, just like modules and functions.</para>
+</callout>
+<callout arearefs="fileinfo.class.2.3">
+<para>&init; is called immediately after an instance of the class is created.  It would be tempting but incorrect to call this the constructor of the class.  It's tempting, because it looks like a constructor (by convention, &init; is the first method defined for the class), acts like one (it's the first piece of code executed in a newly created instance of the class), and even sounds like one (<quote>init</quote> certainly suggests a constructor-ish nature).  Incorrect, because the object has already been constructed by the time &init; is called, and you already have a valid reference to the new instance of the class.  But &init; is the closest thing you're going to get to a constructor in &python;, and it fills much the same role.</para>
+</callout>
+<callout arearefs="fileinfo.class.2.4">
+<para>The first argument of every class method, including &init;, is always a reference to the current instance of the class.  By convention, this argument is always named &self;.  In the &init; method, &self; refers to the newly created object; in other class methods, it refers to the instance whose method was called.  Although you need to specify &self; explicitly when defining the method, you do <emphasis>not</emphasis> specify it when calling the method; &python; will add it for you automatically.</para>
+</callout>
+<callout arearefs="fileinfo.class.2.5">
+<para>&init; methods can take any number of arguments, and just like functions, the arguments can be defined with default values, making them optional to the caller.  In this case, <varname>filename</varname> has a default value of &none;, which is the &python; null value.</para>
+</callout>
+</calloutlist>
+</example>
+<note id="compare.self.java" role="compare" vendor="java">
+<title>&python; &vs; &java;: &self;</title>
+<para>By convention, the first argument of any &python; class method (the reference to the current instance) is called &self;.  This argument fills the role of the reserved word &this; in &cpp; or &java;, but &self; is not a reserved word in &python;, merely a naming convention.  Nonetheless, please don't call it anything but &self;; this is a very strong convention.</para>
+</note>
+<example id="fileinfo.init.code.example">
+<title>Coding the &fileinfo_classname; Class</title>
+<programlisting>
+&fileinfo_filedef;
+&fileinfo_filedoc;
+&fileinfo_fileinit;
+&fileinfo_filecallsuper;        <co id="fileinfo.class.2.6"/>
+&fileinfo_fileinitcode;        <co id="fileinfo.class.2.7"/>
+                                       <co id="fileinfo.class.2.8"/></programlisting>
+<calloutlist>
+<callout arearefs="fileinfo.class.2.6">
+<para>Some pseudo-object-oriented languages like &powerbuilder; have a concept of <quote>extending</quote> constructors and other events, where the ancestor's method is called automatically before the descendant's method is executed.  &python; does not do this; you must always explicitly call the appropriate method in the ancestor class.</para>
+</callout>
+<callout arearefs="fileinfo.class.2.7">
+<para>I told you that this class acts like a dictionary, and here is the first sign of it.  You're assigning the argument <varname>filename</varname> as the value of this object's <literal>name</literal> key.</para>
+</callout>
+<callout arearefs="fileinfo.class.2.8">
+<para>Note that the &init; method never returns a value.</para>
+</callout>
+</calloutlist>
+</example>
+</section>
+<section>
+<title>Knowing When to Use &self; and &init;</title>
+<para>When defining your class methods, you <emphasis>must</emphasis> explicitly list &self; as the first argument for each method, including &init;.  When you call a method of an ancestor class from within your class, you <emphasis>must</emphasis> include the &self; argument.  But when you call your class method from outside, you do not specify anything for the &self; argument; you skip it entirely, and &python; automatically adds the instance reference for you.  I am aware that this is confusing at first; it's not really inconsistent, but it may appear inconsistent because it relies on a distinction (between bound and unbound methods) that you don't know about yet.</para>
+<para>Whew.  I realize that's a lot to absorb, but you'll get the hang of it.  All &python; classes work the same way, so once you learn one, you've learned them all.  If you forget everything else, remember this one thing, because I promise it will trip you up:</para>
+<note id="tip.initoptional">
+<title>&init; Methods</title>
+<para>&init; methods are optional, but when you define one, you must remember to explicitly call the ancestor's &init; method (if it defines one).  This is more generally true: whenever a descendant wants to extend the behavior of the ancestor, the descendant method must explicitly call the ancestor method at the proper time, with the proper arguments.</para>
+</note>
+<itemizedlist role="furtherreading">
+<title>Further Reading on &python; Classes</title>
+<listitem><para>&learningtoprogram; has a gentler <ulink url="&url_learningtoprogram;tutclass.htm">introduction to classes</ulink>.</para></listitem>
+<listitem><para>&howtothink; shows how to <ulink url="&url_howtothink;chap12.htm">use classes to model compound datatypes</ulink>.</para></listitem>
+<listitem><para>&pythontutorial; has an in-depth look at <ulink url="&url_pythontutorial;node11.html">classes, namespaces, and inheritance</ulink>.</para></listitem>
+<listitem><para>&pythonknowledgebase; answers <ulink url="&url_pythonknowledgebase;index.phtml/fid/242">common questions about classes</ulink>.</para></listitem>
+</itemizedlist>
+</section>
+</section>
+<section id="fileinfo.create">
+<?dbhtml filename="object_oriented_framework/instantiating_classes.html"?>
+<title>Instantiating Classes</title>
+<abstract>
+<title/>
+<para>Instantiating classes in &python; is straightforward.  To instantiate a class, simply call the class as if it were a function, passing the arguments that the &init; method defines.  The return value will be the newly created object.</para>
+</abstract>
+<example>
+<title>Creating a <classname>FileInfo</classname> Instance</title>
+<screen>&prompt;<userinput>import &fileinfo_name;</userinput>
+&prompt;<userinput>f = fileinfo.FileInfo("/music/_singles/kairo.mp3")</userinput> <co id="fileinfo.create.1.1"/>
+&prompt;<userinput>f.__class__</userinput>                                        <co id="fileinfo.create.1.2"/>
+<computeroutput>&lt;class fileinfo.FileInfo at 010EC204></computeroutput>
+&prompt;<userinput>f.__doc__</userinput>                                          <co id="fileinfo.create.1.3"/>
+<computeroutput>'store file metadata'</computeroutput>
+&prompt;<userinput>f</userinput>                                                  <co id="fileinfo.create.1.4"/>
+<computeroutput>{'name': '/music/_singles/kairo.mp3'}</computeroutput></screen>
+<calloutlist>
+<callout arearefs="fileinfo.create.1.1">
+<para>You are creating an instance of the <classname>FileInfo</classname> class (defined in the &fileinfo_modulename; module) and assigning the newly created instance to the variable <varname>f</varname>.  You are passing one parameter, <literal>/music/_singles/kairo.mp3</literal>, which will end up as the <varname>filename</varname> argument in <classname>FileInfo</classname>'s &init; method.</para>
+</callout>
+<callout arearefs="fileinfo.create.1.2">
+<para>Every class instance has a built-in attribute, &classattr;, which is the object's class.  (Note that the representation of this includes the physical address of the instance on my machine; your representation will be different.)  &java; programmers may be familiar with the <classname>Class</classname> class, which contains methods like <function>getName</function> and <function>getSuperclass</function> to get metadata information about an object.  In &python;, this kind of metadata is available directly on the object itself through attributes like &classattr;, <literal>__name__</literal>, and <literal>__bases__</literal>.</para>
+</callout>
+<callout arearefs="fileinfo.create.1.3">
+<para>You can access the instance's &docstring; just as with a function or a module.  All instances of a class share the same &docstring;.</para>
+</callout>
+<callout arearefs="fileinfo.create.1.4">
+<para>Remember when the &init; method <link linkend="fileinfo.class.example">assigned its <varname>filename</varname> argument to <literal>self["name"]</literal></link>?  Well, here's the result.  The arguments you pass when you create the class instance get sent right along to the &init; method (along with the object reference, &self;, which &python; adds for free).</para>
+</callout>
+</calloutlist>
+</example>
+<note id="compare.new.java" role="compare" vendor="java">
+<title>&python; &vs; &java;: Instantiating Classes</title>
+<para>In &python;, simply call a class as if it were a function to create a new instance of the class.  There is no explicit &new; operator like &cpp; or &java;.</para>
+</note>
+<section>
+<title>Garbage Collection</title>
+<para>If creating new instances is easy, destroying them is even easier.  In general, there is no need to explicitly free instances, because they are freed automatically when the variables assigned to them go out of scope.  Memory leaks are rare in &python;.</para>
+<example id="fileinfo.scope">
+<title>Trying to Implement a Memory Leak</title>
+<screen>&prompt;<userinput>def leakmem():</userinput>
+&continuationprompt;<userinput>f = fileinfo.FileInfo('/music/_singles/kairo.mp3')</userinput> <co id="fileinfo.create.2.1"/>
+&continuationprompt;
+&prompt;<userinput>for i in range(100):</userinput>
+&continuationprompt;<userinput>leakmem()</userinput>                                          <co id="fileinfo.create.2.3"/></screen>
+<calloutlist>
+<callout arearefs="fileinfo.create.2.1">
+<para>Every time the <function>leakmem</function> function is called, you are creating an instance of <classname>FileInfo</classname> and assigning it to the variable <varname>f</varname>, which is a local variable within the function.  Then the function ends without ever freeing <varname>f</varname>, so you would expect a memory leak, but you would be wrong.  When the function ends, the local variable <varname>f</varname> goes out of scope.  At this point, there are no longer any references to the newly created instance of <classname>FileInfo</classname> (since you never assigned it to anything other than <varname>f</varname>), so &python; destroys the instance for us.</para>
+</callout>
+<callout arearefs="fileinfo.create.2.3">
+<para>No matter how many times you call the <function>leakmem</function> function, it will never leak memory, because every time, &python; will destroy the newly created &fileinfo_classname; class before returning from <function>leakmem</function>.</para>
+</callout>
+</calloutlist>
+</example>
+<para>The technical term for this form of garbage collection is <quote>reference counting</quote>.  &python; keeps a list of references to every instance created.  In the above example, there was only one reference to the &fileinfo_classname; instance: the local variable <varname>f</varname>.  When the function ends, the variable <varname>f</varname> goes out of scope, so the reference count drops to &zero;, and &python; destroys the instance automatically.</para>
+<para>In previous versions of &python;, there were situations where reference counting failed, and &python; couldn't clean up after you.  If you created two instances that referenced each other (for instance, a doubly-linked list, where each node has a pointer to the previous and next node in the list), neither instance would ever be destroyed automatically because &python; (correctly) believed that there is always a reference to each instance.  &python; 2.0 has an additional form of garbage collection called <quote>mark-and-sweep</quote> which is smart enough to notice this virtual gridlock and clean up circular references correctly.</para>
+<para>As a former philosophy major, it disturbs me to think that things disappear when no one is looking at them, but that's exactly what happens in &python;.  In general, you can simply forget about memory management and let &python; clean up after you.</para>
+<itemizedlist role="furtherreading">
+<title>Further Reading on Garbage Collection</title>
+<listitem><para>&pythonlibraryreference; summarizes <ulink url="&url_pythonlibraryreference;specialattrs.html">built-in attributes like &classattr;</ulink>.</para></listitem>
+<listitem><para>&pythonlibraryreference; documents the <ulink url="&url_pythonlibraryreference;module-gc.html"><filename class="headerfile">gc</filename> module</ulink>, which gives you low-level control over &python;'s garbage collection.</para></listitem>
+</itemizedlist>
+</section>
+</section>
+<section id="fileinfo.userdict">
+<?dbhtml filename="object_oriented_framework/userdict.html"?>
+<title>Exploring &userdict_classname;: A Wrapper Class</title>
+<abstract>
+<title/>
+<para>As you've seen, &fileinfo_classname; is a class that acts like a dictionary.  To explore this further, let's look at the &userdict_classname; class in the &userdict; module, which is the ancestor of the &fileinfo_classname; class.  This is nothing special; the class is written in &python; and stored in a <literal>.py</literal> file, just like any other &python; code.  In particular, it's stored in the <filename class="directory">lib</filename> directory in your &python; installation.</para>
+</abstract>
+<tip id="tip.locate">
+<!--<title>Open Modules Quickly</title>-->
+<title/>
+<para>In the &activepython; &ide; on &windows;, you can quickly open any module in your library path by selecting
+<menuchoice>
+<shortcut>
+<keycombo>
+<keycap>Ctrl</keycap>
+<keysym>L</keysym>
+</keycombo>
+</shortcut>
+<guimenu>File</guimenu>
+<guimenuitem><accel>L</accel>ocate...</guimenuitem>
+</menuchoice>.</para>
+</tip>
+<example id="fileinfo.userdict.init.example">
+<title>Defining the &userdict_classname; Class</title>
+<programlisting>
+&userdict_class; <co id="fileinfo.userdict.1.1"/>
+&userdict_init; <co id="fileinfo.userdict.1.2"/>
+&userdict_initassign; <co id="fileinfo.userdict.1.3"/>
+&userdict_initupdate; <co id="fileinfo.userdict.1.4"/> <co id="fileinfo.userdict.1.5"/>
+</programlisting>
+<calloutlist>
+<callout arearefs="fileinfo.userdict.1.1">
+<para>Note that &userdict_classname; is a base class, not inherited from any other class.</para>
+</callout>
+<callout arearefs="fileinfo.userdict.1.2">
+<para>This is the &init; method that you <link linkend="fileinfo.class.example">overrode in the &fileinfo_classname; class</link>.  Note that the argument list in this ancestor class is different than the descendant.  That's okay; each subclass can have its own set of arguments, as long as it calls the ancestor with the correct arguments.  Here the ancestor class has a way to define initial values (by passing a dictionary in the <varname>dict</varname> argument) which the &fileinfo_classname; does not use.</para>
+</callout>
+<callout arearefs="fileinfo.userdict.1.3">
+<para>&python; supports data attributes (called <quote>instance variables</quote> in &java; and &powerbuilder;, and <quote>member variables</quote> in &cpp;).  Data attributes are pieces of data held by a specific instance of a class.  In this case, each instance of &userdict_classname; will have a data attribute <varname>data</varname>.  To reference this attribute from code outside the class, you qualify it with the instance name, <literal><replaceable>instance</replaceable>.data</literal>, in the same way that you qualify a function with its module name.  To reference a data attribute from within the class, you use &self; as the qualifier.  By convention, all data attributes are initialized to reasonable values in the &init; method.  However, this is not required, since data attributes, like local variables, <link linkend="odbchelper.vardef">spring into existence</link> when they are first assigned a value.</para>
+</callout>
+<callout arearefs="fileinfo.userdict.1.4">
+<para>The &update; method is a dictionary duplicator: it copies all the keys and values from one dictionary to another.  This does <emphasis>not</emphasis> clear the target dictionary first; if the target dictionary already has some keys, the ones from the source dictionary will be overwritten, but others will be left untouched.  Think of &update; as a merge function, not a copy function.</para>
+</callout>
+<callout arearefs="fileinfo.userdict.1.5">
+<para>This is a syntax you may not have seen before (I haven't used it in the examples in this book).  It's an &if; statement, but instead of having an indented block starting on the next line, there is just a single statement on the same line, after the colon.  This is perfectly legal syntax, which is just a shortcut you can use when you have only one statement in a block.  (It's like specifying a single statement without braces in &cpp;.)  You can use this syntax, or you can have indented code on subsequent lines, but you can't do both for the same block.</para>
+</callout>
+</calloutlist>
+</example>
+<note id="compare.overloading" role="compare" vendor="java">
+<title>&python; &vs; &java;: Function Overloading</title>
+<para>&java; and &powerbuilder; support function overloading by argument list, &ie; one class can have multiple methods with the same name but a different number of arguments, or arguments of different types.  Other languages (most notably &plsql;) even support function overloading by argument name; &ie; one class can have multiple methods with the same name and the same number of arguments of the same type but different argument names.  &python; supports neither of these; it has no form of function overloading whatsoever.  Methods are defined solely by their name, and there can be only one method per class with a given name.  So if a descendant class has an &init; method, it <emphasis>always</emphasis> overrides the ancestor &init; method, even if the descendant defines it with a different argument list.  And the same rule applies to any other method.</para>
+</note>
+<note id="fileinfo.derivedclasses">
+<!--<title>Guido on Derived Classes</title>-->
+<title/>
+<para>Guido, the original author of &python;, explains method overriding this way: "Derived classes may override methods of their base classes. Because methods have no special privileges when calling other methods of the same object, a method of a base class that calls another method defined in the same base class, may in fact end up calling a method of a derived class that overrides it. (For &cpp; programmers: all methods in &python; are effectively virtual.)"  If that doesn't make sense to you (it confuses the hell out of me), feel free to ignore it.  I just thought I'd pass it along.</para>
+</note>
+<caution id="note.dataattributes">
+<!--<title>Always Initialize Data Attributes</title>-->
+<title/>
+<para>Always assign an initial value to all of an instance's data attributes in the &init; method.  It will save you hours of debugging later, tracking down <classname>AttributeError</classname> exceptions because you're referencing uninitialized (and therefore non-existent) attributes.</para>
+</caution>
+<example id="fileinfo.userdict.normalmethods">
+<title>&userdict_classname; Normal Methods</title>
+<programlisting>
+&userdict_clear; <co id="fileinfo.userdict.2.1"/>
+&userdict_copy; <co id="fileinfo.userdict.2.2"/>
+&userdict_copyif; <co id="fileinfo.userdict.2.3"/>
+&userdict_copyreturn1;
+&userdict_copyimport; <co id="fileinfo.userdict.2.4"/>
+&userdict_copyreturn2;
+&userdict_keys; <co id="fileinfo.userdict.2.5"/>
+&userdict_items;
+&userdict_values;
+</programlisting>
+<calloutlist>
+<callout arearefs="fileinfo.userdict.2.1">
+<para>&clear; is a normal class method; it is publicly available to be called by anyone at any time.  Notice that &clear;, like all class methods, has &self; as its first argument.  (Remember that you don't include &self; when you call the method; it's something that &python; adds for you.)  Also note the basic technique of this wrapper class: store a real dictionary (<varname>data</varname>) as a data attribute, define all the methods that a real dictionary has, and have each class method redirect to the corresponding method on the real dictionary.  (In case you'd forgotten, a dictionary's &clear; method <link linkend="odbchelper.dict.del">deletes all of its keys</link> and their associated values.)</para>
+</callout>
+<callout arearefs="fileinfo.userdict.2.2">
+<para>The &copy; method of a real dictionary returns a new dictionary that is an exact duplicate of the original (all the same key-value pairs).  But &userdict_classname; can't simply redirect to <function>self.data.copy</function>, because that method returns a real dictionary, and what you want is to return a new instance that is the same class as &self;.</para>
+</callout>
+<callout arearefs="fileinfo.userdict.2.3">
+<para>You use the &classattr; attribute to see if &self; is a &userdict_classname;; if so, you're golden, because you know how to copy a &userdict_classname;: just create a new &userdict_classname; and give it the real dictionary that you've squirreled away in <varname>self.data</varname>.  Then you immediately return the new &userdict_classname; you don't even get to the <literal>import copy</literal> on the next line.</para>
+</callout>
+<callout arearefs="fileinfo.userdict.2.4">
+<para>If <literal>&self;.&classattr;</literal> is not &userdict_classname;, then &self; must be some subclass of &userdict_classname; (like maybe &fileinfo_classname;), in which case life gets trickier.  &userdict_classname; doesn't know how to make an exact copy of one of its descendants; there could, for instance, be other data attributes defined in the subclass, so you would need to iterate through them and make sure to copy all of them.  Luckily, &python; comes with a module to do exactly this, and it's called &copy;.  I won't go into the details here (though it's a wicked cool module, if you're ever inclined to dive into it on your own).  Suffice it to say that &copy; can copy arbitrary &python; objects, and that's how you're using it here.</para>
+</callout>
+<callout arearefs="fileinfo.userdict.2.5">
+<para>The rest of the methods are straightforward, redirecting the calls to the built-in methods on <varname>self.data</varname>.</para>
+</callout>
+</calloutlist>
+</example>
+<note>
+<title>Historical Note</title>
+<para>In versions of &python; prior to 2.2, you could not directly subclass built-in datatypes like strings, lists, and dictionaries.  To compensate for this, &python; comes with wrapper classes that mimic the behavior of these built-in datatypes: <classname>UserString</classname>, <classname>UserList</classname>, and &userdict_classname;.  Using a combination of normal and special methods, the &userdict_classname; class does an excellent imitation of a dictionary.  In &python; 2.2 and later, you can inherit classes directly from built-in datatypes like &dict;.  An example of this is given in the examples that come with this book, in <filename>fileinfo_fromdict.py</filename>.</para>
+</note>
+<para>In &python;, you can inherit directly from the &dict; built-in datatype, as shown in this example.  There are three differences here compared to the &userdict; version.</para>
+<example id="fileinfo.userdict.fromdict">
+<title>Inheriting Directly from Built-In Datatype &dict;</title>
+<programlisting>
+class FileInfo(dict):                  <co id="fileinfo.userdict.3.1"/>
+    "store file metadata"
+    def __init__(self, filename=None): <co id="fileinfo.userdict.3.2"/>
+        self["name"] = filename
+</programlisting>
+<calloutlist>
+<callout arearefs="fileinfo.userdict.3.1">
+<para>The first difference is that you don't need to import the &userdict; module, since &dict; is a built-in datatype and is always available.  The second is that you are inheriting from &dict; directly, instead of from <function>UserDict.UserDict</function>.</para>
+</callout>
+<callout arearefs="fileinfo.userdict.3.2">
+<para>The third difference is subtle but important.  Because of the way &userdict; works internally, it requires you to manually call its &init; method to properly initialize its internal data structures.  &dict; does not work like this; it is not a wrapper, and it requires no explicit initialization.</para>
+</callout>
+</calloutlist>
+</example>
+<itemizedlist role="furtherreading">
+<title>Further Reading on &userdict;</title>
+<listitem><para>&pythonlibraryreference; documents the <ulink url="&url_pythonlibraryreference;module-UserDict.html">&userdict; module</ulink> and the <ulink url="&url_pythonlibraryreference;module-copy.html">&copy; module</ulink>.</para></listitem>
+</itemizedlist>
+</section>
+<section id="fileinfo.specialmethods">
+<?dbhtml filename="object_oriented_framework/special_class_methods.html"?>
+<title>Special Class Methods</title>
+<abstract>
+<title/>
+<para>In addition to normal class methods, there are a number of special methods that &python; classes can define.  Instead of being called directly by your code (like normal methods), special methods are called for you by &python; in particular circumstances or when specific syntax is used.</para>
+</abstract>
+<para>As you saw in the <link linkend="fileinfo.userdict">previous section</link>, normal methods go a long way towards wrapping a dictionary in a class.  But normal methods alone are not enough, because there are a lot of things you can do with dictionaries besides call methods on them.  For starters, you can <link linkend="odbchelper.dict.define">get</link> and <link linkend="odbchelper.dict.modify">set</link> items with a syntax that doesn't include explicitly invoking methods.  This is where special class methods come in: they provide a way to map non-method-calling syntax into method calls.</para>
+<section>
+<title>Getting and Setting Items</title>
+<example>
+<title>The &getitem; Special Method</title>
+<programlisting>
+&userdict_getitem;</programlisting>
+<screen>&prompt;<userinput>f = fileinfo.FileInfo("/music/_singles/kairo.mp3")</userinput>
+&prompt;<userinput>f</userinput>
+<computeroutput>{'name':'/music/_singles/kairo.mp3'}</computeroutput>
+&prompt;<userinput>f.__getitem__("name")</userinput> <co id="fileinfo.specialmethods.1.1"/>
+<computeroutput>'/music/_singles/kairo.mp3'</computeroutput>
+&prompt;<userinput>f["name"]</userinput>             <co id="fileinfo.specialmethods.1.2"/>
+<computeroutput>'/music/_singles/kairo.mp3'</computeroutput></screen>
+<calloutlist>
+<callout arearefs="fileinfo.specialmethods.1.1">
+<para>The &getitem; special method looks simple enough.  Like the normal methods &clear;, &keys;, and &values;, it just redirects to the dictionary to return its value.  But how does it get called?  Well, you can call &getitem; directly, but in practice you wouldn't actually do that; I'm just doing it here to show you how it works.  The right way to use &getitem; is to get &python; to call it for you.</para>
+</callout>
+<callout arearefs="fileinfo.specialmethods.1.2">
+<para>This looks just like the syntax you would use to <link linkend="odbchelper.dict.define">get a dictionary value</link>, and in fact it returns the value you would expect.  But here's the missing link: under the covers, &python; has converted this syntax to the method call <literal>f.__getitem__("name")</literal>.  That's why &getitem; is a special class method; not only can you call it yourself, you can get &python; to call it for you by using the right syntax.</para>
+</callout>
+</calloutlist>
+</example>
+<para>Of course, &python; has a &setitem; special method to go along with &getitem;, as shown in the next example.</para>
+<example id="fileinfo.specialmethods.setitem.example">
+<title>The &setitem; Special Method</title>
+<programlisting>
+&userdict_setitem;</programlisting>
+<screen>&prompt;<userinput>f</userinput>
+<computeroutput>{'name':'/music/_singles/kairo.mp3'}</computeroutput>
+&prompt;<userinput>f.__setitem__("genre", 31)</userinput> <co id="fileinfo.specialmethods.2.1"/>
+&prompt;<userinput>f</userinput>
+<computeroutput>{'name':'/music/_singles/kairo.mp3', 'genre':31}</computeroutput>
+&prompt;<userinput>f["genre"] = 32</userinput>            <co id="fileinfo.specialmethods.2.2"/>
+&prompt;<userinput>f</userinput>
+<computeroutput>{'name':'/music/_singles/kairo.mp3', 'genre':32}</computeroutput></screen>
+<calloutlist>
+<callout arearefs="fileinfo.specialmethods.2.1">
+<para>Like the &getitem; method, &setitem; simply redirects to the real dictionary <varname>self.data</varname> to do its work.  And like &getitem;, you wouldn't ordinarily call it directly like this; &python; calls &setitem; for you when you use the right syntax.</para>
+</callout>
+<callout arearefs="fileinfo.specialmethods.2.2">
+<para>This looks like regular dictionary syntax, except of course that <varname>f</varname> is really a class that's trying very hard to masquerade as a dictionary, and &setitem; is an essential part of that masquerade.  This line of code actually calls <literal>f.__setitem__("genre", 32)</literal> under the covers.</para>
+</callout>
+</calloutlist>
+</example>
+<para>&setitem; is a special class method because it gets called for you, but it's still a class method.  Just as easily as the &setitem; method was defined in &userdict_classname;, you can redefine it in the descendant class to override the ancestor method.  This allows you to define classes that act like dictionaries in some ways but define their own behavior above and beyond the built-in dictionary.</para>
+<para>This concept is the basis of the entire framework you're studying in this chapter.  Each file type can have a handler class that knows how to get metadata from a particular type of file.  Once some attributes (like the file's name and location) are known, the handler class knows how to derive other attributes automatically.  This is done by overriding the &setitem; method, checking for particular keys, and adding additional processing when they are found.</para>
+<para>For example, &mp3fileinfo_classname; is a descendant of &fileinfo_classname;.  When an &mp3fileinfo_classname;'s <literal>name</literal> is set, it doesn't just set the <literal>name</literal> key (like the ancestor &fileinfo_classname; does); it also looks in the file itself for &mp3; tags and populates a whole set of keys.  The next example shows how this works.</para>
+<example>
+<title>Overriding &setitem; in &mp3fileinfo_classname;</title>
+<programlisting>
+&fileinfo_mp3setitemdef;         <co id="fileinfo.specialmethods.3.1"/>
+&fileinfo_mp3setitemif;            <co id="fileinfo.specialmethods.3.2"/>
+&fileinfo_mp3setitemparse;                <co id="fileinfo.specialmethods.3.3"/>
+&fileinfo_mp3setitemcallsuper; <co id="fileinfo.specialmethods.3.4"/></programlisting>
+<calloutlist>
+<callout arearefs="fileinfo.specialmethods.3.1">
+<para>Notice that this &setitem; method is defined exactly the same way as the ancestor method.  This is important, since &python; will be calling the method for you, and it expects it to be defined with a certain number of arguments.  (Technically speaking, the names of the arguments don't matter; only the number of arguments is important.)</para>
+</callout>
+<callout arearefs="fileinfo.specialmethods.3.2">
+<para>Here's the crux of the entire &mp3fileinfo_classname; class: if you're assigning a value to the <literal>name</literal> key, you want to do something extra.</para>
+</callout>
+<callout arearefs="fileinfo.specialmethods.3.3">
+<para>The extra processing you do for <literal>name</literal>s is encapsulated in the &fileinfo_parse; method.  This is another class method defined in &mp3fileinfo_classname;, and when you call it, you qualify it with <varname>self</varname>.  Just calling <function>__parse</function> would look for a normal function defined outside the class, which is not what you want.  Calling <function>self.__parse</function> will look for a class method defined within the class.  This isn't anything new; you reference <link linkend="fileinfo.userdict.normalmethods">data attributes</link> the same way.</para>
+</callout>
+<callout arearefs="fileinfo.specialmethods.3.4">
+<para>After doing this extra processing, you want to call the ancestor method.  Remember that this is never done for you in &python;; you must do it manually.  Note that you're calling the immediate ancestor, &fileinfo_classname;, even though it doesn't have a &setitem; method.  That's okay, because &python; will walk up the ancestor tree until it finds a class with the method you're calling, so this line of code will eventually find and call the &setitem; defined in &userdict_classname;.</para>
+</callout>
+</calloutlist>
+</example>
+<note id="tip.self.call">
+<!--<title>Calling Other Class Methods</title>-->
+<title/>
+<para>When accessing data attributes within a class, you need to qualify the attribute name: <literal>self.<replaceable>attribute</replaceable></literal>.  When calling other methods within a class, you need to qualify the method name: <literal>self.<replaceable>method</replaceable></literal>.</para>
+</note>
+<example id="fileinfo.specialmethods.setname">
+<title>Setting an &mp3fileinfo_classname;'s <literal>name</literal></title>
+<screen>&prompt;<userinput>import fileinfo</userinput>
+&prompt;<userinput>mp3file = fileinfo.MP3FileInfo()</userinput>                   <co id="fileinfo.specialmethods.4.1"/>
+&prompt;<userinput>mp3file</userinput>
+<computeroutput>{'name':None}</computeroutput>
+&prompt;<userinput>mp3file["name"] = "/music/_singles/kairo.mp3"</userinput>      <co id="fileinfo.specialmethods.4.2"/>
+&prompt;<userinput>mp3file</userinput>
+<computeroutput>{'album': 'Rave Mix', 'artist': '***DJ MARY-JANE***', 'genre': 31,
+'title': 'KAIRO****THE BEST GOA', 'name': '/music/_singles/kairo.mp3',
+'year': '2000', 'comment': 'http://mp3.com/DJMARYJANE'}</computeroutput>
+&prompt;<userinput>mp3file["name"] = "/music/_singles/sidewinder.mp3"</userinput> <co id="fileinfo.specialmethods.4.3"/>
+&prompt;<userinput>mp3file</userinput>
+<computeroutput>{'album': '', 'artist': 'The Cynic Project', 'genre': 18, 'title': 'Sidewinder', 
+'name': '/music/_singles/sidewinder.mp3', 'year': '2000', 
+'comment': 'http://mp3.com/cynicproject'}</computeroutput></screen>
+<calloutlist>
+<callout arearefs="fileinfo.specialmethods.4.1">
+<para>First, you create an instance of &mp3fileinfo_classname;, without passing it a filename.  (You can get away with this because the <varname>filename</varname> argument of the &init; method is <link linkend="apihelper.optional">optional</link>.)  Since &mp3fileinfo_classname; has no &init; method of its own, &python; walks up the ancestor tree and finds the &init; method of &fileinfo_classname;.  This &init; method manually calls the &init; method of &userdict_classname; and then sets the <literal>name</literal> key to <varname>filename</varname>, which is &none;, since you didn't pass a filename.  Thus, <varname>mp3file</varname> initially looks like a dictionary with one key, <literal>name</literal>, whose value is &none;.
+</para>
+</callout>
+<callout arearefs="fileinfo.specialmethods.4.2">
+<para>Now the real fun begins.  Setting the <literal>name</literal> key of <varname>mp3file</varname> triggers the &setitem; method on &mp3fileinfo_classname; (not &userdict_classname;), which notices that you're setting the <literal>name</literal> key with a real value and calls <function>self.__parse</function>.  Although you haven't traced through the <function>__parse</function> method yet, you can see from the output that it sets several other keys: <literal>album</literal>, <literal>artist</literal>, <literal>genre</literal>, <literal>title</literal>, <literal>year</literal>, and <literal>comment</literal>.
+</para>
+</callout>
+<callout arearefs="fileinfo.specialmethods.4.3">
+<para>Modifying the <literal>name</literal> key will go through the same process again: &python; calls &setitem;, which calls <function>self.__parse</function>, which sets all the other keys.
+</para>
+</callout>
+</calloutlist>
+</example>
+</section>
+</section>
+<section id="fileinfo.morespecial">
+<?dbhtml filename="object_oriented_framework/special_class_methods2.html"?>
+<title>Advanced Special Class Methods</title>
+<abstract>
+<title/>
+<para>&python; has more special methods than just &getitem; and &setitem;.  Some of them let you emulate functionality that you may not even know about.</para>
+</abstract>
+<para>This example shows some of the other special methods in &userdict;.</para>
+<example id="fileinfo.morespecial.example">
+<title>More Special Methods in &userdict_classname;</title>
+<programlisting>
+&userdict_repr; <co id="fileinfo.morespecial.1.1"/>
+&userdict_cmp; <co id="fileinfo.morespecial.1.2"/>
+&userdict_cmpif;
+&userdict_cmpreturn1;
+&userdict_cmpelse;
+&userdict_cmpreturn2;
+&userdict_len; <co id="fileinfo.morespecial.1.3"/>
+&userdict_delitem; <co id="fileinfo.morespecial.1.4"/></programlisting>
+<calloutlist>
+<callout arearefs="fileinfo.morespecial.1.1">
+<para>&reprspecial; is a special method that is called when you call <literal>repr(<replaceable>instance</replaceable>)</literal>.  The &repr; function is a built-in function that returns a string representation of an object.  It works on any object, not just class instances.  You're already intimately familiar with &repr; and you don't even know it.  In the interactive window, when you type just a variable name and press the <keycap>ENTER</keycap> key, &python; uses &repr; to display the variable's value.  Go create a dictionary <varname>d</varname> with some data and then <literal>print repr(d)</literal> to see for yourself.</para>
+</callout>
+<callout arearefs="fileinfo.morespecial.1.2">
+<para>&cmpspecial; is called when you compare class instances.  In general, you can compare any two &python; objects, not just class instances, by using &comparisonequals;.  There are rules that define when built-in datatypes are considered equal; for instance, dictionaries are equal when they have all the same keys and values, and strings are equal when they are the same length and contain the same sequence of characters.  For class instances, you can define the &cmpspecial; method and code the comparison logic yourself, and then you can use &comparisonequals; to compare instances of your class and &python; will call your &cmpspecial; special method for you.</para>
+</callout>
+<callout arearefs="fileinfo.morespecial.1.3">
+<para>&lenspecial; is called when you call <literal>len(<replaceable>instance</replaceable>)</literal>.  The &len; function is a built-in function that returns the length of an object.  It works on any object that could reasonably be thought of as having a length.  The &len; of a string is its number of characters; the &len; of a dictionary is its number of keys; the &len; of a list or tuple is its number of elements.  For class instances, define the &lenspecial; method and code the length calculation yourself, and then call <literal>len(<replaceable>instance</replaceable>)</literal> and &python; will call your &lenspecial; special method for you.</para>
+</callout>
+<callout arearefs="fileinfo.morespecial.1.4">
+<para>&delitem; is called when you call <literal>del <replaceable>instance</replaceable>[<replaceable>key</replaceable>]</literal>, which you may remember as the way to <link linkend="odbchelper.dict.del">delete individual items from a dictionary</link>.  When you use &del; on a class instance, &python; calls the &delitem; special method for you.</para>
+</callout>
+</calloutlist>
+</example>
+<note id="compare.strequals.java" role="compare" vendor="java">
+<title>&python; &vs; &java; equality and identity</title>
+<para>In &java;, you determine whether two string variables reference the same physical memory location by using <literal>str1 == str2</literal>.  This is called <emphasis>object identity</emphasis>, and it is written in &python; as <literal>str1 is str2</literal>.  To compare string values in &java;, you would use <literal>str1.equals(str2)</literal>; in &python;, you would use <literal>str1 == str2</literal>.  &java; programmers who have been taught to believe that the world is a better place because &comparisonequals; in &java; compares by identity instead of by value may have a difficult time adjusting to &python;'s lack of such <quote>gotchas</quote>.</para>
+</note>
+<para>At this point, you may be thinking, <quote>All this work just to do something in a class that I can do with a built-in datatype.</quote>  And it's true that life would be easier (and the entire &userdict_classname; class would be unnecessary) if you could inherit from built-in datatypes like a dictionary.  But even if you could, special methods would still be useful, because they can be used in any class, not just wrapper classes like &userdict_classname;.</para>
+<para>Special methods mean that <emphasis>any class</emphasis> can store key/value pairs like a dictionary, just by defining the &setitem; method.  <emphasis>Any class</emphasis> can act like a sequence, just by defining the &getitem; method.  Any class that defines the &cmpspecial; method can be compared with &comparisonequals;.  And if your class represents something that has a length, don't define a <function>GetLength</function> method; define the &lenspecial; method and use <literal>len(<replaceable>instance</replaceable>)</literal>.</para>
+<note id="note.physical.v.logical">
+<!--<title>Physical &vs; Logical Models</title>-->
+<title/>
+<para>While other object-oriented languages only let you define the physical model of an object (<quote>this object has a <function>GetLength</function> method</quote>), &python;'s special class methods like &lenspecial; allow you to define the logical model of an object (<quote>this object has a length</quote>).</para>
+</note>
+<para>&python; has a lot of other special methods.  There's a whole set of them that let classes act like numbers, allowing you to add, subtract, and do other arithmetic operations on class instances.  (The canonical example of this is a class that represents complex numbers, numbers with both real and imaginary components.)  The &callspecial; method lets a class act like a function, allowing you to call a class instance directly.  And there are other special methods that allow classes to have read-only and write-only data attributes; you'll talk more about those in later chapters.</para>
+<itemizedlist role="furtherreading">
+<title>Further Reading on Special Class Methods</title>
+<listitem><para>&pythonlanguagereference; documents <ulink url="&url_pythonlanguagereference;specialnames.html">all the special class methods</ulink>.</para></listitem>
+</itemizedlist>
+</section>
+<section id="fileinfo.classattributes">
+<?dbhtml filename="object_oriented_framework/class_attributes.html"?>
+<title>Introducing Class Attributes</title>
+<abstract>
+<title/>
+<para>You already know about <link linkend="fileinfo.userdict.init.example">data attributes</link>, which are variables owned by a specific instance of a class.  &python; also supports class attributes, which are variables owned by the class itself.</para>
+</abstract>
+<example id="fileinfo.classattributes.intro">
+<title>Introducing Class Attributes</title>
+<programlisting>
+&fileinfo_mp3def;
+&fileinfo_mp3doc;
+&fileinfo_mp3classvar;</programlisting>
+<screen>&prompt;<userinput>import fileinfo</userinput>
+&prompt;<userinput>fileinfo.MP3FileInfo</userinput>            <co id="fileinfo.classattributes.1.1"/>
+<computeroutput>&lt;class fileinfo.MP3FileInfo at 01257FDC></computeroutput>
+&prompt;<userinput>fileinfo.MP3FileInfo.tagDataMap</userinput> <co id="fileinfo.classattributes.1.2"/>
+<computeroutput>{'title': (3, 33, &lt;function stripnulls at 0260C8D4>), 
+'genre': (127, 128, &lt;built-in function ord>), 
+'artist': (33, 63, &lt;function stripnulls at 0260C8D4>), 
+'year': (93, 97, &lt;function stripnulls at 0260C8D4>), 
+'comment': (97, 126, &lt;function stripnulls at 0260C8D4>), 
+'album': (63, 93, &lt;function stripnulls at 0260C8D4>)}</computeroutput>
+&prompt;<userinput>m = fileinfo.MP3FileInfo()</userinput>      <co id="fileinfo.classattributes.1.3"/>
+&prompt;<userinput>m.tagDataMap</userinput>
+<computeroutput>{'title': (3, 33, &lt;function stripnulls at 0260C8D4>), 
+'genre': (127, 128, &lt;built-in function ord>), 
+'artist': (33, 63, &lt;function stripnulls at 0260C8D4>), 
+'year': (93, 97, &lt;function stripnulls at 0260C8D4>), 
+'comment': (97, 126, &lt;function stripnulls at 0260C8D4>), 
+'album': (63, 93, &lt;function stripnulls at 0260C8D4>)}</computeroutput></screen>
+<calloutlist>
+<callout arearefs="fileinfo.classattributes.1.1">
+<para>&mp3fileinfo_classname; is the class itself, not any particular instance of the class.</para>
+</callout>
+<callout arearefs="fileinfo.classattributes.1.2">
+<para>&tagdatamap; is a class attribute: literally, an attribute of the class.  It is available before creating any instances of the class.</para>
+</callout>
+<callout arearefs="fileinfo.classattributes.1.3">
+<para>Class attributes are available both through direct reference to the class and through any instance of the class.</para>
+</callout>
+</calloutlist>
+</example>
+<note id="compare.classattr.java" role="compare" vendor="java">
+<title>&python; vs. &java; attribute definitions</title>
+<para>In &java;, both static variables (called class attributes in &python;) and instance variables (called data attributes in &python;) are defined immediately after the class definition (one with the <literal>static</literal> keyword, one without).  In &python;, only class attributes can be defined here; data attributes are defined in the &init; method.</para>
+</note>
+<para>Class attributes can be used as class-level constants (which is how you use them in &mp3fileinfo_classname;), but they are not really constants.  You can also change them.</para>
+<note>
+<title/>
+<para>There are no constants in &python;.  Everything can be changed if you try hard enough.  This fits with one of the core principles of &python;: bad behavior should be discouraged but not banned.  If you really want to change the value of &none;, you can do it, but don't come running to me when your code is impossible to debug.</para>
+</note>
+<example id="fileinfo.classattributes.writeable.example">
+<title>Modifying Class Attributes</title>
+<screen>&prompt;<userinput>class counter:</userinput>
+&continuationprompt;<userinput>count = 0</userinput>                     <co id="fileinfo.classattributes.2.1"/>
+&continuationprompt;<userinput>def __init__(self):</userinput>
+&continuationprompt;<userinput>    self.__class__.count += 1</userinput> <co id="fileinfo.classattributes.2.2"/>
+&continuationprompt;
+&prompt;<userinput>counter</userinput>
+<computeroutput>&lt;class __main__.counter at 010EAECC></computeroutput>
+&prompt;<userinput>counter.count</userinput>                     <co id="fileinfo.classattributes.2.3"/>
+<computeroutput>0</computeroutput>
+&prompt;<userinput>c = counter()</userinput>
+&prompt;<userinput>c.count</userinput>                           <co id="fileinfo.classattributes.2.4"/>
+<computeroutput>1</computeroutput>
+&prompt;<userinput>counter.count</userinput>
+<computeroutput>1</computeroutput>
+&prompt;<userinput>d = counter()</userinput>                     <co id="fileinfo.classattributes.2.5"/>
+&prompt;<userinput>d.count</userinput>
+<computeroutput>2</computeroutput>
+&prompt;<userinput>c.count</userinput>
+<computeroutput>2</computeroutput>
+&prompt;<userinput>counter.count</userinput>
+<computeroutput>2</computeroutput></screen>
+<calloutlist>
+<callout arearefs="fileinfo.classattributes.2.1">
+<para><varname>count</varname> is a class attribute of the <classname>counter</classname> class.</para>
+</callout>
+<callout arearefs="fileinfo.classattributes.2.2">
+<para><literal>__class__</literal> is a built-in attribute of every class instance (of every class).  It is a reference to the class that <varname>self</varname> is an instance of (in this case, the <classname>counter</classname> class).</para>
+</callout>
+<callout arearefs="fileinfo.classattributes.2.3">
+<para>Because <varname>count</varname> is a class attribute, it is available through direct reference to the class, before you have created any instances of the class.</para>
+</callout>
+<callout arearefs="fileinfo.classattributes.2.4">
+<para>Creating an instance of the class calls the &init; method, which increments the class attribute <varname>count</varname> by &one;.  This affects the class itself, not just the newly created instance.</para>
+</callout>
+<callout arearefs="fileinfo.classattributes.2.5">
+<para>Creating a second instance will increment the class attribute <varname>count</varname> again.  Notice how the class attribute is shared by the class and all instances of the class.</para>
+</callout>
+</calloutlist>
+</example>
+</section>
+<section id="fileinfo.private">
+<?dbhtml filename="object_oriented_framework/private_functions.html"?>
+<title>Private Functions</title>
+<para>Like most languages, &python; has the concept of private elements:</para>
+<itemizedlist>
+<listitem><para>Private functions, which can't be called from outside their module</para></listitem>
+<listitem><para>Private class methods, which can't be called from outside their class</para></listitem>
+<listitem><para>Private attributes, which can't be accessed from outside their class.</para></listitem>
+</itemizedlist>
+<abstract>
+<title/>
+<para>Unlike in most languages, whether a &python; function, method, or attribute is private or public is determined entirely by its name.</para>
+</abstract>
+<para>If the name of a &python; function, class method, or attribute starts with (but doesn't end with) two underscores, it's private; everything else is public.  &python; has no concept of <emphasis>protected</emphasis> class methods (accessible only in their own class and descendant classes).  Class methods are either private (accessible only in their own class) or public (accessible from anywhere).</para>
+<para>In &mp3fileinfo_classname;, there are two methods: <function>__parse</function> and &setitem;.  As you have already discussed, &setitem; is a <link linkend="fileinfo.specialmethods.setitem.example">special method</link>; normally, you would call it indirectly by using the dictionary syntax on a class instance, but it is public, and you could call it directly (even from outside the &fileinfo_modulename; module) if you had a really good reason.  However, <function>__parse</function> is private, because it has two underscores at the beginning of its name.</para>
+<note id="tip.specialmethodnames">
+<title>Method Naming Conventions</title>
+<para>In &python;, all special methods (like <link linkend="fileinfo.specialmethods.setitem.example">&setitem;</link>) and built-in attributes (like <link linkend="odbchelper.import">&doc;</link>) follow a standard naming convention: they both start with and end with two underscores.  Don't name your own methods and attributes this way, because it will only confuse you (and others) later.</para>
+</note>
+<example>
+<title>Trying to Call a Private Method</title>
+<screen>&prompt;<userinput>import &fileinfo_name;</userinput>
+&prompt;<userinput>m = fileinfo.MP3FileInfo()</userinput>
+&prompt;<userinput>m.__parse("/music/_singles/kairo.mp3")</userinput> <co id="fileinfo.private.1.1"/>
+<computeroutput role='traceback'>&traceback;
+AttributeError: 'MP3FileInfo' instance has no attribute '__parse'</computeroutput></screen>
+<calloutlist>
+<callout arearefs="fileinfo.private.1.1">
+<para>If you try to call a private method, &python; will raise a slightly misleading exception, saying that the method does not exist.  Of course it does exist, but it's private, so it's not accessible outside the class.</para>
+<para>Strictly speaking, private methods are accessible outside their class, just not <emphasis>easily</emphasis> accessible.  Nothing in &python; is truly private; internally, the names of private methods and attributes are mangled and unmangled on the fly to make them seem inaccessible by their given names.  You can access the <function>__parse</function> method of the &mp3fileinfo_classname; class by the name <function>_MP3FileInfo__parse</function>.  Acknowledge that this is interesting, but promise to never, ever do it in real code.  Private methods are private for a reason, but like many other things in &python;, their privateness is ultimately a matter of convention, not force.</para>
+</callout>
+</calloutlist>
+</example>
+<itemizedlist role="furtherreading">
+<title>Further Reading on Private Functions</title>
+<listitem><para>&pythontutorial; discusses the inner workings of <ulink url="&url_pythontutorial;node11.html#SECTION0011600000000000000000">private variables</ulink>.</para></listitem>
+</itemizedlist>
+</section>
+<section id="fileinfo.summary">
+<?dbhtml filename="object_oriented_framework/summary.html"?>
+<title>Summary</title>
+<abstract>
+<title/>
+<para>That's it for the hard-core object trickery.  You'll see a real-world application of special class methods in <xref linkend="soap" endterm="soap.numberonly"/>, which uses &getattr; to create a proxy to a remote web service.</para>
+</abstract>
+<para>The next chapter will continue using this code sample to explore other &python; concepts, such as exceptions, file objects, and &for; loops.</para>
+<para>Before diving into the next chapter, make sure you're comfortable doing all of these things:</para>
+<itemizedlist>
+<listitem><para>Importing modules using either <link linkend="odbchelper.import">&importmodule;</link> or <link linkend="fileinfo.fromimport">&frommoduleimport;</link></para></listitem>
+<listitem><para><link linkend="fileinfo.class">Defining</link> and <link linkend="fileinfo.create">instantiating</link> classes</para></listitem>
+<listitem><para>Defining <link linkend="fileinfo.class.example">&init; methods</link> and other <link linkend="fileinfo.specialmethods">special class methods</link>, and understanding when they are called</para></listitem>
+<listitem><para>Subclassing <link linkend="fileinfo.userdict">&userdict_classname;</link> to define classes that act like dictionaries</para></listitem>
+<listitem><para>Defining <link linkend="fileinfo.userdict.init.example">data attributes</link> and <link linkend="fileinfo.classattributes">class attributes</link>, and understanding the differences between them</para></listitem>
+<listitem><para>Defining <link linkend="fileinfo.private">private attributes and methods</link></para></listitem>
+</itemizedlist>
+</section>
+</chapter>
+<chapter id="filehandling">
+<?dbhtml filename="file_handling/index.html"?>
+<title>Exceptions and File Handling</title>
+<titleabbrev id="filehandling.numberonly">Chapter 6</titleabbrev>
+<abstract>
+<title/>
+<para>In this chapter, you will dive into exceptions, file objects, &for; loops, and the &os; and &sys; modules.  If you've used exceptions in another programming language, you can skim the first section to get a sense of &python;'s syntax.  Be sure to tune in again for file handling.</para>
+</abstract>
+<section id="fileinfo.exception">
+<?dbhtml filename="file_handling/handling_exceptions.html"?>
+<title>Handling Exceptions</title>
+<abstract>
+<title/>
+<para>Like many other programming languages, &python; has exception handling via &tryexcept; blocks.</para>
+</abstract>
+<note id="compare.exceptions.java" role="compare" vendor="java">
+<title>&python; &vs; &java; exception handling</title>
+<para>&python; uses &tryexcept; to handle exceptions and <literal>raise</literal> to generate them.  &java; and &cpp; use <literal>try...catch</literal> to handle exceptions, and <literal>throw</literal> to generate them.</para>
+</note>
+<para>Exceptions are everywhere in &python;.  Virtually every module in the standard &python; library uses them, and &python; itself will raise them in a lot of different circumstances.  You've already seen them repeatedly throughout this book.</para>
+<itemizedlist>
+<listitem><para><link linkend="odbchelper.dict.define">Accessing a non-existent dictionary key</link> will raise a <errorcode>KeyError</errorcode> exception.</para></listitem>
+<listitem><para><link linkend="odbchelper.list.search">Searching a list for a non-existent value</link> will raise a <errorcode>ValueError</errorcode> exception.</para></listitem>
+<listitem><para><link linkend="odbchelper.tuplemethods">Calling a non-existent method</link> will raise an <errorcode>AttributeError</errorcode> exception.</para></listitem>
+<listitem><para><link linkend="odbchelper.unboundvariable">Referencing a non-existent variable</link> will raise a <errorcode>NameError</errorcode> exception.</para></listitem>
+<listitem><para><link linkend="odbchelper.stringformatting.coerce">Mixing datatypes without coercion</link> will raise a <errorcode>TypeError</errorcode> exception.</para></listitem>
+</itemizedlist>
+<para>In each of these cases, you were simply playing around in the &python; &ide;: an error occurred, the exception was printed (depending on your &ide;, perhaps in an intentionally jarring shade of red), and that was that.  This is called an <emphasis>unhandled</emphasis> exception.  When the exception was raised, there was no code to explicitly notice it and deal with it, so it bubbled its way back to the default behavior built in to &python;, which is to spit out some debugging information and give up.  In the &ide;, that's no big deal, but if that happened while your actual &python; program was running, the entire program would come to a screeching halt.</para>
+<para>An exception doesn't need result in a complete program crash, though.  Exceptions, when raised, can be <emphasis>handled</emphasis>.  Sometimes an exception is really because you have a bug in your code (like accessing a variable that doesn't exist), but many times, an exception is something you can anticipate.  If you're opening a file, it might not exist.  If you're connecting to a database, it might be unavailable, or you might not have the correct security credentials to access it.  If you know a line of code may raise an exception, you should handle the exception using a &tryexcept; block.</para>
+<example>
+<title>Opening a Non-Existent File</title>
+<screen>&prompt;<userinput>fsock = open("/notthere", "r")</userinput>      <co id="fileinfo.exceptions.1.1"/>
+<computeroutput role='traceback'>&traceback;
+IOError: [Errno 2] No such file or directory: '/notthere'</computeroutput>
+&prompt;<userinput>try:</userinput>
+&continuationprompt;<userinput>fsock = open("/notthere")</userinput>       <co id="fileinfo.exceptions.1.2"/>
+<prompt>... </prompt><userinput>except IOError:</userinput>                     <co id="fileinfo.exceptions.1.3"/>
+&continuationprompt;<userinput>print "The file does not exist, exiting gracefully"</userinput>
+<prompt>... </prompt><userinput>print "This line will always print"</userinput> <co id="fileinfo.exceptions.1.4"/>
+<computeroutput>The file does not exist, exiting gracefully
+This line will always print</computeroutput></screen>
+<calloutlist>
+<callout arearefs="fileinfo.exceptions.1.1">
+<para>Using the built-in &open; function, you can try to open a file for reading (more on &open; in the next section).  But the file doesn't exist, so this raises the &ioerror; exception.  Since you haven't provided any explicit check for an &ioerror; exception, &python; just prints out some debugging information about what happened and then gives up.</para>
+</callout>
+<callout arearefs="fileinfo.exceptions.1.2">
+<para>You're trying to open the same non-existent file, but this time you're doing it within a &tryexcept; block.</para>
+</callout>
+<callout arearefs="fileinfo.exceptions.1.3">
+<para>When the &open; method raises an &ioerror; exception, you're ready for it.  The <literal>except IOError:</literal> line catches the exception and executes your own block of code, which in this case just prints a more pleasant error message.</para>
+</callout>
+<callout arearefs="fileinfo.exceptions.1.4">
+<para>Once an exception has been handled, processing continues normally on the first line after the &tryexcept; block.  Note that this line will always print, whether or not an exception occurs.  If you really did have a file called <filename>notthere</filename> in your root directory, the call to &open; would succeed, the <literal>except</literal> clause would be ignored, and this line would still be executed.</para>
+</callout>
+</calloutlist>
+</example>
+<para>Exceptions may seem unfriendly (after all, if you don't catch the exception, your entire program will crash), but consider the alternative.  Would you rather get back an unusable file object to a non-existent file?  You'd need to check its validity somehow anyway, and if you forgot, somewhere down the line, your program would give you strange errors somewhere down the line that you would need to trace back to the source.  I'm sure you've experienced this, and you know it's not fun.  With exceptions, errors occur immediately, and you can handle them in a standard way at the source of the problem.</para>
+<section>
+<title>Using Exceptions For Other Purposes</title>
+<para>There are a lot of other uses for exceptions besides handling actual error conditions.  A common use in the standard &python; library is to try to import a module, and then check whether it worked.  Importing a module that does not exist will raise an &importerror; exception.  You can use this to define multiple levels of functionality based on which modules are available at run-time, or to support multiple platforms (where platform-specific code is separated into different modules).</para>
+<para>You can also define your own exceptions by creating a class that inherits from the built-in <classname>Exception</classname> class, and then raise your exceptions with the <function>raise</function> command.  See the further reading section if you're interested in doing this.</para>
+
+<para>The next example demonstrates how to use an exception to support platform-specific functionality.  This code comes from the <filename class="headerfile">getpass</filename> module, a wrapper module for getting a password from the user.  Getting a password is accomplished differently on &unix;, &windows;, and &macos; platforms, but this code encapsulates all of those differences.</para>
+
+<example id="crossplatform.example">
+<title>Supporting Platform-Specific Functionality</title>
+<programlisting>
+  # Bind the name getpass to the appropriate function
+  try:
+      import termios, TERMIOS                     <co id="fileinfo.exceptions.2.1"/>
+  except ImportError:
+      try:
+          import msvcrt                           <co id="fileinfo.exceptions.2.2"/>
+      except ImportError:
+          try:
+              from EasyDialogs import AskPassword <co id="fileinfo.exceptions.2.3"/>
+          except ImportError:
+              getpass = default_getpass           <co id="fileinfo.exceptions.2.4"/>
+          else:                                   <co id="fileinfo.exceptions.2.5"/>
+              getpass = AskPassword
+      else:
+          getpass = win_getpass
+  else:
+      getpass = unix_getpass</programlisting>
+<calloutlist>
+<callout arearefs="fileinfo.exceptions.2.1">
+<para>&termios; is a &unix;-specific module that provides low-level control over the input terminal.  If this module is not available (because it's not on your system, or your system doesn't support it), the import fails and &python; raises an &importerror;, which you catch.</para>
+</callout>
+<callout arearefs="fileinfo.exceptions.2.2">
+<para>OK, you didn't have &termios;, so let's try &msvcrt;, which is a &windows;-specific module that provides an &api; to many useful functions in the Microsoft <application>Visual C++</application> runtime services.  If this import fails, &python; will raise an &importerror;, which you catch.</para>
+</callout>
+<callout arearefs="fileinfo.exceptions.2.3">
+<para>If the first two didn't work, you try to import a function from &easydialogs;, which is a &macos;-specific module that provides functions to pop up dialog boxes of various types.  Once again, if this import fails, &python; will raise an &importerror;, which you catch.</para>
+</callout>
+<callout arearefs="fileinfo.exceptions.2.4">
+<para>None of these platform-specific modules is available (which is possible, since &python; has been ported to a lot of different platforms), so you need to fall back on a default password input function (which is defined elsewhere in the &getpass; module).  Notice what you're doing here: assigning the function <function>default_getpass</function> to the variable <varname>getpass</varname>.  If you read the official &getpass; documentation, it tells you that the &getpass; module defines a <function>getpass</function> function.  It does this by binding <varname>getpass</varname> to the correct function for your platform.  Then when you call the <function>getpass</function> function, you're really calling a platform-specific function that this code has set up for you.  You don't need to know or care which platform your code is running on -- just call <function>getpass</function>, and it will always do the right thing.</para>
+</callout>
+<callout arearefs="fileinfo.exceptions.2.5">
+<para>A &tryexcept; block can have an &else; clause, like an &if; statement.  If no exception is raised during the <literal>try</literal> block, the &else; clause is executed afterwards.  In this case, that means that the <literal>from EasyDialogs import AskPassword</literal> import worked, so you should bind <varname>getpass</varname> to the <function>AskPassword</function> function.  Each of the other &tryexcept; blocks has similar &else; clauses to bind <varname>getpass</varname> to the appropriate function when you find an &import; that works.</para>
+</callout>
+</calloutlist>
+</example>
+<itemizedlist role="furtherreading">
+<title>Further Reading on Exception Handling</title>
+<listitem><para>&pythontutorial; discusses <ulink url="&url_pythontutorial;node10.html#SECTION0010400000000000000000">defining and raising your own exceptions, and handling multiple exceptions at once</ulink>.</para></listitem>
+<listitem><para>&pythonlibraryreference; summarizes <ulink url="&url_pythonlibraryreference;module-exceptions.html">all the built-in exceptions</ulink>.</para></listitem>
+<listitem><para>&pythonlibraryreference; documents the <ulink url="&url_pythonlibs;module-getpass.html">getpass</ulink> module.</para></listitem>
+<listitem><para>&pythonlibraryreference; documents the <ulink url="&url_pythonlibraryreference;module-traceback.html"><filename class="headerfile">traceback</filename> module</ulink>, which provides low-level access to exception attributes after an exception is raised.</para></listitem>
+<listitem><para>&pythonlanguagereference; discusses the inner workings of the <ulink url="&url_pythonlanguagereference;try.html">&tryexcept; block</ulink>.</para></listitem>
+</itemizedlist>
+</section>
+</section>
+<section id="fileinfo.files">
+<?dbhtml filename="file_handling/file_objects.html"?>
+<title>Working with File Objects</title>
+<abstract>
+<title/>
+<para>&python; has a built-in function, &open;, for opening a file on disk.  &open; returns a file object, which has methods and attributes for getting information about and manipulating the opened file.</para>
+</abstract>
+<example>
+<title>Opening a File</title>
+<screen>&prompt;<userinput>f = open("/music/_singles/kairo.mp3", "rb")</userinput> <co id="fileinfo.files.1.1"/>
+&prompt;<userinput>f</userinput>                                           <co id="fileinfo.files.1.2"/>
+<computeroutput>&lt;open file '/music/_singles/kairo.mp3', mode 'rb' at 010E3988></computeroutput>
+&prompt;<userinput>f.mode</userinput>                                      <co id="fileinfo.files.1.3"/>
+<computeroutput>'rb'</computeroutput>
+&prompt;<userinput>f.name</userinput>                                      <co id="fileinfo.files.1.4"/>
+<computeroutput>'/music/_singles/kairo.mp3'</computeroutput></screen>
+<calloutlist>
+<callout arearefs="fileinfo.files.1.1">
+<para>The &open; method can take up to three parameters: a filename, a mode, and a buffering parameter.  Only the first one, the filename, is required; the other two are <link linkend="apihelper.optional">optional</link>.  If not specified, the file is opened for reading in text mode.  Here you are opening the file for reading in binary mode.  (<literal>print open.__doc__</literal> displays a great explanation of all the possible modes.)</para>
+</callout>
+<callout arearefs="fileinfo.files.1.2">
+<para>The &open; function returns an object (by now, <link linkend="odbchelper.objects">this should not surprise you</link>).  A file object has several useful attributes.</para>
+</callout>
+<callout arearefs="fileinfo.files.1.3">
+<para>The <varname>mode</varname> attribute of a file object tells you in which mode the file was opened.</para>
+</callout>
+<callout arearefs="fileinfo.files.1.4">
+<para>The <varname>name</varname> attribute of a file object tells you the name of the file that the file object has open.</para>
+</callout>
+</calloutlist>
+</example>
+<section>
+<title>Reading Files</title>
+<para>After you open a file, the first thing you'll want to do is read from it, as shown in the next example.</para>
+<example>
+<title>Reading a File</title>
+<screen>
+&prompt;<userinput>f</userinput>
+<computeroutput>&lt;open file '/music/_singles/kairo.mp3', mode 'rb' at 010E3988></computeroutput>
+&prompt;<userinput>f.tell()</userinput>              <co id="fileinfo.files.2.1"/>
+<computeroutput>0</computeroutput>
+&prompt;<userinput>f.seek(-128, 2)</userinput>       <co id="fileinfo.files.2.2"/>
+&prompt;<userinput>f.tell()</userinput>              <co id="fileinfo.files.2.3"/>
+<computeroutput>7542909</computeroutput>
+&prompt;<userinput>tagData = f.read(128)</userinput> <co id="fileinfo.files.2.4"/>
+&prompt;<userinput>tagData</userinput>
+<computeroutput>'TAGKAIRO****THE BEST GOA         ***DJ MARY-JANE***            
+Rave Mix                      2000http://mp3.com/DJMARYJANE     \037'</computeroutput>
+&prompt;<userinput>f.tell()</userinput>              <co id="fileinfo.files.2.5"/>
+<computeroutput>7543037</computeroutput></screen>
+<calloutlist>
+<callout arearefs="fileinfo.files.2.1">
+<para>A file object maintains state about the file it has open.  The &tell; method of a file object tells you your current position in the open file.  Since you haven't done anything with this file yet, the current position is &zero;, which is the beginning of the file.</para>
+</callout>
+<callout arearefs="fileinfo.files.2.2">
+<para>The &seek; method of a file object moves to another position in the open file.  The second parameter specifies what the first one means; &zero; means move to an absolute position (counting from the start of the file), &one; means move to a relative position (counting from the current position), and <literal>2</literal> means move to a position relative to the end of the file.  Since the &mp3; tags you're looking for are stored at the end of the file, you use <literal>2</literal> and tell the file object to move to a position <literal>128</literal> bytes from the end of the file.</para>
+</callout>
+<callout arearefs="fileinfo.files.2.3">
+<para>The &tell; method confirms that the current file position has moved.</para>
+</callout>
+<callout arearefs="fileinfo.files.2.4">
+<para>The &read; method reads a specified number of bytes from the open file and returns a string with the data that was read.  The optional parameter specifies the maximum number of bytes to read.  If no parameter is specified, &read; will read until the end of the file.  (You could have simply said <literal>read()</literal> here, since you know exactly where you are in the file and you are, in fact, reading the last 128 bytes.)  The read data is assigned to the <varname>tagData</varname> variable, and the current position is updated based on how many bytes were read.</para>
+</callout>
+<callout arearefs="fileinfo.files.2.5">
+<para>The &tell; method confirms that the current position has moved.  If you do the math, you'll see that after reading 128 bytes, the position has been incremented by 128.</para>
+</callout>
+</calloutlist>
+</example>
+</section>
+<section>
+<title>Closing Files</title>
+<para>Open files consume system resources, and depending on the file mode, other programs may not be able to access them.  It's important to close files as soon as you're finished with them.</para>
+<example>
+<title>Closing a File</title>
+<screen>
+&prompt;<userinput>f</userinput>
+<computeroutput>&lt;open file '/music/_singles/kairo.mp3', mode 'rb' at 010E3988></computeroutput>
+&prompt;<userinput>f.closed</userinput>       <co id="fileinfo.files.3.1"/>
+<computeroutput>False</computeroutput>
+&prompt;<userinput>f.close()</userinput>      <co id="fileinfo.files.3.2"/>
+&prompt;<userinput>f</userinput>
+<computeroutput>&lt;closed file '/music/_singles/kairo.mp3', mode 'rb' at 010E3988></computeroutput>
+&prompt;<userinput>f.closed</userinput>       <co id="fileinfo.files.3.3"/>
+<computeroutput>True</computeroutput>
+&prompt;<userinput>f.seek(0)</userinput>      <co id="fileinfo.files.3.4"/>
+<computeroutput role='traceback'>&traceback;
+ValueError: I/O operation on closed file</computeroutput>
+&prompt;<userinput>f.tell()</userinput>
+<computeroutput role='traceback'>&traceback;
+ValueError: I/O operation on closed file</computeroutput>
+&prompt;<userinput>f.read()</userinput>
+<computeroutput role='traceback'>&traceback;
+ValueError: I/O operation on closed file</computeroutput>
+&prompt;<userinput>f.close()</userinput>      <co id="fileinfo.files.3.5"/></screen>
+<calloutlist>
+<callout arearefs="fileinfo.files.3.1">
+<para>The <varname>closed</varname> attribute of a file object indicates whether the object has a file open or not.  In this case, the file is still open (<varname>closed</varname> is &false;).</para>
+</callout>
+<callout arearefs="fileinfo.files.3.2">
+<para>To close a file, call the &close; method of the file object.  This frees the lock (if any) that you were holding on the file, flushes buffered writes (if any) that the system hadn't gotten around to actually writing yet, and releases the system resources.</para>
+</callout>
+<callout arearefs="fileinfo.files.3.3">
+<para>The <varname>closed</varname> attribute confirms that the file is closed.</para>
+</callout>
+<callout arearefs="fileinfo.files.3.4">
+<para>Just because a file is closed doesn't mean that the file object ceases to exist.  The variable <varname>f</varname> will continue to exist until it <link linkend="fileinfo.scope">goes out of scope</link> or gets manually deleted.  However, none of the methods that manipulate an open file will work once the file has been closed; they all raise an exception.</para>
+</callout>
+<callout arearefs="fileinfo.files.3.5">
+<para>Calling &close; on a file object whose file is already closed does <emphasis>not</emphasis> raise an exception; it fails silently.</para>
+</callout>
+</calloutlist>
+</example>
+</section>
+<section>
+<title>Handling <acronym>I/O</acronym> Errors</title>
+<para>Now you've seen enough to understand the file handling code in the &fileinfo_filename; sample code from teh previous chapter.  This example shows how to safely open and read from a file and gracefully handle errors.</para>
+<example id="fileinfo.files.incode">
+<title>File Objects in &mp3fileinfo_classname;</title>
+<programlisting>
+&fileinfo_mp3parsetryexcepttry; <co id="fileinfo.files.4.1"/>
+&fileinfo_mp3parseopen; <co id="fileinfo.files.4.2"/>
+&fileinfo_mp3parsetryfinallytry;
+&fileinfo_mp3parseseek; <co id="fileinfo.files.4.3"/>
+&fileinfo_mp3parseread; <co id="fileinfo.files.4.4"/>
+&fileinfo_mp3parsetryfinallyfinally; <co id="fileinfo.files.4.5"/>
+&fileinfo_mp3parseclose;
+            .
+            .
+            .
+&fileinfo_mp3parsetryexceptexcept; <co id="fileinfo.files.4.6"/>
+&fileinfo_mp3parsepass;</programlisting>
+<calloutlist>
+<callout arearefs="fileinfo.files.4.1">
+<para>Because opening and reading files is risky and may raise an exception, all of this code is wrapped in a &tryexcept; block.  (Hey, isn't <link linkend="odbchelper.indenting">standardized indentation</link> great?  This is where you start to appreciate it.)</para>
+</callout>
+<callout arearefs="fileinfo.files.4.2">
+<para>The &open; function may raise an &ioerror;.  (Maybe the file doesn't exist.)</para>
+</callout>
+<callout arearefs="fileinfo.files.4.3">
+<para>The &seek; method may raise an &ioerror;.  (Maybe the file is smaller than 128 bytes.)</para>
+</callout>
+<callout arearefs="fileinfo.files.4.4">
+<para>The &read; method may raise an &ioerror;.  (Maybe the disk has a bad sector, or it's on a network drive and the network just went down.)</para>
+</callout>
+<callout arearefs="fileinfo.files.4.5">
+<para>This is new: a &tryfinally; block.  Once the file has been opened successfully by the &open; function, you want to make absolutely sure that you close it, even if an exception is raised by the &seek; or &read; methods.  That's what a &tryfinally; block is for: code in the <literal>finally</literal> block will <emphasis>always</emphasis> be executed, even if something in the <literal>try</literal> block raises an exception.  Think of it as code that gets executed on the way out, regardless of what happened before.</para>
+</callout>
+<callout arearefs="fileinfo.files.4.6">
+<para>At last, you handle your &ioerror; exception.  This could be the &ioerror; exception raised by the call to &open;, &seek;, or &read;.  Here, you really don't care, because all you're going to do is ignore it silently and continue.  (Remember, &pass; is a &python; statement that <link linkend="fileinfo.class.simplest">does nothing</link>.)  That's perfectly legal; <quote>handling</quote> an exception can mean explicitly doing nothing.  It still counts as handled, and processing will continue normally on the next line of code after the &tryexcept; block.</para>
+</callout>
+</calloutlist>
+</example>
+</section>
+<section>
+<title>Writing to Files</title>
+<para>As you would expect, you can also write to files in much the same way that you read from them.  There are two basic file modes:</para>
+<itemizedlist>
+<listitem><para>"Append" mode will add data to the end of the file.</para></listitem>
+<listitem><para>"write" mode will overwrite the file.</para></listitem>
+</itemizedlist>
+<para>Either mode will create the file automatically if it doesn't already exist, so there's never a need for any sort of fiddly "if the log file doesn't exist yet, create a new empty file just so you can open it for the first time" logic.  Just open it and start writing.</para>
+<example id="fileinfo.files.writeandappend">
+<title>Writing to Files</title>
+<screen>
+&prompt;<userinput>logfile = open('test.log', 'w')</userinput> <co id="fileinfo.files.5.1"/>
+&prompt;<userinput>logfile.write('test succeeded')</userinput> <co id="fileinfo.files.5.2"/>
+&prompt;<userinput>logfile.close()</userinput>
+&prompt;<userinput>print file('test.log').read()</userinput>   <co id="fileinfo.files.5.3"/>
+<computeroutput>test succeeded</computeroutput>
+&prompt;<userinput>logfile = open('test.log', 'a')</userinput> <co id="fileinfo.files.5.4"/>
+&prompt;<userinput>logfile.write('line 2')</userinput>
+&prompt;<userinput>logfile.close()</userinput>
+&prompt;<userinput>print file('test.log').read()</userinput>   <co id="fileinfo.files.5.5"/>
+<computeroutput>test succeededline 2</computeroutput>
+</screen>
+<calloutlist>
+<callout arearefs="fileinfo.files.5.1">
+<para>You start boldly by creating either the new file <filename>test.log</filename> or overwrites the existing file, and opening the file for writing.  (The second parameter <literal>"w"</literal> means open the file for writing.)  Yes, that's all as dangerous as it sounds.  I hope you didn't care about the previous contents of that file, because it's gone now.</para>
+</callout>
+<callout arearefs="fileinfo.files.5.2">
+<para>You can add data to the newly opened file with the &write; method of the file object returned by &open;.</para>
+</callout>
+<callout arearefs="fileinfo.files.5.3">
+<para>&file; is a synonym for &open;.  This one-liner opens the file, reads its contents, and prints them.</para>
+</callout>
+<callout arearefs="fileinfo.files.5.4">
+<para>You happen to know that <filename>test.log</filename> exists (since you just finished writing to it), so you can open it and append to it.  (The <literal>"a"</literal> parameter means open the file for appending.)  Actually you could do this even if the file didn't exist, because opening the file for appending will create the file if necessary.  But appending will <emphasis>never</emphasis> harm the existing contents of the file.</para>
+</callout>
+<callout arearefs="fileinfo.files.5.5">
+<para>As you can see, both the original line you wrote and the second line you appended are now in <filename>test.log</filename>.  Also note that carriage returns are not included.  Since you didn't write them explicitly to the file either time, the file doesn't include them.  You can write a carriage return with the <literal>"\n"</literal> character.  Since you didn't do this, everything you wrote to the file ended up smooshed together on the same line.</para>
+</callout>
+</calloutlist>
+</example>
+<itemizedlist role="furtherreading">
+<title>Further Reading on File Handling</title>
+<listitem><para>&pythontutorial; discusses reading and writing files, including how to <ulink url="&url_pythontutorial;node9.html#SECTION009210000000000000000">read a file one line at a time into a list</ulink>.</para></listitem>
+<listitem><para>&effbot; discusses efficiency and performance of <ulink url="&url_effbot;readline-performance.htm">various ways of reading a file</ulink>.</para></listitem>
+<listitem><para>&pythonknowledgebase; answers <ulink url="&url_pythonknowledgebase;index.phtml/fid/552">common questions about files</ulink>.</para></listitem>
+<listitem><para>&pythonlibraryreference; summarizes <ulink url="&url_pythonlibraryreference;bltin-file-objects.html">all the file object methods</ulink>.</para></listitem>
+</itemizedlist>
+</section>
+</section>
+<section id="fileinfo.for">
+<?dbhtml filename="file_handling/for_loops.html"?>
+<title>Iterating with &for; Loops</title>
+<abstract>
+<title/>
+<para>Like most other languages, &python; has &for; loops.  The only reason you haven't seen them until now is that &python; is good at so many other things that you don't need them as often.</para>
+</abstract>
+<para>Most other languages don't have a powerful list datatype like &python;, so you end up doing a lot of manual work, specifying a start, end, and step to define a range of integers or characters or other iteratable entities.  But in &python;, a &for; loop simply iterates over a list, the same way <link linkend="odbchelper.map">list comprehensions</link> work.</para>
+<example>
+<title>Introducing the &for; Loop</title>
+<screen>&prompt;<userinput>li = ['a', 'b', 'e']</userinput>
+&prompt;<userinput>for s in li:</userinput>         <co id="fileinfo.for.1.1"/>
+&continuationprompt;<userinput>print s</userinput>          <co id="fileinfo.for.1.2"/>
+<computeroutput>a
+b
+e</computeroutput>
+&prompt;<userinput>print "\n".join(li)</userinput>  <co id="fileinfo.for.1.3"/>
+<computeroutput>a
+b
+e</computeroutput></screen>
+<calloutlist>
+<callout arearefs="fileinfo.for.1.1">
+<para>The syntax for a &for; loop is similar to <link linkend="odbchelper.map">list comprehensions</link>.  <varname>li</varname> is a list, and <varname>s</varname> will take the value of each element in turn, starting from the first element.</para>
+</callout>
+<callout arearefs="fileinfo.for.1.2">
+<para>Like an &if; statement or any other <link linkend="odbchelper.indenting">indented block</link>, a &for; loop can have any number of lines of code in it.</para>
+</callout>
+<callout arearefs="fileinfo.for.1.3">
+<para>This is the reason you haven't seen the &for; loop yet: you haven't needed it yet.  It's amazing how often you use &for; loops in other languages when all you really want is a &join; or a list comprehension.</para>
+</callout>
+</calloutlist>
+</example>
+<para>Doing a <quote>normal</quote> (by &vb; standards) counter &for; loop is also simple.</para>
+<example id="fileinfo.for.counter">
+<title>Simple Counters</title>
+<screen>
+&prompt;<userinput>for i in range(5):</userinput>             <co id="fileinfo.for.3.1"/>
+&continuationprompt;<userinput>print i</userinput>
+<computeroutput>0
+1
+2
+3
+4</computeroutput>
+&prompt;<userinput>li = ['a', 'b', 'c', 'd', 'e']</userinput>
+&prompt;<userinput>for i in range(len(li)):</userinput>       <co id="fileinfo.for.3.2"/>
+&continuationprompt;<userinput>print li[i]</userinput>
+<computeroutput>a
+b
+c
+d
+e</computeroutput>
+</screen>
+<calloutlist>
+<callout arearefs="fileinfo.for.3.1">
+<para>As you saw in <xref linkend="odbchelper.multiassign.range"/>, &range; produces a list of integers, which you then loop through.  I know it looks a bit odd, but it is occasionally (and I stress <emphasis>occasionally</emphasis>) useful to have a counter loop.</para>
+</callout>
+<callout arearefs="fileinfo.for.3.2">
+<para>Don't ever do this.  This is &vb;-style thinking.  Break out of it.  Just iterate through the list, as shown in the previous example.</para>
+</callout>
+</calloutlist>
+</example>
+<para>&for; loops are not just for simple counters.  They can iterate through all kinds of things.  Here is an example of using a &for; loop to iterate through a dictionary.</para>
+<example id="dictionaryiter.example">
+<title>Iterating Through a Dictionary</title>
+<screen>
+&prompt;<userinput>import os</userinput>
+&prompt;<userinput>for k, v in os.environ.items():</userinput>      <co id="fileinfo.for.2.1"/> <co id="fileinfo.for.2.2"/>
+&continuationprompt;<userinput>print "%s=%s" % (k, v)</userinput>
+<computeroutput>USERPROFILE=C:\Documents and Settings\mpilgrim
+OS=Windows_NT
+COMPUTERNAME=MPILGRIM
+USERNAME=mpilgrim
+
+[...snip...]</computeroutput>
+&prompt;<userinput>print "\n".join(["%s=%s" % (k, v)</userinput>
+&continuationprompt;<userinput>for k, v in os.environ.items()])</userinput> <co id="fileinfo.for.2.3"/>
+<computeroutput>USERPROFILE=C:\Documents and Settings\mpilgrim
+OS=Windows_NT
+COMPUTERNAME=MPILGRIM
+USERNAME=mpilgrim
+
+[...snip...]</computeroutput></screen>
+<calloutlist>
+<callout arearefs="fileinfo.for.2.1">
+<para><varname>os.environ</varname> is a dictionary of the environment variables defined on your system.  In &windows;, these are your user and system variables accessible from &dos;.  In &unix;, they are the variables exported in your shell's startup scripts.  In &macos;, there is no concept of environment variables, so this dictionary is empty.</para>
+</callout>
+<callout arearefs="fileinfo.for.2.2">
+<para><literal>os.environ.items()</literal> returns a list of tuples: <literal>[(<replaceable>key1</replaceable>, <replaceable>value1</replaceable>), (<replaceable>key2</replaceable>, <replaceable>value2</replaceable>), ...]</literal>.  The &for; loop iterates through this list.  The first round, it assigns <literal><replaceable>key1</replaceable></literal> to <varname>k</varname> and <literal><replaceable>value1</replaceable></literal> to <varname>v</varname>, so <varname>k</varname> = <literal>USERPROFILE</literal> and <varname>v</varname> = <literal>C:\Documents and Settings\mpilgrim</literal>.  In the second round, <varname>k</varname> gets the second key, <literal>OS</literal>, and <varname>v</varname> gets the corresponding value, <literal>Windows_NT</literal>.</para>
+</callout>
+<callout arearefs="fileinfo.for.2.3">
+<para>With <link linkend="odbchelper.multiassign">multi-variable assignment</link> and <link linkend="odbchelper.map">list comprehensions</link>, you can replace the entire &for; loop with a single statement.  Whether you actually do this in real code is a matter of personal coding style.  I like it because it makes it clear that what I'm doing is mapping a dictionary into a list, then joining the list into a single string.  Other programmers prefer to write this out as a &for; loop.  The output is the same in either case, although this version is slightly faster, because there is only one &print; statement instead of many.</para>
+</callout>
+</calloutlist>
+</example>
+<para>Now we can look at the &for; loop in <classname>MP3FileInfo</classname>, from the sample &fileinfo_filename; program introduced in <xref linkend="fileinfo" endterm="fileinfo.numberonly"/>.</para>
+<example id="fileinfo.multiassign.for.example">
+<title>&for; Loop in &mp3fileinfo_classname;</title>
+<programlisting>
+&fileinfo_mp3classvar;                               <co id="fileinfo.multiassign.5.1"/>
+    .
+    .
+    .
+&fileinfo_mp3parseiftag;
+&fileinfo_mp3parsefor; <co id="fileinfo.multiassign.5.2"/>
+&fileinfo_mp3parsecode; <co id="fileinfo.multiassign.5.3"/></programlisting>
+<calloutlist>
+<callout arearefs="fileinfo.multiassign.5.1">
+<para>&tagdatamap; is a <link linkend="fileinfo.classattributes">class attribute</link> that defines the tags you're looking for in an &mp3; file.  Tags are stored in fixed-length fields.  Once you read the last 128 bytes of the file, bytes 3 through 32 of those are always the song title, 33 through 62 are always the artist name, 63 through 92 are the album name, and so forth.  Note that &tagdatamap; is a dictionary of tuples, and each tuple contains two integers and a function reference.</para>
+</callout>
+<callout arearefs="fileinfo.multiassign.5.2">
+<para>This looks complicated, but it's not.  The structure of the &for; variables matches the structure of the elements of the list returned by &items;.  Remember that &items; returns a list of tuples of the form <literal>(<replaceable>key</replaceable>, <replaceable>value</replaceable>)</literal>.  The first element of that list is <literal>("title", (3, 33, &lt;function stripnulls>))</literal>, so the first time around the loop, <varname>tag</varname> gets <literal>"title"</literal>, <varname>start</varname> gets <literal>3</literal>, <varname>end</varname> gets <literal>33</literal>, and <varname>parseFunc</varname> gets the function <function>stripnulls</function>.</para>
+</callout>
+<callout arearefs="fileinfo.multiassign.5.3">
+<para>Now that you've extracted all the parameters for a single &mp3; tag, saving the tag data is easy.  You <link linkend="odbchelper.list.slice">slice</link> <varname>tagdata</varname> from <varname>start</varname> to <varname>end</varname> to get the actual data for this tag, call <varname>parseFunc</varname> to post-process the data, and assign this as the value for the key <varname>tag</varname> in the pseudo-dictionary <varname>self</varname>.  After iterating through all the elements in &tagdatamap;, <varname>self</varname> has the values for all the tags, and <link linkend="fileinfo.specialmethods.setname">you know what that looks like</link>.</para>
+</callout>
+</calloutlist>
+</example>
+</section>
+<section id="fileinfo.modules">
+<?dbhtml filename="file_handling/more_on_modules.html"?>
+<title>Using &sysmodules;</title>
+<abstract>
+<title/>
+<para>Modules, like everything else in &python;, are objects.  Once imported, you can always get a reference to a module through the global dictionary &sysmodules;.</para>
+</abstract>
+<example>
+<title>Introducing &sysmodules;</title>
+<screen>&prompt;<userinput>import sys</userinput>                          <co id="fileinfo.modules.1.1"/>
+&prompt;<userinput>print '\n'.join(sys.modules.keys())</userinput> <co id="fileinfo.modules.1.2"/>
+<computeroutput>win32api
+os.path
+os
+exceptions
+__main__
+ntpath
+nt
+sys
+__builtin__
+site
+signal
+UserDict
+stat</computeroutput></screen>
+<calloutlist>
+<callout arearefs="fileinfo.modules.1.1">
+<para>The &sys; module contains system-level information, such as the version of &python; you're running (<literal>&sys;.version</literal> or <literal>&sys;.version_info</literal>), and system-level options such as the maximum allowed recursion depth (<literal>&sys;.getrecursionlimit()</literal> and <literal>&sys;.setrecursionlimit()</literal>).</para>
+</callout>
+<callout arearefs="fileinfo.modules.1.2">
+<para>&sysmodules; is a dictionary containing all the modules that have ever been imported since &python; was started; the key is the module name, the value is the module object.  Note that this is more than just the modules <emphasis>your</emphasis> program has imported.  &python; preloads some modules on startup, and if you're using a &python; &ide;, &sysmodules; contains all the modules imported by all the programs you've run within the &ide;.</para>
+</callout>
+</calloutlist>
+</example>
+<para>This example demonstrates how to use &sysmodules;.</para>
+<example>
+<title>Using &sysmodules;</title>
+<screen>&prompt;<userinput>import fileinfo</userinput>         <co id="fileinfo.modules.1.3"/>
+&prompt;<userinput>print '\n'.join(sys.modules.keys())</userinput>
+<computeroutput>win32api
+os.path
+os
+fileinfo
+exceptions
+__main__
+ntpath
+nt
+sys
+__builtin__
+site
+signal
+UserDict
+stat</computeroutput>
+&prompt;<userinput>fileinfo</userinput>
+<computeroutput>&lt;module 'fileinfo' from 'fileinfo.pyc'></computeroutput>
+&prompt;<userinput>sys.modules["fileinfo"]</userinput> <co id="fileinfo.modules.1.4"/>
+<computeroutput>&lt;module 'fileinfo' from 'fileinfo.pyc'></computeroutput></screen>
+<calloutlist>
+<callout arearefs="fileinfo.modules.1.3">
+<para>As new modules are imported, they are added to &sysmodules;.  This explains why importing the same module twice is very fast: &python; has already loaded and cached the module in &sysmodules;, so importing the second time is simply a dictionary lookup.</para>
+</callout>
+<callout arearefs="fileinfo.modules.1.4">
+<para>Given the name (as a string) of any previously-imported module, you can get a reference to the module itself through the &sysmodules; dictionary.</para>
+</callout>
+</calloutlist>
+</example>
+<para>The next example shows how to use the <literal>__module__</literal> class attribute with the &sysmodules; dictionary to get a reference to the module in which a class is defined.</para>
+<example>
+<title>The &moduleattr; Class Attribute</title>
+<screen>&prompt;<userinput>from fileinfo import MP3FileInfo</userinput>
+&prompt;<userinput>MP3FileInfo.__module__</userinput>              <co id="fileinfo.modules.2.1"/>
+<computeroutput>'fileinfo'</computeroutput>
+&prompt;<userinput>sys.modules[MP3FileInfo.__module__]</userinput> <co id="fileinfo.modules.2.2"/>
+<computeroutput>&lt;module 'fileinfo' from 'fileinfo.pyc'></computeroutput></screen>
+<calloutlist>
+<callout arearefs="fileinfo.modules.2.1">
+<para>Every &python; class has a built-in <link linkend="fileinfo.classattributes">class attribute</link> &moduleattr;, which is the name of the module in which the class is defined.</para>
+</callout>
+<callout arearefs="fileinfo.modules.2.2">
+<para>Combining this with the &sysmodules; dictionary, you can get a reference to the module in which a class is defined.</para>
+</callout>
+</calloutlist>
+</example>
+<para>Now you're ready to see how &sysmodules; is used in &fileinfo_filename;, the sample program introduced in <xref linkend="fileinfo" endterm="fileinfo.numberonly"/>.  This example shows that portion of the code.</para>
+<example>
+<title>&sysmodules; in &fileinfo_filename;</title>
+<programlisting>
+&fileinfo_getdef; <co id="fileinfo.modules.3.1"/>
+&fileinfo_getdoc;
+&fileinfo_getcode; <co id="fileinfo.modules.3.2"/>
+&fileinfo_getreturn; <co id="fileinfo.modules.3.3"/></programlisting>
+<calloutlist>
+<callout arearefs="fileinfo.modules.3.1">
+<para>This is a function with two arguments; <varname>filename</varname> is required, but <varname>module</varname> is <link linkend="apihelper.optional">optional</link> and defaults to the module that contains the <classname>FileInfo</classname> class.  This looks inefficient, because you might expect &python; to evaluate the &sysmodules; expression every time the function is called.  In fact, &python; evaluates default expressions only once, the first time the module is imported.  As you'll see later, you never call this function with a <varname>module</varname> argument, so <varname>module</varname> serves as a function-level constant.</para>
+</callout>
+<callout arearefs="fileinfo.modules.3.2">
+<para>You'll plow through this line later, after you dive into the &os; module.  For now, take it on faith that <varname>subclass</varname> ends up as the name of a class, like <classname>MP3FileInfo</classname>.</para>
+</callout>
+<callout arearefs="fileinfo.modules.3.3">
+<para>You already know about <link linkend="apihelper.getattr">&getattr;</link>, which gets a reference to an object by name.  &hasattr; is a complementary function that checks whether an object has a particular attribute; in this case, whether a module has a particular class (although it works for any object and any attribute, just like &getattr;).  In English, this line of code says, <quote>If this module has the class named by <varname>subclass</varname> then return it, otherwise return the base class <classname>FileInfo</classname>.</quote></para>
+</callout>
+</calloutlist>
+</example>
+<itemizedlist role="furtherreading">
+<title>Further Reading on Modules</title>
+<listitem><para>&pythontutorial; discusses exactly <ulink url="&url_pythontutorial;node6.html#SECTION006710000000000000000">when and how default arguments are evaluated</ulink>.</para></listitem>
+<listitem><para>&pythonlibraryreference; documents the <ulink url="&url_pythonlibraryreference;module-sys.html">&sys;</ulink> module.</para></listitem>
+</itemizedlist>
+</section>
+<section id="fileinfo.os">
+<?dbhtml filename="file_handling/os_module.html"?>
+<title>Working with Directories</title>
+<abstract>
+<title/>
+<para>The &ospath; module has several functions for manipulating files and directories.  Here, we're looking at handling pathnames and listing the contents of a directory.</para>
+</abstract>
+<example id="fileinfo.os.path.join.example">
+<title>Constructing Pathnames</title>
+<screen>
+&prompt;<userinput>import os</userinput>
+&prompt;<userinput>os.path.join("c:\\music\\ap\\", "mahadeva.mp3")</userinput> <co id="fileinfo.os.1.1"/> <co id="fileinfo.os.1.2"/>
+<computeroutput>'c:\\music\\ap\\mahadeva.mp3'</computeroutput>
+&prompt;<userinput>os.path.join("c:\\music\\ap", "mahadeva.mp3")</userinput>   <co id="fileinfo.os.1.3"/>
+<computeroutput>'c:\\music\\ap\\mahadeva.mp3'</computeroutput>
+&prompt;<userinput>os.path.expanduser("~")</userinput>                         <co id="fileinfo.os.1.4"/>
+<computeroutput>'c:\\Documents and Settings\\mpilgrim\\My Documents'</computeroutput>
+&prompt;<userinput>os.path.join(os.path.expanduser("~"), "Python")</userinput> <co id="fileinfo.os.1.5"/>
+<computeroutput>'c:\\Documents and Settings\\mpilgrim\\My Documents\\Python'</computeroutput></screen>
+<calloutlist>
+<callout arearefs="fileinfo.os.1.1">
+<para>&ospath; is a reference to a module -- which module depends on your platform.  Just as <link linkend="crossplatform.example">&getpass;</link> encapsulates differences between platforms by setting <varname>getpass</varname> to a platform-specific function, &os; encapsulates differences between platforms by setting <varname>path</varname> to a platform-specific module.</para>
+</callout>
+<callout arearefs="fileinfo.os.1.2">
+<para>The &join; function of &ospath; constructs a pathname out of one or more partial pathnames.  In this case, it simply concatenates strings.  (Note that dealing with pathnames on &windows; is annoying because the backslash character must be escaped.)</para>
+</callout>
+<callout arearefs="fileinfo.os.1.3">
+<para>In this slightly less trivial case, &join; will add an extra backslash to the pathname before joining it to the filename.  I was overjoyed when I discovered this, since <function>addSlashIfNecessary</function> is one of the stupid little functions I always need to write when building up my toolbox in a new language.  <emphasis>Do not</emphasis> write this stupid little function in &python;; smart people have already taken care of it for you.</para>
+</callout>
+<callout arearefs="fileinfo.os.1.4">
+<para><function>expanduser</function> will expand a pathname that uses <literal>~</literal> to represent the current user's home directory.  This works on any platform where users have a home directory, like &windows;, &unix;, and &macosx;; it has no effect on &macos;.</para>
+</callout>
+<callout arearefs="fileinfo.os.1.5">
+<para>Combining these techniques, you can easily construct pathnames for directories and files under the user's home directory.</para>
+</callout>
+</calloutlist>
+</example>
+<example id="splittingpathnames.example">
+<title>Splitting Pathnames</title>
+<screen>&prompt;<userinput>os.path.split("c:\\music\\ap\\mahadeva.mp3")</userinput>                        <co id="fileinfo.os.2.1"/>
+<computeroutput>('c:\\music\\ap', 'mahadeva.mp3')</computeroutput>
+&prompt;<userinput>(filepath, filename) = os.path.split("c:\\music\\ap\\mahadeva.mp3")</userinput> <co id="fileinfo.os.2.2"/>
+&prompt;<userinput>filepath</userinput>                                                            <co id="fileinfo.os.2.3"/>
+<computeroutput>'c:\\music\\ap'</computeroutput>
+&prompt;<userinput>filename</userinput>                                                            <co id="fileinfo.os.2.4"/>
+<computeroutput>'mahadeva.mp3'</computeroutput>
+&prompt;<userinput>(shortname, extension) = os.path.splitext(filename)</userinput>                 <co id="fileinfo.os.2.5"/>
+&prompt;<userinput>shortname</userinput>
+<computeroutput>'mahadeva'</computeroutput>
+&prompt;<userinput>extension</userinput>
+<computeroutput>'.mp3'</computeroutput></screen>
+<calloutlist>
+<callout arearefs="fileinfo.os.2.1">
+<para>The &split; function splits a full pathname and returns a tuple containing the path and filename.  Remember when I said you could use <link linkend="odbchelper.multiassign">multi-variable assignment</link> to return multiple values from a function?  Well, &split; is such a function.</para>
+</callout>
+<callout arearefs="fileinfo.os.2.2">
+<para>You assign the return value of the &split; function into a tuple of two variables.  Each variable receives the value of the corresponding element of the returned tuple.</para>
+</callout>
+<callout arearefs="fileinfo.os.2.3">
+<para>The first variable, <varname>filepath</varname>, receives the value of the first element of the tuple returned from &split;, the file path.</para>
+</callout>
+<callout arearefs="fileinfo.os.2.4">
+<para>The second variable, <varname>filename</varname>, receives the value of the second element of the tuple returned from &split;, the filename.</para>
+</callout>
+<callout arearefs="fileinfo.os.2.5">
+<para>&ospath; also contains a function &splitext;, which splits a filename and returns a tuple containing the filename and the file extension.   You use the same technique to assign each of them to separate variables.</para>
+</callout>
+</calloutlist>
+</example>
+<example id="fileinfo.listdir.example">
+<title>Listing Directories</title>
+<screen>&prompt;<userinput>os.listdir("c:\\music\\_singles\\")</userinput>              <co id="fileinfo.os.3.1"/>
+<computeroutput>['a_time_long_forgotten_con.mp3', 'hellraiser.mp3',
+'kairo.mp3', 'long_way_home1.mp3', 'sidewinder.mp3', 
+'spinning.mp3']</computeroutput>
+&prompt;<userinput>dirname = "c:\\"</userinput>
+&prompt;<userinput>os.listdir(dirname)</userinput>                              <co id="fileinfo.os.3.2"/>
+<computeroutput>['AUTOEXEC.BAT', 'boot.ini', 'CONFIG.SYS', 'cygwin',
+'docbook', 'Documents and Settings', 'Incoming', 'Inetpub', 'IO.SYS',
+'MSDOS.SYS', 'Music', 'NTDETECT.COM', 'ntldr', 'pagefile.sys',
+'Program Files', 'Python20', 'RECYCLER',
+'System Volume Information', 'TEMP', 'WINNT']</computeroutput>
+&prompt;<userinput>[f for f in os.listdir(dirname)</userinput>
+&continuationprompt;<userinput>if os.path.isfile(os.path.join(dirname, f))]</userinput> <co id="fileinfo.os.3.3"/>
+<computeroutput>['AUTOEXEC.BAT', 'boot.ini', 'CONFIG.SYS', 'IO.SYS', 'MSDOS.SYS',
+'NTDETECT.COM', 'ntldr', 'pagefile.sys']</computeroutput>
+&prompt;<userinput>[f for f in os.listdir(dirname)</userinput>
+&continuationprompt;<userinput>if os.path.isdir(os.path.join(dirname, f))]</userinput>  <co id="fileinfo.os.3.4"/>
+<computeroutput>['cygwin', 'docbook', 'Documents and Settings', 'Incoming',
+'Inetpub', 'Music', 'Program Files', 'Python20', 'RECYCLER',
+'System Volume Information', 'TEMP', 'WINNT']</computeroutput></screen>
+<calloutlist>
+<callout arearefs="fileinfo.os.3.1">
+<para>The &listdir; function takes a pathname and returns a list of the contents of the directory.</para>
+</callout>
+<callout arearefs="fileinfo.os.3.2">
+<para>&listdir; returns both files and folders, with no indication of which is which.</para>
+</callout>
+<callout arearefs="fileinfo.os.3.3">
+<para>You can use <link linkend="apihelper.filter">list filtering</link> and the <function>isfile</function> function of the &ospath; module to separate the files from the folders.  &isfile; takes a pathname and returns 1 if the path represents a file, and 0 otherwise.  Here you're using <literal>&ospath;.&join;</literal> to ensure a full pathname, but &isfile; also works with a partial path, relative to the current working directory.  You can use <literal>os.getcwd()</literal> to get the current working directory.</para>
+</callout>
+<callout arearefs="fileinfo.os.3.4">
+<para>&ospath; also has a <function>isdir</function> function which returns 1 if the path represents a directory, and 0 otherwise.  You can use this to get a list of the subdirectories within a directory.</para>
+</callout>
+</calloutlist>
+</example>
+<example>
+<title>Listing Directories in &fileinfo_filename;</title>
+<programlisting>
+&fileinfo_listdef;
+&fileinfo_listdoc; 
+&fileinfo_listupper; <co id="fileinfo.os.3a.1"/> <co id="fileinfo.os.3a.2"/>
+&fileinfo_listcode; <co id="fileinfo.os.3a.3"/> <co id="fileinfo.os.3a.4"/> <co id="fileinfo.os.3a.5"/></programlisting>
+<calloutlist>
+<callout arearefs="fileinfo.os.3a.1">
+<para><literal>os.listdir(directory)</literal> returns a list of all the files and folders in <varname>directory</varname>.</para>
+</callout>
+<callout arearefs="fileinfo.os.3a.2">
+<para>Iterating through the list with <varname>f</varname>, you use <literal>os.path.normcase(f)</literal> to normalize the case according to operating system defaults.  <function>normcase</function> is a useful little function that compensates for case-insensitive operating systems that think that <filename>mahadeva.mp3</filename> and <filename>mahadeva.MP3</filename> are the same file.  For instance, on &windows; and &macos;, <function>normcase</function> will convert the entire filename to lowercase; on &unix;-compatible systems, it will return the filename unchanged.</para>
+</callout>
+<callout arearefs="fileinfo.os.3a.3">
+<para>Iterating through the normalized list with <varname>f</varname> again, you use <literal>os.path.splitext(f)</literal> to split each filename into name and extension.</para>
+</callout>
+<callout arearefs="fileinfo.os.3a.4">
+<para>For each file, you see if the extension is in the list of file extensions you care about (<varname>fileExtList</varname>, which was passed to the <function>listDirectory</function> function).</para>
+</callout>
+<callout arearefs="fileinfo.os.3a.5">
+<para>For each file you care about, you use <literal>os.path.join(directory, f)</literal> to construct the full pathname of the file, and return a list of the full pathnames.</para>
+</callout>
+</calloutlist>
+</example>
+<note id="tip.os">
+<!--<title>When To Use the &os; Module</title>-->
+<title/>
+<para>Whenever possible, you should use the functions in &os; and &ospath; for file, directory, and path manipulations.  These modules are wrappers for platform-specific modules, so functions like <function>os.path.split</function> work on &unix;, &windows;, &macos;, and any other platform supported by &python;.</para>
+</note>
+<para>There is one other way to get the contents of a directory.  It's very powerful, and it uses the sort of wildcards that you may already be familiar with from working on the command line.</para>
+<example id="fileinfo.os.glob.example">
+<title>Listing Directories with &glob;</title>
+<screen>
+&prompt;<userinput>os.listdir("c:\\music\\_singles\\")</userinput>               <co id="fileinfo.os.4.1"/>
+<computeroutput>['a_time_long_forgotten_con.mp3', 'hellraiser.mp3',
+'kairo.mp3', 'long_way_home1.mp3', 'sidewinder.mp3',
+'spinning.mp3']</computeroutput>
+&prompt;<userinput>import glob</userinput>
+&prompt;<userinput>glob.glob('c:\\music\\_singles\\*.mp3')</userinput>           <co id="fileinfo.os.4.2"/>
+<computeroutput>['c:\\music\\_singles\\a_time_long_forgotten_con.mp3',
+'c:\\music\\_singles\\hellraiser.mp3',
+'c:\\music\\_singles\\kairo.mp3',
+'c:\\music\\_singles\\long_way_home1.mp3',
+'c:\\music\\_singles\\sidewinder.mp3',
+'c:\\music\\_singles\\spinning.mp3']</computeroutput>
+&prompt;<userinput>glob.glob('c:\\music\\_singles\\s*.mp3')</userinput>          <co id="fileinfo.os.4.3"/>
+<computeroutput>['c:\\music\\_singles\\sidewinder.mp3',
+'c:\\music\\_singles\\spinning.mp3']</computeroutput>
+&prompt;<userinput>glob.glob('c:\\music\\*\\*.mp3')</userinput>                  <co id="fileinfo.os.4.4"/>
+</screen>
+<calloutlist>
+<callout arearefs="fileinfo.os.4.1">
+<para>As you saw earlier, <function>os.listdir</function> simply takes a directory path and lists all files and directories in that directory.</para>
+</callout>
+<callout arearefs="fileinfo.os.4.2">
+<para>The &glob; module, on the other hand, takes a wildcard and returns the full path of all files and directories matching the wildcard.  Here the wildcard is a directory path plus "*.mp3", which will match all <filename>.mp3</filename> files.  Note that each element of the returned list already includes the full path of the file.</para>
+</callout>
+<callout arearefs="fileinfo.os.4.3">
+<para>If you want to find all the files in a specific directory that start with "s" and end with ".mp3", you can do that too.</para>
+</callout>
+<callout arearefs="fileinfo.os.4.4">
+<para>Now consider this scenario: you have a <filename>music</filename> directory, with several subdirectories within it, with <filename>.mp3</filename> files within each subdirectory.  You can get a list of all of those with a single call to &glob;, by using two wildcards at once.  One wildcard is the <literal>"*.mp3"</literal> (to match <filename>.mp3</filename> files), and one wildcard is <emphasis>within the directory path itself</emphasis>, to match any subdirectory within <filename>c:\music</filename>.  That's a crazy amount of power packed into one deceptively simple-looking function!</para>
+</callout>
+</calloutlist>
+</example>
+<itemizedlist role="furtherreading">
+<title>Further Reading on the &os; Module</title>
+<listitem><para>&pythonknowledgebase; answers <ulink url="&url_pythonknowledgebase;index.phtml/fid/240">questions about the &os; module</ulink>.</para></listitem>
+<listitem><para>&pythonlibraryreference; documents the <ulink url="&url_pythonlibraryreference;module-os.html">&os;</ulink> module and the <ulink url="&url_pythonlibraryreference;module-os.path.html">&ospath;</ulink> module.</para></listitem>
+</itemizedlist>
+</section>
+<section id="fileinfo.alltogether">
+<?dbhtml filename="file_handling/all_together.html"?>
+<title>Putting It All Together</title>
+<abstract>
+<title/>
+<para>Once again, all the dominoes are in place.  You've seen how each line of code works.  Now let's step back and see how it all fits together.</para>
+</abstract>
+<example id="fileinfo.nested">
+<title>&listdirectory;</title>
+<programlisting>
+&fileinfo_listdef; <co id="fileinfo.alltogether.1.1"/>
+&fileinfo_listdoc;
+&fileinfo_listupper;
+&fileinfo_listcode;                         <co id="fileinfo.alltogether.1.2"/>
+&fileinfo_getdef; <co id="fileinfo.alltogether.1.3"/>
+&fileinfo_getdoc;
+&fileinfo_getcode; <co id="fileinfo.alltogether.1.4"/>
+&fileinfo_getreturn; <co id="fileinfo.alltogether.1.5"/>
+&fileinfo_listreturn; <co id="fileinfo.alltogether.1.6"/></programlisting>
+<calloutlist>
+<callout arearefs="fileinfo.alltogether.1.1">
+<para>&listdirectory; is the main attraction of this entire module.  It takes a directory (like <filename class="directory">c:\music\_singles\</filename> in my case) and a list of interesting file extensions (like <literal>['.mp3']</literal>), and it returns a list of class instances that act like dictionaries that contain metadata about each interesting file in that directory.  And it does it in just a few straightforward lines of code.</para>
+</callout>
+<callout arearefs="fileinfo.alltogether.1.2">
+<para>As you saw in the <link linkend="fileinfo.os">previous section</link>, this line of code gets a list of the full pathnames of all the files in <varname>directory</varname> that have an interesting file extension (as specified by <varname>fileExtList</varname>).</para>
+</callout>
+<callout arearefs="fileinfo.alltogether.1.3">
+<para>Old-school &pascal; programmers may be familiar with them, but most people give me a blank stare when I tell them that &python; supports <emphasis>nested functions</emphasis> -- literally, a function within a function.  The nested function <function>getFileInfoClass</function> can be called only from the function in which it is defined, &listdirectory;.  As with any other function, you don't need an interface declaration or anything fancy; just define the function and code it.</para>
+</callout>
+<callout arearefs="fileinfo.alltogether.1.4">
+<para>Now that you've seen the <link linkend="fileinfo.os">&os;</link> module, this line should make more sense.  It gets the extension of the file (<literal>os.path.splitext(filename)[1]</literal>), forces it to uppercase (<literal>.upper()</literal>), slices off the dot (<literal>[1:]</literal>), and constructs a class name out of it with string formatting.  So <filename>c:\music\ap\mahadeva.mp3</filename> becomes <literal>.mp3</literal> becomes <literal>.MP3</literal> becomes <literal>MP3</literal> becomes <literal>MP3FileInfo</literal>.</para>
+</callout>
+<callout arearefs="fileinfo.alltogether.1.5">
+<para>Having constructed the name of the handler class that would handle this file, you check to see if that handler class actually exists in this module.  If it does, you return the class, otherwise you return the base class &fileinfo_classname;.  This is a very important point: <emphasis>this function returns a class</emphasis>.  Not an instance of a class, but the class itself.</para>
+</callout>
+<callout arearefs="fileinfo.alltogether.1.6">
+<para>For each file in the <quote>interesting files</quote> list (<varname>fileList</varname>), you call <function>getFileInfoClass</function> with the filename (<varname>f</varname>).  Calling <literal>getFileInfoClass(f)</literal> returns a class; you don't know exactly which class, but you don't care.  You then create an instance of this class (whatever it is) and pass the filename (<varname>f</varname> again), to the &init; method.  As you saw <link linkend="fileinfo.specialmethods.setname">earlier in this chapter</link>, the &init; method of &fileinfo_classname; sets <literal>self["name"]</literal>, which triggers &setitem;, which is overridden in the descendant (&mp3fileinfo_classname;) to parse the file appropriately to pull out the file's metadata.  You do all that for each interesting file and return a list of the resulting instances.</para>
+</callout>
+</calloutlist>
+</example>
+<para>Note that &listdirectory; is completely generic.  It doesn't know ahead of time which types of files it will be getting, or which classes are defined that could potentially handle those files.  It inspects the directory for the files to process, and then introspects its own module to see what special handler classes (like &mp3fileinfo_classname;) are defined.  You can extend this program to handle other types of files simply by defining an appropriately-named class: <classname>HTMLFileInfo</classname> for <acronym>HTML</acronym> files, <classname>DOCFileInfo</classname> for <application>Word</application> <literal>.doc</literal> files, and so forth.  &listdirectory; will handle them all, without modification, by handing off the real work to the appropriate classes and collating the results.</para>
+</section>
+<section id="fileinfo.summary2">
+<?dbhtml filename="file_handling/summary.html"?>
+<title>Summary</title>
+<abstract>
+<title/>
+<para>The &fileinfo_filename; program introduced in <xref linkend="fileinfo" endterm="fileinfo.numberonly"/> should now make perfect sense.</para>
+</abstract>
+<informalexample>
+<!--<title>&fileinfo_filename;</title>-->
+<programlisting>
+&fileinfo_doc;
+&fileinfo_import;
+
+&fileinfo_stripnullsdef;
+&fileinfo_stripnullsdoc;
+&fileinfo_stripnullscode;
+
+&fileinfo_filedef;
+&fileinfo_filedoc;
+&fileinfo_fileinit;
+&fileinfo_filecallsuper;
+&fileinfo_fileinitcode;
+
+&fileinfo_mp3def;
+&fileinfo_mp3doc;
+&fileinfo_mp3classvar;
+
+&fileinfo_mp3parsedef;
+&fileinfo_mp3parsedoc;
+&fileinfo_mp3parseclear;
+&fileinfo_mp3parsetryexcepttry;
+&fileinfo_mp3parseopen;
+&fileinfo_mp3parsetryfinallytry;
+&fileinfo_mp3parseseek;
+&fileinfo_mp3parseread;
+&fileinfo_mp3parsetryfinallyfinally;
+&fileinfo_mp3parseclose;
+&fileinfo_mp3parseiftag;
+&fileinfo_mp3parsefor;
+&fileinfo_mp3parsecode;
+&fileinfo_mp3parsetryexceptexcept;
+&fileinfo_mp3parsepass;
+
+&fileinfo_mp3setitemdef;
+&fileinfo_mp3setitemif;
+&fileinfo_mp3setitemparse;
+&fileinfo_mp3setitemcallsuper;
+
+&fileinfo_listdef;
+&fileinfo_listdoc;
+&fileinfo_listupper;
+&fileinfo_listcode;
+&fileinfo_getdef;
+&fileinfo_getdoc;
+&fileinfo_getcode;
+&fileinfo_getreturn;
+&fileinfo_listreturn;
+
+&fileinfo_ifname;
+&fileinfo_for;
+&fileinfo_print;
+&fileinfo_printblank;</programlisting>
+</informalexample>
+<highlights>
+<para>Before diving into the next chapter, make sure you're comfortable doing the following things:</para>
+<itemizedlist>
+<listitem><para>Catching exceptions with <link linkend="fileinfo.exception">&tryexcept;</link></para></listitem>
+<listitem><para>Protecting external resources with <link linkend="fileinfo.files.incode">&tryfinally;</link></para></listitem>
+<listitem><para>Reading from <link linkend="fileinfo.files">files</link></para></listitem>
+<listitem><para>Assigning multiple values at once in a <link linkend="fileinfo.multiassign.for.example">&for; loop</link></para></listitem>
+<listitem><para>Using the <link linkend="fileinfo.os">&os;</link> module for all your cross-platform file manipulation needs</para></listitem>
+<listitem><para>Dynamically <link linkend="fileinfo.alltogether">instantiating classes of unknown type</link> by treating classes as objects and passing them around</para></listitem>
+</itemizedlist>
+</highlights>
+</section>
+</chapter>
+<!--
+Chapter 3 notes:
+* briefly mention things that should look familiar:
+  * doc strings, including for module itself
+  X both types of import
+  X if-name trick
+* intro to classes
+  * defining a class
+  * class doc string
+  * __init__ (not really a constructor, because it's optional, but called as soon as the instance is created)
+  * the importance of self (always first argument)
+  * calling ancestor explicitly
+* digress to screen example
+  * create a FileInfo object
+  * talk about create syntax
+  * show result (acts like dictionary)
+  * talk about scope, automagical memory management
+  X talk about del to manually delete variable (and destroy instance)
+  X there is a __del__ destructor, but usually only need it to free up external resources (file sockets, etc.)
+  X mention "close" method - convention for freeing up resources (used in file objects, later in this chapter)
+* explore UserDict
+  * here's the __init__ method that you called manually
+  * descendant __init__ method has different arguments, but it still overrides, because
+    there is no overloading
+  * instance variables - like other variables, they're never declared, but
+    by convention all are initialized in __init__ method
+  * if statement in __init__ method: one line block on same line (works for any block:
+    if statement, for loop, function, class method, even entire class)
+  * class methods: clear, copy, keys, items, values, has_key, update, get, and setdefault
+    mirror the methods of a dictionary and redirect to self.data's methods
+  * special class methods: __repr__, __cmp__, __len__, __getitem__, __setitem__, and __delitem__
+    are called when the object is passed to specific functions or involved in specific
+    operations:
+    * object.__repr__() ... repr(object) (this is the string returned in the interactive window)
+    * object.__cmp__(other_object) ... object == other_object
+    * object.__len__() ... len(object)
+    * object.__getitem__(key) ... object[key]
+    * object.__setitem__(key, value) ... object[key] = value
+    * object.__delitem__(key) ... del d[key]
+  * __setitem__
+    * special attribute name, called with assigning value to a dictionary
+    * in this case, you're overriding the ancestor (UserDict) to add additional preprocessing, then calling ancestor
+    * calling class methods from other class methods - use self.<method name>
+  * Special methods mean that...
+    * ANY OBJECT can act like a dictionary with __setitem__,
+    * ANY OBJECT can act like a sequence (list, tuple, dictionary) with __getitem__ and __len__,
+    * ANY OBJECT can be compared with __cmp__,
+    - ANY OBJECT can have a custom string representation with __repr__
+  * there are a lot of other special class methods
+    * objects that act like numbers (add, subtract)
+    * objects that act like functions (called directly)
+    * objects with read-only or write-only attributes (__getattr__, __setattr__)
+* class attributes
+  * attribute of class, not instance
+  * all instances share same data, any changes will affect all instances
+  * generally used for class-specific constants, but not limited to that (technically, there are no constants in Python)
+  * available before any instances are created
+* private functions
+  * __*__ = special method (__setitem__) or built-in attribute (__doc__)
+  * __*   = private function/method/attribute (__parse)
+* handling exceptions
+  * try...except
+    * single exception
+    X multiple exceptions
+    X exceptions with arguments
+    * else clause
+* file objects
+  * open (can trigger IOError if file does not exist)
+  X open mode (r/w/a [+b])
+  * seek (can trigger IOError if file is less than 128 bytes)
+  * read (can trigger IOError if disk is bad or network goes down)
+  * close (should always be called if file was successfully opened)
+  * try..finally
+* for loop
+* multi-variable assignment
+* __module__ built-in attribute
+* sys.modules
+* os module
+  * listdir
+  * os.path
+    * split
+    * splitext
+    * join
+  * show in context of listDirectory function
+* getFileInfoClass
+  * nested functions
+  X variable scope (module)
+  * classes are objects (everything is an object)
+  * step through heinous string formatting to get subclass
+  * returning the class that listDirectory will use to create an object
+* FileInfo triggers descendant __setitem__ by setting "name" key (all Python class methods are virtual - ancestor can call method overridden in descendant class without ever knowing it)
+* putting it all together
+* summary
+-->

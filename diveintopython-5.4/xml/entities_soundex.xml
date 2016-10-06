@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!ENTITY soundex 'Soundex'>
+<!ENTITY timeit '<filename class="headerfile">timeit</filename>'>
+<!ENTITY soundex_filename '<filename>soundex.py</filename>'>
+<!ENTITY soundex_modulename '<filename class="headerfile">soundex</filename>'>
+<!ENTITY soundex '<function>soundex</function>'>
+<!ENTITY timer '<classname>Timer</classname>'>

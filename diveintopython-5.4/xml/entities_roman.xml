@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!ENTITY toroman "<function>toRoman</function>">
+<!ENTITY fromroman "<function>fromRoman</function>">
+<!ENTITY pyunit "<application>PyUnit</application>">
+<!ENTITY unittest_module "<filename class='headerfile'>unittest</filename>">
+<!ENTITY unittest_filename "<filename>unittest.py</filename>">
+<!ENTITY romantest1_filename "<filename>romantest1.py</filename>">
+<!ENTITY romantest2_filename "<filename>romantest2.py</filename>">
+<!ENTITY romantest3_filename "<filename>romantest3.py</filename>">
+<!ENTITY romantest4_filename "<filename>romantest4.py</filename>">
+<!ENTITY romantest5_filename "<filename>romantest5.py</filename>">
+<!ENTITY romantest61_filename "<filename>romantest61.py</filename>">
+<!ENTITY romantest62_filename "<filename>romantest62.py</filename>">
+<!ENTITY romantest71_filename "<filename>romantest71.py</filename>">
+<!ENTITY romantest72_filename "<filename>romantest72.py</filename>">
+<!ENTITY romantest81_filename "<filename>romantest81.py</filename>">
+<!ENTITY romantest82_filename "<filename>romantest82.py</filename>">
+<!ENTITY romantest83_filename "<filename>romantest83.py</filename>">
+<!ENTITY romantest9_filename "<filename>romantest9.py</filename>">
+<!ENTITY romantest_filename "<filename>romantest.py</filename>">
+<!ENTITY roman1_filename "<filename>roman1.py</filename>">
+<!ENTITY roman2_filename "<filename>roman2.py</filename>">
+<!ENTITY roman3_filename "<filename>roman3.py</filename>">
+<!ENTITY roman4_filename "<filename>roman4.py</filename>">
+<!ENTITY roman5_filename "<filename>roman5.py</filename>">
+<!ENTITY roman61_filename "<filename>roman61.py</filename>">
+<!ENTITY roman62_filename "<filename>roman62.py</filename>">
+<!ENTITY roman71_filename "<filename>roman71.py</filename>">
+<!ENTITY roman72_filename "<filename>roman72.py</filename>">
+<!ENTITY roman81_filename "<filename>roman81.py</filename>">
+<!ENTITY roman82_filename "<filename>roman82.py</filename>">
+<!ENTITY roman83_filename "<filename>roman83.py</filename>">
+<!ENTITY roman9_filename "<filename>roman9.py</filename>">
+<!ENTITY roman_filename "<filename>roman.py</filename>">
+<!ENTITY roman_module "<filename class='headerfile'>roman</filename>">
+<!ENTITY romantest_module "<filename class='headerfile'>romantest</filename>">
+<!ENTITY url_pyunit "http://pyunit.sourceforge.net/">
+<!ENTITY url_pyunit_display "<systemitem class='systemname'>pyunit.sourceforge.net</systemitem>">
+<!ENTITY assertEqual "<function>assertEqual</function>">
+<!ENTITY assertRaises "<function>assertRaises</function>">
+<!ENTITY testcase_classname "<classname>TestCase</classname>">
+
+<!ENTITY romantest_doc '"""Unit test for roman.py"""'>
+
+<!ENTITY romantest_import1 'import roman'>
+<!ENTITY romantest_import2 'import unittest'>
+
+<!ENTITY romantest_knownvaluesdef 'class KnownValues(unittest.TestCase):                          '>
+<!ENTITY romantest_knownvaluesattr "    knownValues = ( (1, 'I'),
+                    (2, 'II'),
+                    (3, 'III'),
+                    (4, 'IV'),
+                    (5, 'V'),
+                    (6, 'VI'),
+                    (7, 'VII'),
+                    (8, 'VIII'),
+                    (9, 'IX'),
+                    (10, 'X'),
+                    (50, 'L'),
+                    (100, 'C'),
+                    (500, 'D'),
+                    (1000, 'M'),
+                    (31, 'XXXI'),
+                    (148, 'CXLVIII'),
+                    (294, 'CCXCIV'),
+                    (312, 'CCCXII'),
+                    (421, 'CDXXI'),
+                    (528, 'DXXVIII'),
+                    (621, 'DCXXI'),
+                    (782, 'DCCLXXXII'),
+                    (870, 'DCCCLXX'),
+                    (941, 'CMXLI'),
+                    (1043, 'MXLIII'),
+                    (1110, 'MCX'),
+                    (1226, 'MCCXXVI'),
+                    (1301, 'MCCCI'),
+                    (1485, 'MCDLXXXV'),
+                    (1509, 'MDIX'),
+                    (1607, 'MDCVII'),
+                    (1754, 'MDCCLIV'),
+                    (1832, 'MDCCCXXXII'),
+                    (1993, 'MCMXCIII'),
+                    (2074, 'MMLXXIV'),
+                    (2152, 'MMCLII'),
+                    (2212, 'MMCCXII'),
+                    (2343, 'MMCCCXLIII'),
+                    (2499, 'MMCDXCIX'),
+                    (2574, 'MMDLXXIV'),
+                    (2646, 'MMDCXLVI'),
+                    (2723, 'MMDCCXXIII'),
+                    (2892, 'MMDCCCXCII'),
+                    (2975, 'MMCMLXXV'),
+                    (3051, 'MMMLI'),
+                    (3185, 'MMMCLXXXV'),
+                    (3250, 'MMMCCL'),
+                    (3313, 'MMMCCCXIII'),
+                    (3408, 'MMMCDVIII'),
+                    (3501, 'MMMDI'),
+                    (3610, 'MMMDCX'),
+                    (3743, 'MMMDCCXLIII'),
+                    (3844, 'MMMDCCCXLIV'),
+                    (3888, 'MMMDCCCLXXXVIII'),
+                    (3940, 'MMMCMXL'),
+                    (3999, 'MMMCMXCIX'))                       ">
+
+<!ENTITY romantest_toknowndef     '    def testToRomanKnownValues(self):                          '>
+<!ENTITY romantest_toknowndoc     '        """toRoman should give known result with known input"""'>
+<!ENTITY romantest_toknownfor     '        for integer, numeral in self.knownValues:              '>
+<!ENTITY romantest_toknowncode1   '            result = roman.toRoman(integer)                    '>
+<!ENTITY romantest_toknowncode2   '            self.assertEqual(numeral, result)                  '>
+
+<!ENTITY romantest_fromknowndef   '    def testFromRomanKnownValues(self):                          '>
+<!ENTITY romantest_fromknowndoc   '        """fromRoman should give known result with known input"""'>
+<!ENTITY romantest_fromknownfor   '        for integer, numeral in self.knownValues:                '>
+<!ENTITY romantest_fromknowncode1 '            result = roman.fromRoman(numeral)                    '>
+<!ENTITY romantest_fromknowncode2 '            self.assertEqual(integer, result)                    '>
+
+<!ENTITY romantest_tobadinputdef 'class ToRomanBadInput(unittest.TestCase):                            '>
+<!ENTITY romantest_toolargedef   '    def testTooLarge(self):                                          '>
+<!ENTITY romantest_toolargedoc   '        """toRoman should fail with large input"""                   '>
+<!ENTITY romantest_toolargecode  '        self.assertRaises(roman.OutOfRangeError, roman.toRoman, 4000)'>
+
+<!ENTITY romantest_zerodef       '    def testZero(self):                                              '>
+<!ENTITY romantest_zerodoc       '        """toRoman should fail with 0 input"""                       '>
+<!ENTITY romantest_zerocode      '        self.assertRaises(roman.OutOfRangeError, roman.toRoman, 0)   '>
+
+<!ENTITY romantest_negativedef   '    def testNegative(self):                                          '>
+<!ENTITY romantest_negativedoc   '        """toRoman should fail with negative input"""                '>
+<!ENTITY romantest_negativecode  '        self.assertRaises(roman.OutOfRangeError, roman.toRoman, -1)  '>
+
+<!ENTITY romantest_decimaldef    '    def testNonInteger(self):                                        '>
+<!ENTITY romantest_decimaldoc    '        """toRoman should fail with non-integer input"""             '>
+<!ENTITY romantest_decimalcode   '        self.assertRaises(roman.NotIntegerError, roman.toRoman, 0.5) '>
+
+<!ENTITY romantest_frombadinputdef 'class FromRomanBadInput(unittest.TestCase):                                      '>
+<!ENTITY romantest_toomanydef      '    def testTooManyRepeatedNumerals(self):                                       '>
+<!ENTITY romantest_toomanydoc      '        """fromRoman should fail with too many repeated numerals"""              '>
+<!ENTITY romantest_toomanyfor      "        for s in ('MMMM', 'DD', 'CCCC', 'LL', 'XXXX', 'VV', 'IIII'):             ">
+<!ENTITY romantest_toomanyassert   '            self.assertRaises(roman.InvalidRomanNumeralError, roman.fromRoman, s)'>
+
+<!ENTITY romantest_repeateddef     '    def testRepeatedPairs(self):                                                 '>
+<!ENTITY romantest_repeateddoc     '        """fromRoman should fail with repeated pairs of numerals"""              '>
+<!ENTITY romantest_repeatedfor     "        for s in ('CMCM', 'CDCD', 'XCXC', 'XLXL', 'IXIX', 'IVIV'):               ">
+<!ENTITY romantest_repeatedassert  '            self.assertRaises(roman.InvalidRomanNumeralError, roman.fromRoman, s)'>
+
+<!ENTITY romantest_malformeddef    '    def testMalformedAntecedent(self):                                           '>
+<!ENTITY romantest_malformeddoc    '        """fromRoman should fail with malformed antecedents"""                   '>
+<!ENTITY romantest_malformedfor    "        for s in ('IIMXCC', 'VX', 'DCM', 'CMM', 'IXIV',
+                  'MCMC', 'XCX', 'IVI', 'LM', 'LD', 'LC'):                       ">
+<!ENTITY romantest_malformedassert '            self.assertRaises(roman.InvalidRomanNumeralError, roman.fromRoman, s)'>
+
+<!ENTITY romantest_blankdef        '    def testBlank(self):'>
+<!ENTITY romantest_blankdoc        '        """fromRoman should fail with blank string"""'>
+<!ENTITY romantest_blankcode       '        self.assertRaises(roman.InvalidRomanNumeralError, roman.fromRoman, "")'>
+
+<!ENTITY romantest_sanityclassdef 'class SanityCheck(unittest.TestCase):        '>
+<!ENTITY romantest_sanitydef      '    def testSanity(self):                    '>
+<!ENTITY romantest_sanitydoc      '        """fromRoman(toRoman(n))==n for all n"""'>
+<!ENTITY romantest_sanityfor      '        for integer in range(1, 4000):       '>
+<!ENTITY romantest_sanitycode1    '            numeral = roman.toRoman(integer) '>
+<!ENTITY romantest_sanitycode2    '            result = roman.fromRoman(numeral)'>
+<!ENTITY romantest_sanitycode3    '            self.assertEqual(integer, result)'>
+
+<!ENTITY romantest_casecheckdef        'class CaseCheck(unittest.TestCase):                   '>
+<!ENTITY romantest_toromancasedef      '    def testToRomanCase(self):                        '>
+<!ENTITY romantest_toromancasedoc      '        """toRoman should always return uppercase"""  '>
+<!ENTITY romantest_toromancasefor      '        for integer in range(1, 4000):                '>
+<!ENTITY romantest_toromancasecode     '            numeral = roman.toRoman(integer)          '>
+<!ENTITY romantest_toromancaseassert   '            self.assertEqual(numeral, numeral.upper())'>
+
+<!ENTITY romantest_fromromancasedef    '    def testFromRomanCase(self):                      '>
+<!ENTITY romantest_fromromancasedoc    '        """fromRoman should only accept uppercase input"""'>
+<!ENTITY romantest_fromromancasefor    '        for integer in range(1, 4000):                '>
+<!ENTITY romantest_fromromancasecode1  '            numeral = roman.toRoman(integer)          '>
+<!ENTITY romantest_fromromancasecode2  '            roman.fromRoman(numeral.upper())          '>
+<!ENTITY romantest_fromromancaseassert '            self.assertRaises(roman.InvalidRomanNumeralError,
+                              roman.fromRoman, numeral.lower())'>
+
+<!ENTITY romantest_ifname 'if __name__ == "__main__":'>
+<!ENTITY romantest_ifnamecode '    unittest.main()   '>
+
+<!ENTITY romantest_full '&romantest_doc;
+
+&romantest_import1;
+&romantest_import2;
+
+&romantest_knownvaluesdef;
+&romantest_knownvaluesattr;
+
+&romantest_toknowndef;
+&romantest_toknowndoc;
+&romantest_toknownfor;
+&romantest_toknowncode1;
+&romantest_toknowncode2;
+
+&romantest_fromknowndef;
+&romantest_fromknowndoc;
+&romantest_fromknownfor;
+&romantest_fromknowncode1;
+&romantest_fromknowncode2;
+
+&romantest_tobadinputdef;
+&romantest_toolargedef;
+&romantest_toolargedoc;
+&romantest_toolargecode;
+
+&romantest_zerodef;
+&romantest_zerodoc;
+&romantest_zerocode;
+
+&romantest_negativedef;
+&romantest_negativedoc;
+&romantest_negativecode;
+
+&romantest_decimaldef;
+&romantest_decimaldoc;
+&romantest_decimalcode;
+
+&romantest_frombadinputdef;
+&romantest_toomanydef;
+&romantest_toomanydoc;
+&romantest_toomanyfor;
+&romantest_toomanyassert;
+
+&romantest_repeateddef;
+&romantest_repeateddoc;
+&romantest_repeatedfor;
+&romantest_repeatedassert;
+
+&romantest_malformeddef;
+&romantest_malformeddoc;
+&romantest_malformedfor;
+&romantest_malformedassert;
+
+&romantest_sanityclassdef;
+&romantest_sanitydef;
+&romantest_sanitydoc;
+&romantest_sanityfor;
+&romantest_sanitycode1;
+&romantest_sanitycode2;
+&romantest_sanitycode3;
+
+&romantest_casecheckdef;
+&romantest_toromancasedef;
+&romantest_toromancasedoc;
+&romantest_toromancasefor;
+&romantest_toromancasecode;
+&romantest_toromancaseassert;
+
+&romantest_fromromancasedef;
+&romantest_fromromancasedoc;
+&romantest_fromromancasefor;
+&romantest_fromromancasecode1;
+&romantest_fromromancasecode2;
+&romantest_fromromancaseassert;
+
+&romantest_ifname;
+&romantest_ifnamecode;'>
+
+<!ENTITY romancache_exceptions '#Define exceptions
+class RomanError(Exception): pass
+class OutOfRangeError(RomanError): pass
+class NotIntegerError(RomanError): pass
+class InvalidRomanNumeralError(RomanError): pass'>
+
+<!ENTITY romancache_max '#Roman numerals must be less than 5000
+MAX_ROMAN_NUMERAL = 4999'>
+
+<!ENTITY romancache_mapping "#Define digit mapping
+romanNumeralMap = (('M',  1000),
+                   ('CM', 900),
+                   ('D',  500),
+                   ('CD', 400),
+                   ('C',  100),
+                   ('XC', 90),
+                   ('L',  50),
+                   ('XL', 40),
+                   ('X',  10),
+                   ('IX', 9),
+                   ('V',  5),
+                   ('IV', 4),
+                   ('I',  1))">
+
+<!ENTITY romancache_lookupvars '#Create tables for fast conversion of roman numerals.
+#See fillLookupTables() below.
+toRomanTable = [ None ]  # Skip an index since Roman numerals have no zero
+fromRomanTable = {}'>
+
+<!ENTITY romancache_toroman 'def toRoman(n):
+    """convert integer to Roman numeral"""
+    if not (0 &lt; n &lt;= MAX_ROMAN_NUMERAL):
+        raise OutOfRangeError, "number out of range (must be 1..&pct;s)" &pct; MAX_ROMAN_NUMERAL
+    if int(n) &lt;&gt; n:
+        raise NotIntegerError, "non-integers can not be converted"'>
+<!ENTITY romancache_toromanreturn '    return toRomanTable[n]'>
+
+<!ENTITY romancache_fromroman 'def fromRoman(s):
+    """convert Roman numeral to integer"""
+    if not s:
+        raise InvalidRomanNumeralError, "Input can not be blank"
+    if not fromRomanTable.has_key(s):
+        raise InvalidRomanNumeralError, "Invalid Roman numeral: &pct;s" &pct; s'>
+<!ENTITY romancache_fromromanreturn '    return fromRomanTable[s]'>
+
+<!ENTITY romancache_dynamicdef 'def toRomanDynamic(n):'>
+<!ENTITY romancache_dynamicdoc '    """convert integer to Roman numeral using dynamic programming"""'>
+<!ENTITY romancache_dynamiccode '    result = ""
+    for numeral, integer in romanNumeralMap:
+        if n &gt;= integer:
+            result = numeral
+            n -= integer'>
+<!ENTITY romancache_dynamicbreak '            break'>
+<!ENTITY romancache_dynamicwickedcooltrick '    if n &gt; 0:
+        result += toRomanTable[n]'>
+<!ENTITY romancache_dynamicreturn '    return result'>
+
+<!ENTITY romancache_filldef 'def fillLookupTables():'>
+<!ENTITY romancache_filldoc '    """compute all the possible roman numerals"""'>
+<!ENTITY romancache_fillcomment '    #Save the values in two global tables to convert to and from integers.'>
+<!ENTITY romancache_fillfor '    for integer in range(1, MAX_ROMAN_NUMERAL + 1):'>
+<!ENTITY romancache_fillcalldynamic '        romanNumber = toRomanDynamic(integer)'>
+<!ENTITY romancache_fillto '        toRomanTable.append(romanNumber)'>
+<!ENTITY romancache_fillfrom '        fromRomanTable[romanNumber] = integer'>
+
+<!ENTITY romancache_fillcall 'fillLookupTables()'>

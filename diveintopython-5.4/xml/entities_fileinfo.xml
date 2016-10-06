@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!ENTITY fileinfo_name 'fileinfo'>
+<!ENTITY fileinfo_filename '<filename>&fileinfo_name;.py</filename>'>
+<!ENTITY fileinfo_modulename '<filename class="headerfile">&fileinfo_name;</filename>'>
+<!ENTITY fileinfo_classname '<classname>FileInfo</classname>'>
+<!ENTITY mp3fileinfo_classname '<classname>MP3FileInfo</classname>'>
+<!ENTITY listdirectory '<function>listDirectory</function>'>
+<!ENTITY fileinfo_parse '<function>__parse</function>'>
+<!ENTITY fileinfo_docstring 'Framework for getting filetype-specific metadata.
+
+Instantiate appropriate class with filename.  Returned object acts like a
+dictionary, with key-value pairs for each piece of metadata.
+    import fileinfo
+    info = fileinfo.MP3FileInfo("/music/ap/mahadeva.mp3")
+    print "\\n".join(["&pct;s=&pct;s" &pct; (k, v) for k, v in info.items()])
+
+Or use listDirectory function to get info on all files in a directory.
+    for info in fileinfo.listDirectory("/music/ap/", [".mp3"]):
+        ...
+
+Framework can be extended by adding classes for particular file types, e.g.
+HTMLFileInfo, MPGFileInfo, DOCFileInfo.  Each class is completely responsible for
+parsing its files appropriately; see MP3FileInfo for example.
+'>
+<!ENTITY fileinfo_doc                       '"""&fileinfo_docstring;"""'>
+<!ENTITY fileinfo_importos                  'import os'>
+<!ENTITY fileinfo_importsys                 'import sys'>
+<!ENTITY fileinfo_importuserdict            'from UserDict import UserDict'>
+<!ENTITY fileinfo_import                    '&fileinfo_importos;
+&fileinfo_importsys;
+&fileinfo_importuserdict;'>
+<!ENTITY fileinfo_stripnullsdef             'def stripnulls(data):'>
+<!ENTITY fileinfo_stripnullsdoc             '    "strip whitespace and nulls"'>
+<!ENTITY fileinfo_stripnullscode            '    return data.replace("\00", "").strip()'>
+<!ENTITY fileinfo_filedef                   'class FileInfo(UserDict):'>
+<!ENTITY fileinfo_filedoc                   '    "store file metadata"'>
+<!ENTITY fileinfo_fileinit                  '    def __init__(self, filename=None):'>
+<!ENTITY fileinfo_filecallsuper             '        UserDict.__init__(self)'>
+<!ENTITY fileinfo_fileinitcode              '        self["name"] = filename'>
+<!ENTITY fileinfo_mp3def                    'class MP3FileInfo(FileInfo):'>
+<!ENTITY fileinfo_mp3doc                    '    "store ID3v1.0 MP3 tags"'>
+<!ENTITY fileinfo_mp3classvar               '    tagDataMap = {"title"   : (  3,  33, stripnulls),
+                  "artist"  : ( 33,  63, stripnulls),
+                  "album"   : ( 63,  93, stripnulls),
+                  "year"    : ( 93,  97, stripnulls),
+                  "comment" : ( 97, 126, stripnulls),
+                  "genre"   : (127, 128, ord)}'>
+<!ENTITY fileinfo_mp3parsedef               '    def __parse(self, filename):'>
+<!ENTITY fileinfo_mp3parsedoc               '        "parse ID3v1.0 tags from MP3 file"'>
+<!ENTITY fileinfo_mp3parseclear             '        self.clear()'>
+<!ENTITY fileinfo_mp3parsetryexcepttry      '        try:                               '>
+<!ENTITY fileinfo_mp3parseopen              '            fsock = open(filename, "rb", 0)'>
+<!ENTITY fileinfo_mp3parsetryfinallytry     '            try:                           '>
+<!ENTITY fileinfo_mp3parseseek              '                fsock.seek(-128, 2)        '>
+<!ENTITY fileinfo_mp3parseread              '                tagdata = fsock.read(128)  '>
+<!ENTITY fileinfo_mp3parsetryfinallyfinally '            finally:                       '>
+<!ENTITY fileinfo_mp3parseclose             '                fsock.close()              '>
+<!ENTITY fileinfo_mp3parseiftag             '            if tagdata[:3] == "TAG":'>
+<!ENTITY fileinfo_mp3parsefor               '                for tag, (start, end, parseFunc) in self.tagDataMap.items():'>
+<!ENTITY fileinfo_mp3parsecode              '                    self[tag] = parseFunc(tagdata[start:end])               '>
+<!ENTITY fileinfo_mp3parsetryexceptexcept   '        except IOError:                    '>
+<!ENTITY fileinfo_mp3parsepass              '            pass                           '>
+<!ENTITY fileinfo_mp3setitemdef             '    def __setitem__(self, key, item):'>
+<!ENTITY fileinfo_mp3setitemif              '        if key == "name" and item:'>
+<!ENTITY fileinfo_mp3setitemparse           '            self.__parse(item)'>
+<!ENTITY fileinfo_mp3setitemcallsuper       '        FileInfo.__setitem__(self, key, item)'>
+<!ENTITY fileinfo_listdef                   'def listDirectory(directory, fileExtList):                                        '>
+<!ENTITY fileinfo_listdoc                   '    "get list of file info objects for files of particular extensions"'>
+<!ENTITY fileinfo_listupper                 '    fileList = [os.path.normcase(f)
+                for f in os.listdir(directory)]           '>
+<!ENTITY fileinfo_listcode                  '    fileList = [os.path.join(directory, f) 
+               for f in fileList
+                if os.path.splitext(f)[1] in fileExtList] '>
+<!ENTITY fileinfo_getdef                    '    def getFileInfoClass(filename, module=sys.modules[FileInfo.__module__]):      '>
+<!ENTITY fileinfo_getdoc                    '        "get file info class from filename extension"                             '>
+<!ENTITY fileinfo_getcode                   '        subclass = "&pct;sFileInfo" &pct; os.path.splitext(filename)[1].upper()[1:]       '>
+<!ENTITY fileinfo_getreturn                 '        return hasattr(module, subclass) and getattr(module, subclass) or FileInfo'>
+<!ENTITY fileinfo_listreturn                '    return [getFileInfoClass(f)(f) for f in fileList]                             '>
+<!ENTITY fileinfo_ifname                    'if __name__ == "__main__":'>
+<!ENTITY fileinfo_for                       '    for info in listDirectory("/music/_singles/", [".mp3"]):'>
+<!ENTITY fileinfo_print                     '        print "\n".join(["&pct;s=&pct;s" &pct; (k, v) for k, v in info.items()])'>
+<!ENTITY fileinfo_printblank                '        print'>
+
+<!ENTITY userdict_doc              '"""A more or less complete user-defined wrapper around dictionary objects."""'>
+<!ENTITY userdict_class            'class UserDict:                               '>
+<!ENTITY userdict_init             '    def __init__(self, dict=None):            '>
+<!ENTITY userdict_initassign       '        self.data = {}                        '>
+<!ENTITY userdict_initupdate       '        if dict is not None: self.update(dict)'>
+<!ENTITY userdict_getitem          '    def __getitem__(self, key): return self.data[key]'>
+<!ENTITY userdict_setitem          '    def __setitem__(self, key, item): self.data[key] = item'>
+<!ENTITY userdict_repr             '    def __repr__(self): return repr(self.data)    '>
+<!ENTITY userdict_cmp              '    def __cmp__(self, dict):                      '>
+<!ENTITY userdict_cmpif            '        if isinstance(dict, UserDict):            '>
+<!ENTITY userdict_cmpreturn1       '            return cmp(self.data, dict.data)      '>
+<!ENTITY userdict_cmpelse          '        else:                                     '>
+<!ENTITY userdict_cmpreturn2       '            return cmp(self.data, dict)           '>
+<!ENTITY userdict_len              '    def __len__(self): return len(self.data)      '>
+<!ENTITY userdict_delitem          '    def __delitem__(self, key): del self.data[key]'>
+<!ENTITY userdict_clear            '    def clear(self): self.data.clear()         '>
+<!ENTITY userdict_copy             '    def copy(self):                            '>
+<!ENTITY userdict_copyif           '        if self.__class__ is UserDict:         '>
+<!ENTITY userdict_copyreturn1      '            return UserDict(self.data)         '>
+<!ENTITY userdict_copyimport       '        import copy                            '>
+<!ENTITY userdict_copyreturn2      '        return copy.copy(self)                 '>
+<!ENTITY userdict_keys             '    def keys(self): return self.data.keys()    '>
+<!ENTITY userdict_items            '    def items(self): return self.data.items()  '>
+<!ENTITY userdict_values           '    def values(self): return self.data.values()'>

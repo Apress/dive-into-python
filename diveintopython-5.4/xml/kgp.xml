@@ -1,0 +1,1720 @@
+<?xml version="1.0" encoding="utf-8"?>
+<chapter id="kgp">
+<?dbhtml filename="xml_processing/index.html"?>
+<title>&xml; Processing</title>
+<titleabbrev id="kgp.numberonly">Chapter 9</titleabbrev>
+<section id="kgp.divein">
+<title>Diving in</title>
+<para>These next two chapters are about &xml; processing in &python;.  It would be helpful if you already knew what an &xml; document looks like, that it's made up of structured tags to form a hierarchy of elements, and so on.  If this doesn't make sense to you, there are <ulink url="&url_xmltutorial;">many &xml; tutorials</ulink> that can explain the basics.</para>
+<para>If you're not particularly interested in XML, you should still read these chapters, which cover important topics like &python; packages, Unicode, command line arguments, and how to use &getattr; for method dispatching.</para>
+<para>Being a philosophy major is not required, although if you have ever had the misfortune of being subjected to the writings of Immanuel Kant, you will appreciate the example program a lot more than if you majored in something useful, like computer science.</para>
+<abstract>
+<title/>
+<para>There are two basic ways to work with &xml;.  One is called &sax; (<quote>Simple &api; for &xml;</quote>), and it works by reading the &xml; a little bit at a time and calling a method for each element it finds.  (If you read <xref linkend="dialect"/>, this should sound familiar, because that's how the &sgmllib_modulename; module works.)  The other is called &dom; (<quote>Document Object Model</quote>), and it works by reading in the entire &xml; document at once and creating an internal representation of it using native &python; classes linked in a tree structure.  &python; has standard modules for both kinds of parsing, but this chapter will only deal with using the &dom;.</para>
+</abstract>
+<para>The following is a complete &python; program which generates pseudo-random output based on a context-free grammar defined in an &xml; format.  Don't worry yet if you don't understand what that means; you'll examine both the program's input and its output in more depth throughout these next two chapters.</para>
+<example>
+<title>&kgp_filename;</title>
+&para_download;
+<programlisting>
+&kgp_doc;
+&kgp_import;
+
+&kgp_debug;
+
+&kgp_exception;
+
+&kgp_classdef;
+&kgp_classdoc;
+
+&kgp_init;
+&kgp_initgrammar;
+&kgp_initsource;
+&kgp_refresh;
+
+&kgp_privateload;
+&kgp_loaddoc;
+&kgp_loadopen;
+&kgp_loadparse;
+&kgp_loadclose;
+&kgp_loadreturn;
+
+&kgp_loadgrammardef;
+&kgp_loadgrammardoc;
+&kgp_loadgrammar;
+&kgp_initrefs;
+&kgp_forref;
+&kgp_refid;
+
+&kgp_loadsourcedef;
+&kgp_loadsourcedoc;
+&kgp_loadsource;
+
+&kgp_defaultsourcedef;
+&kgp_defaultsourcedoc;
+&kgp_initxrefs;
+&kgp_forxref;
+&kgp_xrefid;
+&kgp_xrefkeys;
+&kgp_standalonexrefs;
+&kgp_ifstandalone;
+&kgp_raiseerror;
+&kgp_returndefaultsource;
+        
+&kgp_resetdef;
+&kgp_resetdoc;
+&kgp_initpieces;
+&kgp_initcapitalizenextword;
+
+&kgp_refreshdef;
+&kgp_refreshdoc;
+&kgp_reset;
+&kgp_parse;
+&kgp_output;
+
+&kgp_outputdef;
+&kgp_outputdoc;
+&kgp_returnoutput;
+
+&kgp_randomchildelementdef;
+&kgp_randomchildelementdoc;
+&kgp_choices;
+&kgp_chosen;
+&kgp_ifdebug;
+&kgp_printchoices;
+&kgp_printchosen;
+&kgp_returnchosen;
+
+&kgp_parsedef;
+&kgp_parsedoc;
+&kgp_getparsemethod;
+&kgp_parsemethod;
+
+&kgp_parsedocumentdef;
+&kgp_parsedocumentdoc;
+&kgp_parsedocument;
+
+&kgp_parsetextdef;
+&kgp_parsetextdoc;
+&kgp_text;
+&kgp_ifcapitalizenextword;
+&kgp_appendcapital;
+&kgp_appendrest;
+&kgp_resetcapital;
+&kgp_elsecapitalizenextword;
+&kgp_appendnormal;
+
+&kgp_parseelementdef;
+&kgp_parseelementdoc;
+&kgp_gethandlermethod;
+&kgp_handlermethod;
+
+&kgp_parsecommentdef;
+&kgp_parsecommentdoc;
+&kgp_pass;
+    
+&kgp_doxrefdef;
+&kgp_doxrefdoc;
+&kgp_id;
+&kgp_parsexref;
+
+&kgp_dopdef;
+&kgp_dopdoc;
+&kgp_keys;
+&kgp_ifclass;
+&kgp_sentence;
+&kgp_setcapitalizenextword;
+&kgp_ifchance;
+&kgp_chance;
+&kgp_rolldice;
+&kgp_elsechance;
+&kgp_setdoit;
+&kgp_ifdoit;
+&kgp_parsep;
+
+&kgp_dochoicedef;
+&kgp_dochoicedoc;
+&kgp_parsechoice;
+
+&kgp_usagedef;
+&kgp_usagecode;
+
+&kgp_maindef;
+&kgp_initmaingrammar;
+&kgp_trygetopt;
+&kgp_getopt;
+&kgp_exceptgetopt;
+&kgp_errorusage;
+&kgp_errorexit;
+&kgp_foropt;
+&kgp_ifh;
+&kgp_helpusage;
+&kgp_helpexit;
+&kgp_ifd;
+&kgp_globaldebug;
+&kgp_setdebug;
+&kgp_ifg;
+&kgp_setmaingrammar;
+    
+&kgp_setdefaultsource;
+
+&kgp_createkantgenerator;
+&kgp_nowrap;
+
+&kgp_ifmain;
+&kgp_main;
+</programlisting>
+</example>
+<example>
+<title>&toolbox_filename;</title>
+<programlisting>
+&tb_doc;
+
+&tb_openanythingdef;
+&tb_openanythingdoc;
+&tb_ifhasattr;
+&tb_returnsource;
+
+&tb_stdin;
+&tb_stdinimport;
+&tb_stdinreturn;
+
+&tb_urllibcomment;
+&tb_importurllib;
+&tb_tryurllib;
+&tb_urlopen;
+&tb_excepturllib;
+&tb_urllibpass;
+    
+&tb_nativecomment;
+&tb_trynative;
+&tb_native;
+&tb_exceptnative;
+&tb_nativepass;
+    
+&tb_stringiocomment;
+&tb_importstringio;
+&tb_stringio;
+</programlisting>
+</example>
+<para>Run the program &kgp_filename; by itself, and it will parse the default &xml;-based grammar, in &kantxml_filename;, and print several paragraphs worth of philosophy in the style of Immanuel Kant.</para>
+<example>
+<title>Sample output of &kgp_filename;</title>
+<screen><prompt>[you@localhost kgp]$ python kgp.py</prompt>
+<computeroutput>     As is shown in the writings of Hume, our a priori concepts, in
+reference to ends, abstract from all content of knowledge; in the study
+of space, the discipline of human reason, in accordance with the
+principles of philosophy, is the clue to the discovery of the
+Transcendental Deduction.  The transcendental aesthetic, in all
+theoretical sciences, occupies part of the sphere of human reason
+concerning the existence of our ideas in general; still, the
+never-ending regress in the series of empirical conditions constitutes
+the whole content for the transcendental unity of apperception.  What
+we have alone been able to show is that, even as this relates to the
+architectonic of human reason, the Ideal may not contradict itself, but
+it is still possible that it may be in contradictions with the
+employment of the pure employment of our hypothetical judgements, but
+natural causes (and I assert that this is the case) prove the validity
+of the discipline of pure reason.  As we have already seen, time (and
+it is obvious that this is true) proves the validity of time, and the
+architectonic of human reason, in the full sense of these terms,
+abstracts from all content of knowledge.  I assert, in the case of the
+discipline of practical reason, that the Antinomies are just as
+necessary as natural causes, since knowledge of the phenomena is a
+posteriori.
+    The discipline of human reason, as I have elsewhere shown, is by
+its very nature contradictory, but our ideas exclude the possibility of
+the Antinomies.  We can deduce that, on the contrary, the pure
+employment of philosophy, on the contrary, is by its very nature
+contradictory, but our sense perceptions are a representation of, in
+the case of space, metaphysics.  The thing in itself is a
+representation of philosophy.  Applied logic is the clue to the
+discovery of natural causes.  However, what we have alone been able to
+show is that our ideas, in other words, should only be used as a canon
+for the Ideal, because of our necessary ignorance of the conditions.
+
+[...snip...]</computeroutput></screen>
+</example>
+<para>This is, of course, complete gibberish.  Well, not complete gibberish.  It is syntactically and grammatically correct (although very verbose -- Kant wasn't what you would call a get-to-the-point kind of guy).  Some of it may actually be true (or at least the sort of thing that Kant would have agreed with), some of it is blatantly false, and most of it is simply incoherent.  But all of it is in the style of Immanuel Kant.</para>
+<para>Let me repeat that this is much, much funnier if you are now or have ever been a philosophy major.</para>
+<para>The interesting thing about this program is that there is nothing Kant-specific about it.  All the content in the previous example was derived from the grammar file, &kantxml_filename;.  If you tell the program to use a different grammar file (which you can specify on the command line), the output will be completely different.</para>
+<example>
+<title>Simpler output from &kgp_filename;</title>
+<screen><prompt>[you@localhost kgp]$ python kgp.py -g binary.xml</prompt>
+<computeroutput>00101001</computeroutput>
+<prompt>[you@localhost kgp]$ python kgp.py -g binary.xml</prompt>
+<computeroutput>10110100</computeroutput></screen>
+</example>
+<para>You will take a closer look at the structure of the grammar file later in this chapter.  For now, all you need to know is that the grammar file defines the structure of the output, and the &kgp_filename; program reads through the grammar and makes random decisions about which words to plug in where.</para>
+</section>
+<section id="kgp.packages">
+<?dbhtml filename="xml_processing/packages.html"?>
+<title>Packages</title>
+<abstract>
+<para>Actually parsing an &xml; document is very simple: one line of code.  However, before you get to that line of code, you need to take a short detour to talk about packages.</para>
+</abstract>
+<example>
+<title>Loading an &xml; document (a sneak peek)</title>
+<screen>
+&prompt;<userinput>from xml.dom import minidom</userinput> <co id="kgp.packages.1.1"/>
+&prompt;<userinput>xmldoc = minidom.parse('~/diveintopython/common/py/kgp/binary.xml')</userinput></screen>
+<calloutlist>
+<callout arearefs="kgp.packages.1.1">
+<para>This is a syntax you haven't seen before.  It looks almost like the &frommoduleimport; you know and love, but the <literal>"."</literal> gives it away as something above and beyond a simple import.  In fact, &xml_packagename; is what is known as a package, &dom_packagename; is a nested package within &xml_packagename;, and &minidom_modulename; is a module within &xmldom_packagename;.</para>
+</callout>
+</calloutlist>
+</example>
+<para>That sounds complicated, but it's really not.  Looking at the actual implementation may help.  Packages are little more than directories of modules; nested packages are subdirectories.  The modules within a package (or a nested package) are still just <filename class="headerfile">.py</filename> files, like always, except that they're in a subdirectory instead of the main <filename class="directory">lib/</filename> directory of your &python; installation.</para>
+<example>
+<title>File layout of a package</title>
+<screen><computeroutput>&python;21/           root &python; installation (home of the executable)
+|
++--lib/             library directory (home of the standard library modules)
+   |
+   +-- xml/         xml package (really just a directory with other stuff in it)
+       |
+       +--sax/      xml.sax package (again, just a directory)
+       |
+       +--dom/      xml.dom package (contains minidom.py)
+       |
+       +--parsers/  xml.parsers package (used internally)</computeroutput></screen>
+</example>
+<para>So when you say <literal>from xml.dom import minidom</literal>, &python; figures out that that means <quote>look in the &xml_packagename; directory for a &dom_packagename; directory, and look in <emphasis>that</emphasis> for the &minidom_modulename; module, and import it as &minidom_modulename;</quote>.  But &python; is even smarter than that; not only can you import entire modules contained within a package, you can selectively import specific classes or functions from a module contained within a package.  You can also import the package itself as a module.  The syntax is all the same; &python; figures out what you mean based on the file layout of the package, and automatically does the right thing.</para>
+<example>
+<title>Packages are modules, too</title>
+<screen>&prompt;<userinput>from xml.dom import minidom</userinput>         <co id="kgp.packages.2.1"/>
+&prompt;<userinput>minidom</userinput>
+<computeroutput>&lt;module 'xml.dom.minidom' from 'C:\Python21\lib\xml\dom\minidom.pyc'&gt;</computeroutput>
+&prompt;<userinput>minidom.Element</userinput>
+<computeroutput>&lt;class xml.dom.minidom.Element at 01095744&gt;</computeroutput>
+&prompt;<userinput>from xml.dom.minidom import Element</userinput> <co id="kgp.packages.2.2"/>
+&prompt;<userinput>Element</userinput>
+<computeroutput>&lt;class xml.dom.minidom.Element at 01095744&gt;</computeroutput>
+&prompt;<userinput>minidom.Element</userinput>
+<computeroutput>&lt;class xml.dom.minidom.Element at 01095744&gt;</computeroutput>
+&prompt;<userinput>from xml import dom</userinput>                 <co id="kgp.packages.2.3"/>
+&prompt;<userinput>dom</userinput>
+<computeroutput>&lt;module 'xml.dom' from 'C:\Python21\lib\xml\dom\__init__.pyc'&gt;</computeroutput>
+&prompt;<userinput>import xml</userinput>                          <co id="kgp.packages.2.4"/>
+&prompt;<userinput>xml</userinput>
+<computeroutput>&lt;module 'xml' from 'C:\Python21\lib\xml\__init__.pyc'&gt;</computeroutput></screen>
+<calloutlist>
+<callout arearefs="kgp.packages.2.1">
+<para>Here you're importing a module (&minidom_modulename;) from a nested package (&xmldom_packagename;).  The result is that &minidom_modulename; is imported into your <link linkend="dialect.locals">namespace</link>, and in order to reference classes within the &minidom_modulename; module (like &element_classname;), you need to preface them with the module name.</para>
+</callout>
+<callout arearefs="kgp.packages.2.2">
+<para>Here you are importing a class (&element_classname;) from a module (&minidom_modulename;) from a nested package (&xmldom_packagename;).  The result is that &element_classname; is imported directly into your namespace.  Note that this does not interfere with the previous import; the &element_classname; class can now be referenced in two ways (but it's all still the same class).</para>
+</callout>
+<callout arearefs="kgp.packages.2.3">
+<para>Here you are importing the &dom_packagename; package (a nested package of &xml_packagename;) as a module in and of itself.  Any level of a package can be treated as a module, as you'll see in a moment.  It can even have its own attributes and methods, just the modules you've seen before.</para>
+</callout>
+<callout arearefs="kgp.packages.2.4">
+<para>Here you are importing the root level &xml_packagename; package as a module.</para>
+</callout>
+</calloutlist>
+</example>
+<para>So how can a package (which is just a directory on disk) be imported and treated as a module (which is always a file on disk)?  The answer is the magical &init_filename; file.  You see, packages are not simply directories; they are directories with a specific file, &init_filename;, inside.  This file defines the attributes and methods of the package.  For instance, &xmldom_packagename; contains a &node_classname; class, which is defined in <filename>xml/dom/__init__.py</filename>.  When you import a package as a module (like &dom_packagename; from &xml_packagename;), you're really importing its &init_filename; file.</para>
+<note>
+<title>What makes a package</title>
+<para>A package is a directory with the special &init_filename; file in it.  The &init_filename; file defines the attributes and methods of the package.  It doesn't need to define anything; it can just be an empty file, but it has to exist.  But if &init_filename; doesn't exist, the directory is just a directory, not a package, and it can't be imported or contain modules or nested packages.</para>
+</note>
+<para>So why bother with packages?  Well, they provide a way to logically group related modules.  Instead of having an &xml_packagename; package with &sax_packagename; and &dom_packagename; packages inside, the authors could have chosen to put all the &sax_packagename; functionality in <filename>xmlsax.py</filename> and all the &dom_packagename; functionality in <filename>xmldom.py</filename>, or even put all of it in a single module.  But that would have been unwieldy (as of this writing, the &xml; package has over 3000 lines of code) and difficult to manage (separate source files mean multiple people can work on different areas simultaneously).</para>
+<para>If you ever find yourself writing a large subsystem in &python; (or, more likely, when you realize that your small subsystem has grown into a large one), invest some time designing a good package architecture.  It's one of the many things &python; is good at, so take advantage of it.</para>
+</section>
+<section id="kgp.parse">
+<?dbhtml filename="xml_processing/parsing_xml.html"?>
+<title>Parsing &xml;</title>
+<abstract>
+<para>As I was saying, actually parsing an &xml; document is very simple: one line of code.  Where you go from there is up to you.</para>
+</abstract>
+<example>
+<title>Loading an &xml; document (for real this time)</title>
+<screen>
+&prompt;<userinput>from xml.dom import minidom</userinput>                                          <co id="kgp.parse.1.1"/>
+&prompt;<userinput>xmldoc = minidom.parse('~/diveintopython/common/py/kgp/binary.xml')</userinput>  <co id="kgp.parse.1.2"/>
+&prompt;<userinput>xmldoc</userinput>                                                               <co id="kgp.parse.1.3"/>
+<computeroutput>&lt;xml.dom.minidom.Document instance at 010BE87C&gt;</computeroutput>
+&prompt;<userinput>print xmldoc.toxml()</userinput>                                                 <co id="kgp.parse.1.4"/>
+<computeroutput>&lt;?xml version="1.0" ?&gt;
+&lt;grammar&gt;
+&lt;ref id="bit"&gt;
+  &lt;p&gt;0&lt;/p&gt;
+  &lt;p&gt;1&lt;/p&gt;
+&lt;/ref&gt;
+&lt;ref id="byte"&gt;
+  &lt;p&gt;&lt;xref id="bit"/&gt;&lt;xref id="bit"/&gt;&lt;xref id="bit"/&gt;&lt;xref id="bit"/&gt;\
+&lt;xref id="bit"/&gt;&lt;xref id="bit"/&gt;&lt;xref id="bit"/&gt;&lt;xref id="bit"/&gt;&lt;/p&gt;
+&lt;/ref&gt;
+&lt;/grammar&gt;</computeroutput></screen>
+<calloutlist>
+<callout arearefs="kgp.parse.1.1">
+<para>As you saw in the <link linkend="kgp.packages">previous section</link>, this imports the &minidom_modulename; module from the &xmldom_packagename; package.</para>
+</callout>
+<callout arearefs="kgp.parse.1.2">
+<para>Here is the one line of code that does all the work: &minidomparse_functionname; takes one argument and returns a parsed representation of the &xml; document.  The argument can be many things; in this case, it's simply a filename of an &xml; document on my local disk.  (To follow along, you'll need to change the path to point to your downloaded examples directory.)  But you can also pass a <link linkend="fileinfo.files">file object</link>, or even a <link linkend="dialect.extract.urllib">file-like object</link>.  You'll take advantage of this flexibility later in this chapter.</para>
+</callout>
+<callout arearefs="kgp.parse.1.3">
+<para>The object returned from &minidomparse_functionname; is a &document_classname; object, a descendant of the &node_classname; class.  This &document_classname; object is the root level of a complex tree-like structure of interlocking &python; objects that completely represent the &xml; document you passed to &minidomparse_functionname;.</para>
+</callout>
+<callout arearefs="kgp.parse.1.4">
+<para>&toxml_functionname; is a method of the &node_classname; class (and is therefore available on the &document_classname; object you got from &minidomparse_functionname;).  &toxml_functionname; prints out the &xml; that this &node_classname; represents.  For the &document_classname; node, this prints out the entire &xml; document.</para>
+</callout>
+</calloutlist>
+</example>
+<para>Now that you have an &xml; document in memory, you can start traversing through it.</para>
+<example id="kgp.parse.gettingchildnodes.example">
+<title>Getting child nodes</title>
+<screen>
+&prompt;<userinput>xmldoc.childNodes</userinput>    <co id="kgp.parse.2.1"/>
+<computeroutput>[&lt;DOM Element: grammar at 17538908>]</computeroutput>
+&prompt;<userinput>xmldoc.childNodes[0]</userinput> <co id="kgp.parse.2.2"/>
+<computeroutput>&lt;DOM Element: grammar at 17538908></computeroutput>
+&prompt;<userinput>xmldoc.firstChild</userinput>    <co id="kgp.parse.2.3"/>
+<computeroutput>&lt;DOM Element: grammar at 17538908></computeroutput></screen>
+<calloutlist>
+<callout arearefs="kgp.parse.2.1">
+<para>Every &node_classname; has a &childnodes_attr; attribute, which is a list of the &node_classname; objects.  A &document_classname; always has only one child node, the root element of the &xml; document (in this case, the &grammarnode; element).</para>
+</callout>
+<callout arearefs="kgp.parse.2.2">
+<para>To get the first (and in this case, the only) child node, just use regular list syntax.  Remember, there is nothing special going on here; this is just a regular &python; list of regular &python; objects.</para>
+</callout>
+<callout arearefs="kgp.parse.2.3">
+<para>Since getting the first child node of a node is a useful and common activity, the &node_classname; class has a &firstchild_attr; attribute, which is synonymous with <literal>childNodes[0]</literal>.  (There is also a &lastchild_attr; attribute, which is synonymous with <literal>childNodes[-1]</literal>.)</para>
+</callout>
+</calloutlist>
+</example>
+<example>
+<title>&toxml_functionname; works on any node</title>
+<screen>
+&prompt;<userinput>grammarNode = xmldoc.firstChild</userinput>
+&prompt;<userinput>print grammarNode.toxml()</userinput> <co id="kgp.parse.3.1"/>
+<computeroutput>&lt;grammar>
+&lt;ref id="bit">
+  &lt;p>0&lt;/p>
+  &lt;p>1&lt;/p>
+&lt;/ref>
+&lt;ref id="byte">
+  &lt;p>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;xref id="bit"/>\
+&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;/p>
+&lt;/ref>
+&lt;/grammar></computeroutput></screen>
+<calloutlist>
+<callout arearefs="kgp.parse.3.1">
+<para>Since the &toxml_functionname; method is defined in the &node_classname; class, it is available on any &xml; node, not just the &document_classname; element.</para>
+</callout>
+</calloutlist>
+</example>
+<example id="kgp.parse.childnodescanbetext.example">
+<title>Child nodes can be text</title>
+<screen>
+&prompt;<userinput>grammarNode.childNodes</userinput>                  <co id="kgp.parse.4.1"/>
+<computeroutput>[&lt;DOM Text node "\n">, &lt;DOM Element: ref at 17533332>, \
+&lt;DOM Text node "\n">, &lt;DOM Element: ref at 17549660>, &lt;DOM Text node "\n">]</computeroutput>
+&prompt;<userinput>print grammarNode.firstChild.toxml()</userinput>    <co id="kgp.parse.4.2"/>
+<computeroutput>
+
+</computeroutput>
+&prompt;<userinput>print grammarNode.childNodes[1].toxml()</userinput> <co id="kgp.parse.4.3"/>
+<computeroutput>&lt;ref id="bit">
+  &lt;p>0&lt;/p>
+  &lt;p>1&lt;/p>
+&lt;/ref></computeroutput>
+&prompt;<userinput>print grammarNode.childNodes[3].toxml()</userinput> <co id="kgp.parse.4.4"/>
+<computeroutput>&lt;ref id="byte">
+  &lt;p>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;xref id="bit"/>\
+&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;/p>
+&lt;/ref></computeroutput>
+&prompt;<userinput>print grammarNode.lastChild.toxml()</userinput>     <co id="kgp.parse.4.5"/>
+<computeroutput>
+
+</computeroutput></screen>
+<calloutlist>
+<callout arearefs="kgp.parse.4.1">
+<para>Looking at the &xml; in &binaryxml_filename;, you might think that the &grammarnode; has only two child nodes, the two &refnode; elements.  But you're missing something: the carriage returns!  After the <literal>'&lt;grammar>'</literal> and before the first <literal>'&lt;ref>'</literal> is a carriage return, and this text counts as a child node of the &grammarnode; element.  Similarly, there is a carriage return after each <literal>'&lt;/ref>'</literal>; these also count as child nodes.  So <literal>grammar.childNodes</literal> is actually a list of 5 objects: 3 &text_classname; objects and 2 &element_classname; objects.</para>
+</callout>
+<callout arearefs="kgp.parse.4.2">
+<para>The first child is a &text_classname; object representing the carriage return after the <literal>'&lt;grammar>'</literal> tag and before the first <literal>'&lt;ref>'</literal> tag.</para>
+</callout>
+<callout arearefs="kgp.parse.4.3">
+<para>The second child is an &element_classname; object representing the first &refnode; element.</para>
+</callout>
+<callout arearefs="kgp.parse.4.4">
+<para>The fourth child is an &element_classname; object representing the second &refnode; element.</para>
+</callout>
+<callout arearefs="kgp.parse.4.5">
+<para>The last child is a &text_classname; object representing the carriage return after the <literal>'&lt;/ref>'</literal> end tag and before the <literal>'&lt;/grammar>'</literal> end tag.</para>
+</callout>
+</calloutlist>
+</example>
+<example>
+<title>Drilling down all the way to text</title>
+<screen>
+&prompt;<userinput>grammarNode</userinput>
+<computeroutput>&lt;DOM Element: grammar at 19167148></computeroutput>
+&prompt;<userinput>refNode = grammarNode.childNodes[1]</userinput> <co id="kgp.parse.5.1"/>
+&prompt;<userinput>refNode</userinput>
+<computeroutput>&lt;DOM Element: ref at 17987740></computeroutput>
+&prompt;<userinput>refNode.childNodes</userinput>                  <co id="kgp.parse.5.2"/>
+<computeroutput>[&lt;DOM Text node "\n">, &lt;DOM Text node "  ">, &lt;DOM Element: p at 19315844>, \
+&lt;DOM Text node "\n">, &lt;DOM Text node "  ">, \
+&lt;DOM Element: p at 19462036>, &lt;DOM Text node "\n">]</computeroutput>
+&prompt;<userinput>pNode = refNode.childNodes[2]</userinput>
+&prompt;<userinput>pNode</userinput>
+<computeroutput>&lt;DOM Element: p at 19315844></computeroutput>
+&prompt;<userinput>print pNode.toxml()</userinput>                 <co id="kgp.parse.5.3"/>
+<computeroutput>&lt;p>0&lt;/p></computeroutput>
+&prompt;<userinput>pNode.firstChild</userinput>                    <co id="kgp.parse.5.4"/>
+<computeroutput>&lt;DOM Text node "0"></computeroutput>
+&prompt;<userinput>pNode.firstChild.data</userinput>               <co id="kgp.parse.5.5"/>
+<computeroutput>u'0'</computeroutput></screen>
+<calloutlist>
+<callout arearefs="kgp.parse.5.1">
+<para>As you saw in the previous example, the first <sgmltag>ref</sgmltag> element is <literal>grammarNode.childNodes[1]</literal>, since childNodes[0] is a &text_classname; node for the carriage return.</para>
+</callout>
+<callout arearefs="kgp.parse.5.2">
+<para>The <sgmltag>ref</sgmltag> element has its own set of child nodes, one for the carriage return, a separate one for the spaces, one for the <sgmltag>p</sgmltag> element, and so forth.</para>
+</callout>
+<callout arearefs="kgp.parse.5.3">
+<para>You can even use the &toxml_functionname; method here, deeply nested within the document.</para>
+</callout>
+<callout arearefs="kgp.parse.5.4">
+<para>The <sgmltag>p</sgmltag> element has only one child node (you can't tell that from this example, but look at <literal>pNode.childNodes</literal> if you don't believe me), and it is a &text_classname; node for the single character <literal>'0'</literal>.</para>
+</callout>
+<callout arearefs="kgp.parse.5.5">
+<para>The <literal>.data</literal> attribute of a &text_classname; node gives you the actual string that the text node represents.  But what is that <literal>'u'</literal> in front of the string?  The answer to that deserves its own section.</para>
+</callout>
+</calloutlist>
+</example>
+</section>
+<section id="kgp.unicode">
+<?dbhtml filename="xml_processing/unicode.html"?>
+<title>Unicode</title>
+<abstract>
+<title/>
+<para>Unicode is a system to represent characters from all the world's different languages.  When &python; parses an &xml; document, all data is stored in memory as unicode.</para>
+</abstract>
+<para>You'll get to all that in a minute, but first, some background.</para>
+<formalpara>
+<title>Historical note</title>
+<para>Before unicode, there were separate character encoding systems for each language, each using the same numbers (0-255) to represent that language's characters.  Some languages (like Russian) have multiple conflicting standards about how to represent the same characters; other languages (like Japanese) have so many characters that they require multiple-byte character sets.  Exchanging documents between systems was difficult because there was no way for a computer to tell for certain which character encoding scheme the document author had used; the computer only saw numbers, and the numbers could mean different things.  Then think about trying to store these documents in the same place (like in the same database table); you would need to store the character encoding alongside each piece of text, and make sure to pass it around whenever you passed the text around.  Then think about multilingual documents, with characters from multiple languages in the same document.  (They typically used escape codes to switch modes; poof, you're in Russian koi8-r mode, so character 241 means this; poof, now you're in Mac Greek mode, so character 241 means something else.  And so on.)  These are the problems which unicode was designed to solve.</para>
+</formalpara>
+<para>To solve these problems, unicode represents each character as a 2-byte number, from 0 to 65535.<footnote><para>This, sadly, is <emphasis>still</emphasis> an oversimplification.  Unicode now has been extended to handle ancient Chinese, Korean, and Japanese texts, which had so many different characters that the 2-byte unicode system could not represent them all.  But &python; doesn't currently support that out of the box, and I don't know if there is a project afoot to add it.  You've reached the limits of my expertise, sorry.</para></footnote>  Each 2-byte number represents a unique character used in at least one of the world's languages.  (Characters that are used in multiple languages have the same numeric code.)  There is exactly 1 number per character, and exactly 1 character per number.  Unicode data is never ambiguous.</para>
+<para>Of course, there is still the matter of all these legacy encoding systems.  7-bit &ascii;, for instance, which stores English characters as numbers ranging from 0 to 127.  (65 is capital <quote><literal>A</literal></quote>, 97 is lowercase <quote><literal>a</literal></quote>, and so forth.)  English has a very simple alphabet, so it can be completely expressed in 7-bit &ascii;.  Western European languages like French, Spanish, and German all use an encoding system called ISO-8859-1 (also called <quote>latin-1</quote>), which uses the 7-bit &ascii; characters for the numbers 0 through 127, but then extends into the 128-255 range for characters like n-with-a-tilde-over-it (241), and u-with-two-dots-over-it (252).  And unicode uses the same characters as 7-bit &ascii; for 0 through 127, and the same characters as ISO-8859-1 for 128 through 255, and then extends from there into characters for other languages with the remaining numbers, 256 through 65535.</para>
+<para>When dealing with unicode data, you may at some point need to convert the data back into one of these other legacy encoding systems.  For instance, to integrate with some other computer system which expects its data in a specific 1-byte encoding scheme, or to print it to a non-unicode-aware terminal or printer.  Or to store it in an &xml; document which explicitly specifies the encoding scheme.</para>
+<para>And on that note, let's get back to &python;.</para>
+<para>&python; has had unicode support throughout the language since version 2.0.  The &xml; package uses unicode to store all parsed &xml; data, but you can use unicode anywhere.</para>
+<example>
+<title>Introducing unicode</title>
+<screen>
+&prompt;<userinput>s = u'Dive in'</userinput>            <co id="kgp.unicode.1.1"/>
+&prompt;<userinput>s</userinput>
+<computeroutput>u'Dive in'</computeroutput>
+&prompt;<userinput>print s</userinput>                   <co id="kgp.unicode.1.2"/>
+<computeroutput>Dive in</computeroutput></screen>
+<calloutlist>
+<callout arearefs="kgp.unicode.1.1">
+<para>To create a unicode string instead of a regular &ascii; string, add the letter <quote><literal>u</literal></quote> before the string.  Note that this particular string doesn't have any non-&ascii; characters.  That's fine; unicode is a superset of &ascii; (a very large superset at that), so any regular &ascii; string can also be stored as unicode.</para>
+</callout>
+<callout arearefs="kgp.unicode.1.2">
+<para>When printing a string, &python; will attempt to convert it to your default encoding, which is usually &ascii;.  (More on this in a minute.)  Since this unicode string is made up of characters that are also &ascii; characters, printing it has the same result as printing a normal &ascii; string; the conversion is seamless, and if you didn't know that <varname>s</varname> was a unicode string, you'd never notice the difference.</para>
+</callout>
+</calloutlist>
+</example>
+<example>
+<title>Storing non-&ascii; characters</title>
+<screen>
+&prompt;<userinput>s = u'La Pe\xf1a'</userinput>         <co id="kgp.unicode.2.1"/>
+&prompt;<userinput>print s</userinput>                   <co id="kgp.unicode.2.2"/>
+<computeroutput role="traceback">&traceback;
+UnicodeError: ASCII encoding error: ordinal not in range(128)</computeroutput>
+&prompt;<userinput>print s.encode('latin-1')</userinput> <co id="kgp.unicode.2.3"/>
+<computeroutput>La Pe&ntilde;a</computeroutput></screen>
+<calloutlist>
+<callout arearefs="kgp.unicode.2.1">
+<para>The real advantage of unicode, of course, is its ability to store non-&ascii; characters, like the Spanish <quote><literal>&ntilde;</literal></quote> (<literal>n</literal> with a tilde over it).  The unicode character code for the tilde-n is <literal>0xf1</literal> in hexadecimal (241 in decimal), which you can type like this: <literal>\xf1</literal>.</para>
+</callout>
+<callout arearefs="kgp.unicode.2.2">
+<para>Remember I said that the &print; function attempts to convert a unicode string to &ascii; so it can print it?  Well, that's not going to work here, because your unicode string contains non-&ascii; characters, so &python; raises a <errorname>UnicodeError</errorname> error.</para>
+</callout>
+<callout arearefs="kgp.unicode.2.3">
+<para>Here's where the conversion-from-unicode-to-other-encoding-schemes comes in.  <varname>s</varname> is a unicode string, but &print; can only print a regular string.  To solve this problem, you call the <function>encode</function> method, available on every unicode string, to convert the unicode string to a regular string in the given encoding scheme, which you pass as a parameter.  In this case, you're using <literal>latin-1</literal> (also known as <literal>iso-8859-1</literal>), which includes the tilde-n (whereas the default &ascii; encoding scheme did not, since it only includes characters numbered 0 through 127).</para>
+</callout>
+</calloutlist>
+</example>
+<para>Remember I said &python; usually converted unicode to &ascii; whenever it needed to make a regular string out of a unicode string?  Well, this default encoding scheme is an option which you can customize.</para>
+<example>
+<title><filename>sitecustomize.py</filename></title>
+<programlisting>
+# sitecustomize.py                   <co id="kgp.unicode.3.1"/>
+# this file can be anywhere in your Python path,
+# but it usually goes in ${pythondir}/lib/site-packages/
+import sys
+sys.setdefaultencoding('iso-8859-1') <co id="kgp.unicode.3.2"/>
+</programlisting>
+<calloutlist>
+<callout arearefs="kgp.unicode.3.1">
+<para><filename>sitecustomize.py</filename> is a special script; &python; will try to import it on startup, so any code in it will be run automatically.  As the comment mentions, it can go anywhere (as long as &import; can find it), but it usually goes in the <filename>site-packages</filename> directory within your &python; <filename>lib</filename> directory.</para>
+</callout>
+<callout arearefs="kgp.unicode.3.2">
+<para><function>setdefaultencoding</function> function sets, well, the default encoding.  This is the encoding scheme that &python; will try to use whenever it needs to auto-coerce a unicode string into a regular string.</para>
+</callout>
+</calloutlist>
+</example>
+<example>
+<title>Effects of setting the default encoding</title>
+<screen>
+&prompt;<userinput>import sys</userinput>
+&prompt;<userinput>sys.getdefaultencoding()</userinput> <co id="kgp.unicode.4.1"/>
+<computeroutput>'iso-8859-1'</computeroutput>
+&prompt;<userinput>s = u'La Pe\xf1a'</userinput>
+&prompt;<userinput>print s</userinput>                  <co id="kgp.unicode.4.2"/>
+<computeroutput>La Pe&ntilde;a</computeroutput></screen>
+<calloutlist>
+<callout arearefs="kgp.unicode.4.1">
+<para>This example assumes that you have made the changes listed in the previous example to your <filename>sitecustomize.py</filename> file, and restarted &python;.  If your default encoding still says <literal>'ascii'</literal>, you didn't set up your <filename>sitecustomize.py</filename> properly, or you didn't restart &python;.  The default encoding can only be changed during &python; startup; you can't change it later.  (Due to some wacky programming tricks that I won't get into right now, you can't even call <function>sys.setdefaultencoding</function> after &python; has started up.  Dig into <filename>site.py</filename> and search for <quote><literal>setdefaultencoding</literal></quote> to find out how.)</para>
+</callout>
+<callout arearefs="kgp.unicode.4.2">
+<para>Now that the default encoding scheme includes all the characters you use in your string, &python; has no problem auto-coercing the string and printing it.</para>
+</callout>
+</calloutlist>
+</example>
+<example>
+<title>Specifying encoding in <filename>.py</filename> files</title>
+<para>If you are going to be storing non-ASCII strings within your &python; code, you'll need to specify the encoding of each individual <filename>.py</filename> file by putting an encoding declaration at the top of each file.  This declaration defines the <filename>.py</filename> file to be UTF-8:</para>
+<programlisting>
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+</programlisting>
+</example>
+<para>Now, what about &xml;?  Well, every &xml; document is in a specific encoding.  Again, ISO-8859-1 is a popular encoding for data in Western European languages.  KOI8-R is popular for Russian texts.  The encoding, if specified, is in the header of the &xml; document.</para>
+<example>
+<title><filename>russiansample.xml</filename></title>
+<screen><computeroutput>
+&lt;?xml version="1.0" encoding="koi8-r"?>       </computeroutput><co id="kgp.unicode.5.1"/><computeroutput>
+&lt;preface>
+&lt;title&gt;&#1055;&#1088;&#1077;&#1076;&#1080;&#1089;&#1083;&#1086;&#1074;&#1080;&#1077;&lt;/title>                    </computeroutput><co id="kgp.unicode.5.2"/><computeroutput>
+&lt;/preface></computeroutput></screen>
+<calloutlist>
+<callout arearefs="kgp.unicode.5.1">
+<para>This is a sample extract from a real Russian &xml; document; it's part of a Russian translation of this very book.  Note the encoding, <literal>koi8-r</literal>, specified in the header.</para>
+</callout>
+<callout arearefs="kgp.unicode.5.2">
+<para>These are Cyrillic characters which, as far as I know, spell the Russian word for <quote>Preface</quote>.  If you open this file in a regular text editor, the characters will most likely like gibberish, because they're encoded using the <literal>koi8-r</literal> encoding scheme, but they're being displayed in <literal>iso-8859-1</literal>.</para>
+</callout>
+</calloutlist>
+</example>
+<example>
+<title>Parsing <filename>russiansample.xml</filename></title>
+<screen>
+&prompt;<userinput>from xml.dom import minidom</userinput>
+&prompt;<userinput>xmldoc = minidom.parse('russiansample.xml')</userinput> <co id="kgp.unicode.6.1"/>
+&prompt;<userinput>title = xmldoc.getElementsByTagName('title')[0].firstChild.data</userinput>
+&prompt;<userinput>title</userinput>                                       <co id="kgp.unicode.6.2"/>
+<computeroutput>u'\u041f\u0440\u0435\u0434\u0438\u0441\u043b\u043e\u0432\u0438\u0435'</computeroutput>
+&prompt;<userinput>print title</userinput>                                 <co id="kgp.unicode.6.3"/>
+<computeroutput role="traceback">&traceback;
+UnicodeError: ASCII encoding error: ordinal not in range(128)</computeroutput>
+&prompt;<userinput>convertedtitle = title.encode('koi8-r')</userinput>     <co id="kgp.unicode.6.4"/>
+&prompt;<userinput>convertedtitle</userinput>
+<computeroutput>'\xf0\xd2\xc5\xc4\xc9\xd3\xcc\xcf\xd7\xc9\xc5'</computeroutput>
+&prompt;<userinput>print convertedtitle</userinput>                        <co id="kgp.unicode.6.5"/>
+<computeroutput>&#1055;&#1088;&#1077;&#1076;&#1080;&#1089;&#1083;&#1086;&#1074;&#1080;&#1077;</computeroutput></screen>
+<calloutlist>
+<callout arearefs="kgp.unicode.6.1">
+<para>I'm assuming here that you saved the previous example as <filename>russiansample.xml</filename> in the current directory.  I am also, for the sake of completeness, assuming that you've changed your default encoding back to <literal>'ascii'</literal> by removing your <filename>sitecustomize.py</filename> file, or at least commenting out the <function>setdefaultencoding</function> line.</para>
+</callout>
+<callout arearefs="kgp.unicode.6.2">
+<para>Note that the text data of the <sgmltag>title</sgmltag> tag (now in the <varname>title</varname> variable, thanks to that long concatenation of &python; functions which I hastily skipped over and, annoyingly, won't explain until the next section) -- the text data inside the &xml; document's <sgmltag>title</sgmltag> element is stored in unicode.</para>
+</callout>
+<callout arearefs="kgp.unicode.6.3">
+<para>Printing the title is not possible, because this unicode string contains non-&ascii; characters, so &python; can't convert it to &ascii; because that doesn't make sense.</para>
+</callout>
+<callout arearefs="kgp.unicode.6.4">
+<para>You can, however, explicitly convert it to <literal>koi8-r</literal>, in which case you get a (regular, not unicode) string of single-byte characters (<literal>f0</literal>, <literal>d2</literal>, <literal>c5</literal>, and so forth) that are the <literal>koi8-r</literal>-encoded versions of the characters in the original unicode string.</para>
+</callout>
+<callout arearefs="kgp.unicode.6.5">
+<para>Printing the <literal>koi8-r</literal>-encoded string will probably show gibberish on your screen, because your &python; &ide; is interpreting those characters as <literal>iso-8859-1</literal>, not <literal>koi8-r</literal>.  But at least they do print.  (And, if you look carefully, it's the same gibberish that you saw when you opened the original &xml; document in a non-unicode-aware text editor.  &python; converted it from <literal>koi8-r</literal> into unicode when it parsed the &xml; document, and you've just converted it back.)</para>
+</callout>
+</calloutlist>
+</example>
+<para>To sum up, unicode itself is a bit intimidating if you've never seen it before, but unicode data is really very easy to handle in &python;.  If your &xml; documents are all 7-bit &ascii; (like the examples in this chapter), you will literally never think about unicode.  &python; will convert the &ascii; data in the &xml; documents into unicode while parsing, and auto-coerce it back to &ascii; whenever necessary, and you'll never even notice.  But if you need to deal with that in other languages, &python; is ready.</para>
+<itemizedlist role="furtherreading">
+<title>Further reading</title>
+<listitem><para><ulink url="&url_unicode;">Unicode.org</ulink> is the home page of the unicode standard, including a brief <ulink url="&url_unicodetech;">technical introduction</ulink>.</para></listitem>
+<listitem><para><ulink url="&url_unicodetutorial;">Unicode Tutorial</ulink> has some more examples of how to use &python;'s unicode functions, including how to force &python; to coerce unicode into &ascii; even when it doesn't really want to.</para></listitem>
+<listitem><para><ulink url="http://www.python.org/peps/pep-0263.html">PEP 263</ulink> goes into more detail about how and when to define a character encoding in your <filename>.py</filename> files.</para></listitem>
+</itemizedlist>
+</section>
+<section id="kgp.search">
+<?dbhtml filename="xml_processing/searching.html"?>
+<title>Searching for elements</title>
+<abstract>
+<title/>
+<para>Traversing &xml; documents by stepping through each node can be tedious.  If you're looking for something in particular, buried deep within your &xml; document, there is a shortcut you can use to find it quickly: &getelementsbytagname_functionname;.</para>
+</abstract>
+<para>For this section, you'll be using the &binaryxml_filename; grammar file, which looks like this:</para>
+<example>
+<title>&binaryxml_filename;</title>
+<screen><computeroutput>&lt;?xml version="1.0"?>
+&lt;!DOCTYPE grammar PUBLIC "-//diveintopython.org//DTD Kant Generator Pro v1.0//EN" "kgp.dtd">
+&lt;grammar>
+&lt;ref id="bit">
+  &lt;p>0&lt;/p>
+  &lt;p>1&lt;/p>
+&lt;/ref>
+&lt;ref id="byte">
+  &lt;p>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;xref id="bit"/>\
+&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;/p>
+&lt;/ref>
+&lt;/grammar></computeroutput></screen>
+</example>
+<para>It has two &refnode;s, <literal>'bit'</literal> and <literal>'byte'</literal>.  A <literal>bit</literal> is either a <literal>'0'</literal> or <literal>'1'</literal>, and a <literal>byte</literal> is 8 <literal>bit</literal>s.</para>
+<example>
+<title>Introducing &getelementsbytagname_functionname;</title>
+<screen>
+&prompt;<userinput>from xml.dom import minidom</userinput>
+&prompt;<userinput>xmldoc = minidom.parse('binary.xml')</userinput>
+&prompt;<userinput>reflist = xmldoc.getElementsByTagName('ref')</userinput> <co id="kgp.search.1.1"/>
+&prompt;<userinput>reflist</userinput>
+<computeroutput>[&lt;DOM Element: ref at 136138108>, &lt;DOM Element: ref at 136144292>]</computeroutput>
+&prompt;<userinput>print reflist[0].toxml()</userinput>
+<computeroutput>&lt;ref id="bit">
+  &lt;p>0&lt;/p>
+  &lt;p>1&lt;/p>
+&lt;/ref></computeroutput>
+&prompt;<userinput>print reflist[1].toxml()</userinput>
+<computeroutput>&lt;ref id="byte">
+  &lt;p>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;xref id="bit"/>\
+&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;/p>
+&lt;/ref>
+</computeroutput></screen>
+<calloutlist>
+<callout arearefs="kgp.search.1.1">
+<para>&getelementsbytagname_functionname; takes one argument, the name of the element you wish to find.  It returns a list of &element_classname; objects, corresponding to the &xml; elements that have that name.  In this case, you find two <literal>ref</literal> elements.</para>
+</callout>
+</calloutlist>
+</example>
+<example>
+<title>Every element is searchable</title>
+<screen>
+&prompt;<userinput>firstref = reflist[0]</userinput>                      <co id="kgp.search.2.1"/>
+&prompt;<userinput>print firstref.toxml()</userinput>
+<computeroutput>&lt;ref id="bit">
+  &lt;p>0&lt;/p>
+  &lt;p>1&lt;/p>
+&lt;/ref></computeroutput>
+&prompt;<userinput>plist = firstref.getElementsByTagName("p")</userinput> <co id="kgp.search.2.2"/>
+&prompt;<userinput>plist</userinput>
+<computeroutput>[&lt;DOM Element: p at 136140116>, &lt;DOM Element: p at 136142172>]</computeroutput>
+&prompt;<userinput>print plist[0].toxml()</userinput>                     <co id="kgp.search.2.3"/>
+<computeroutput>&lt;p>0&lt;/p></computeroutput>
+&prompt;<userinput>print plist[1].toxml()</userinput>
+<computeroutput>&lt;p>1&lt;/p></computeroutput></screen>
+<calloutlist>
+<callout arearefs="kgp.search.2.1">
+<para>Continuing from the previous example, the first object in your <varname>reflist</varname> is the <literal>'bit'</literal> &refnode; element.</para>
+</callout>
+<callout arearefs="kgp.search.2.2">
+<para>You can use the same &getelementsbytagname_functionname; method on this &element_classname; to find all the <sgmltag>&lt;p></sgmltag> elements within the <literal>'bit'</literal> &refnode; element.</para>
+</callout>
+<callout arearefs="kgp.search.2.3">
+<para>Just as before, the &getelementsbytagname_functionname; method returns a list of all the elements it found.  In this case, you have two, one for each bit.</para>
+</callout>
+</calloutlist>
+</example>
+<example>
+<title>Searching is actually recursive</title>
+<screen>
+&prompt;<userinput>plist = xmldoc.getElementsByTagName("p")</userinput> <co id="kgp.search.3.1"/>
+&prompt;<userinput>plist</userinput>
+<computeroutput>[&lt;DOM Element: p at 136140116>, &lt;DOM Element: p at 136142172>, &lt;DOM Element: p at 136146124>]</computeroutput>
+&prompt;<userinput>plist[0].toxml()</userinput>                         <co id="kgp.search.3.2"/>
+<computeroutput>'&lt;p>0&lt;/p>'</computeroutput>
+&prompt;<userinput>plist[1].toxml()</userinput>
+<computeroutput>'&lt;p>1&lt;/p>'</computeroutput>
+&prompt;<userinput>plist[2].toxml()</userinput>                         <co id="kgp.search.3.3"/>
+<computeroutput>'&lt;p>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;xref id="bit"/>\
+&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;/p>'</computeroutput></screen>
+<calloutlist>
+<callout arearefs="kgp.search.3.1">
+<para>Note carefully the difference between this and the previous example.  Previously, you were searching for &pnode; elements within <varname>firstref</varname>, but here you are searching for &pnode; elements within <varname>xmldoc</varname>, the root-level object that represents the entire &xml; document.  This <emphasis>does</emphasis> find the &pnode; elements nested within the &refnode; elements within the root &grammarnode; element.</para>
+</callout>
+<callout arearefs="kgp.search.3.2">
+<para>The first two &pnode; elements are within the first &refnode; (the <literal>'bit'</literal> &refnode;).</para>
+</callout>
+<callout arearefs="kgp.search.3.3">
+<para>The last &pnode; element is the one within the second &refnode; (the <literal>'byte'</literal> &refnode;).</para>
+</callout>
+</calloutlist>
+</example>
+</section>
+<section id="kgp.attributes">
+<?dbhtml filename="xml_processing/attributes.html"?>
+<title>Accessing element attributes</title>
+<abstract>
+<title/>
+<para>&xml; elements can have one or more attributes, and it is incredibly simple to access them once you have parsed an &xml; document.</para>
+</abstract>
+<para>For this section, you'll be using the &binaryxml_filename; grammar file that you saw in the <link linkend="kgp.search">previous section</link>.</para>
+<note>
+<title>&xml; attributes and &python; attributes</title>
+<para>This section may be a little confusing, because of some overlapping terminology.  Elements in an &xml; document have attributes, and &python; objects also have attributes.  When you parse an &xml; document, you get a bunch of &python; objects that represent all the pieces of the &xml; document, and some of these &python; objects represent attributes of the &xml; elements.  But the (&python;) objects that represent the (&xml;) attributes also have (&python;) attributes, which are used to access various parts of the (&xml;) attribute that the object represents.  I told you it was confusing.  I am open to suggestions on how to distinguish these more clearly.</para>
+</note>
+<example>
+<title>Accessing element attributes</title>
+<screen>
+&prompt;<userinput>xmldoc = minidom.parse('binary.xml')</userinput>
+&prompt;<userinput>reflist = xmldoc.getElementsByTagName('ref')</userinput>
+&prompt;<userinput>bitref = reflist[0]</userinput>
+&prompt;<userinput>print bitref.toxml()</userinput>
+<computeroutput>&lt;ref id="bit">
+  &lt;p>0&lt;/p>
+  &lt;p>1&lt;/p>
+&lt;/ref></computeroutput>
+&prompt;<userinput>bitref.attributes</userinput>          <co id="kgp.attributes.1.1"/>
+<computeroutput>&lt;xml.dom.minidom.NamedNodeMap instance at 0x81e0c9c></computeroutput>
+&prompt;<userinput>bitref.attributes.keys()</userinput>   <co id="kgp.attributes.1.2"/> <co id="kgp.attributes.1.3"/>
+<computeroutput>[u'id']</computeroutput>
+&prompt;<userinput>bitref.attributes.values()</userinput> <co id="kgp.attributes.1.4"/>
+<computeroutput>[&lt;xml.dom.minidom.Attr instance at 0x81d5044>]</computeroutput>
+&prompt;<userinput>bitref.attributes["id"]</userinput>    <co id="kgp.attributes.1.5"/>
+<computeroutput>&lt;xml.dom.minidom.Attr instance at 0x81d5044></computeroutput></screen>
+<calloutlist>
+<callout arearefs="kgp.attributes.1.1">
+<para>Each &element_classname; object has an attribute called <literal>attributes</literal>, which is a &namednodemap_classname; object.  This sounds scary, but it's not, because a &namednodemap_classname; is an object that <link linkend="fileinfo.userdict">acts like a dictionary</link>, so you already know how to use it.</para>
+</callout>
+<callout arearefs="kgp.attributes.1.2">
+<para>Treating the &namednodemap_classname; as a dictionary, you can get a list of the names of the attributes of this element by using <function>attributes.keys()</function>.  This element has only one attribute, <literal>'id'</literal>.</para>
+</callout>
+<callout arearefs="kgp.attributes.1.3">
+<para>Attribute names, like all other text in an &xml; document, are stored in <link linkend="kgp.unicode">unicode</link>.</para>
+</callout>
+<callout arearefs="kgp.attributes.1.4">
+<para>Again treating the &namednodemap_classname; as a dictionary, you can get a list of the values of the attributes by using <function>attributes.values()</function>.  The values are themselves objects, of type &attr_classname;.  You'll see how to get useful information out of this object in the next example.</para>
+</callout>
+<callout arearefs="kgp.attributes.1.5">
+<para>Still treating the &namednodemap_classname; as a dictionary, you can access an individual attribute by name, using normal dictionary syntax.  (Readers who have been paying extra-close attention will already know how the &namednodemap_classname; class accomplishes this neat trick: by defining a <link linkend="fileinfo.specialmethods">&getitem; special method</link>.  Other readers can take comfort in the fact that they don't need to understand how it works in order to use it effectively.)</para>
+</callout>
+</calloutlist>
+</example>
+<example>
+<title>Accessing individual attributes</title>
+<screen>
+&prompt;<userinput>a = bitref.attributes["id"]</userinput>
+&prompt;<userinput>a</userinput>
+<computeroutput>&lt;xml.dom.minidom.Attr instance at 0x81d5044></computeroutput>
+&prompt;<userinput>a.name</userinput>  <co id="kgp.attributes.2.1"/>
+<computeroutput>u'id'</computeroutput>
+&prompt;<userinput>a.value</userinput> <co id="kgp.attributes.2.2"/>
+<computeroutput>u'bit'</computeroutput></screen>
+<calloutlist>
+<callout arearefs="kgp.attributes.2.1">
+<para>The &attr_classname; object completely represents a single &xml; attribute of a single &xml; element.  The name of the attribute (the same name as you used to find this object in the <literal>bitref.attributes</literal> &namednodemap_classname; pseudo-dictionary) is stored in <literal>a.name</literal>.</para>
+</callout>
+<callout arearefs="kgp.attributes.2.2">
+<para>The actual text value of this &xml; attribute is stored in <literal>a.value</literal>.</para>
+</callout>
+</calloutlist>
+</example>
+<note>
+<title>Attributes have no order</title>
+<para>Like a dictionary, attributes of an &xml; element have no ordering.  Attributes may <emphasis>happen to be</emphasis> listed in a certain order in the original &xml; document, and the &attr_classname; objects may <emphasis>happen to be</emphasis> listed in a certain order when the &xml; document is parsed into &python; objects, but these orders are arbitrary and should carry no special meaning.  You should always access individual attributes by name, like the keys of a dictionary.</para>
+</note>
+</section>
+<section id="kgp.segue">
+<?dbhtml filename="xml_processing/summary.html"?>
+<title>Segue</title>
+<abstract>
+<title/>
+<para>OK, that's it for the hard-core XML stuff.  The next chapter will continue to use these same example programs, but focus on other aspects that make the program more flexible: using streams for input processing, using &getattr; for method dispatching, and using command-line flags to allow users to reconfigure the program without changing the code.</para>
+</abstract>
+<para>Before moving on to the next chapter, you should be comfortable doing all of these things:</para>
+<itemizedlist>
+<listitem><para><link linkend="kgp.parse">Parsing &xml; documents</link> using &minidom_modulename;, <link linkend="kgp.search">searching through the parsed document</link>, and accessing arbitrary <link linkend="kgp.attributes">element attributes</link> and <link linkend="kgp.child">element children</link></para></listitem>
+<listitem><para>Organizing complex libraries into <link linkend="kgp.packages">packages</link></para></listitem>
+<listitem><para><link linkend="kgp.unicode">Converting unicode strings</link> to different character encodings</para></listitem>
+</itemizedlist>
+</section>
+</chapter>
+<chapter id="streams">
+<?dbhtml filename="scripts_and_streams/index.html"?>
+<!-- You can only enter the same stream once. -->
+<title>Scripts and Streams</title>
+<titleabbrev id="streams.numberonly">Chapter 10</titleabbrev>
+<section id="kgp.openanything">
+<?dbhtml filename="scripts_and_streams/input_sources.html"?>
+<title>Abstracting input sources</title>
+<abstract>
+<title/>
+<para>One of &python;'s greatest strengths is its dynamic binding, and one powerful use of dynamic binding is the <emphasis>file-like object</emphasis>.</para>
+</abstract>
+<para>Many functions which require an input source could simply take a filename, go open the file for reading, read it, and close it when they're done.  But they don't.  Instead, they take a <emphasis>file-like object</emphasis>.</para>
+<para>In the simplest case, a <emphasis>file-like object</emphasis> is any object with a &read; method with an optional <varname>size</varname> parameter, which returns a string.  When called with no <varname>size</varname> parameter, it reads everything there is to read from the input source and returns all the data as a single string.  When called with a <varname>size</varname> parameter, it reads that much from the input source and returns that much data; when called again, it picks up where it left off and returns the next chunk of data.</para>
+<para>This is how <link linkend="fileinfo.files">reading from real files</link> works; the difference is that you're not limiting yourself to real files.  The input source could be anything: a file on disk, a web page, even a hard-coded string.  As long as you pass a file-like object to the function, and the function simply calls the object's &read; method, the function can handle any kind of input source without specific code to handle each kind.</para>
+<para>In case you were wondering how this relates to &xml; processing, &minidomparse_functionname; is one such function which can take a file-like object.</para>
+<example>
+<title>Parsing &xml; from a file</title>
+<screen>
+&prompt;<userinput>from xml.dom import minidom</userinput>
+&prompt;<userinput>fsock = open('binary.xml')</userinput>    <co id="kgp.openanything.1.1"/>
+&prompt;<userinput>xmldoc = minidom.parse(fsock)</userinput> <co id="kgp.openanything.1.2"/>
+&prompt;<userinput>fsock.close()</userinput>                 <co id="kgp.openanything.1.3"/>
+&prompt;<userinput>print xmldoc.toxml()</userinput>          <co id="kgp.openanything.1.4"/>
+<computeroutput>&lt;?xml version="1.0" ?>
+&lt;grammar>
+&lt;ref id="bit">
+  &lt;p>0&lt;/p>
+  &lt;p>1&lt;/p>
+&lt;/ref>
+&lt;ref id="byte">
+  &lt;p>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;xref id="bit"/>\
+&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;/p>
+&lt;/ref>
+&lt;/grammar></computeroutput></screen>
+<calloutlist>
+<callout arearefs="kgp.openanything.1.1">
+<para>First, you open the file on disk.  This gives you a <link linkend="fileinfo.files">file object</link>.</para>
+</callout>
+<callout arearefs="kgp.openanything.1.2">
+<para>You pass the file object to &minidomparse_functionname;, which calls the &read; method of <varname>fsock</varname> and reads the &xml; document from the file on disk.</para>
+</callout>
+<callout arearefs="kgp.openanything.1.3">
+<para>Be sure to call the &close; method of the file object after you're done with it.  &minidomparse_functionname; will not do this for you.</para>
+</callout>
+<callout arearefs="kgp.openanything.1.4">
+<para>Calling the <methodname>toxml()</methodname> method on the returned &xml; document prints out the entire thing.</para>
+</callout>
+</calloutlist>
+</example>
+<para>Well, that all seems like a colossal waste of time.  After all, you've already seen that &minidomparse_functionname; can simply take the filename and do all the opening and closing nonsense automatically.  And it's true that if you know you're just going to be parsing a local file, you can pass the filename and &minidomparse_functionname; is smart enough to <trademark>Do The Right Thing</trademark>.  But notice how similar -- and easy -- it is to parse an &xml; document straight from the Internet.</para>
+<example id="kgp.openanything.urllib">
+<title>Parsing &xml; from a &url;</title>
+<screen>
+&prompt;<userinput>import urllib</userinput>
+&prompt;<userinput>usock = urllib.urlopen('http://slashdot.org/slashdot.rdf')</userinput> <co id="kgp.openanything.2.1"/>
+&prompt;<userinput>xmldoc = minidom.parse(usock)</userinput>                              <co id="kgp.openanything.2.2"/>
+&prompt;<userinput>usock.close()</userinput>                                              <co id="kgp.openanything.2.3"/>
+&prompt;<userinput>print xmldoc.toxml()</userinput>                                       <co id="kgp.openanything.2.4"/>
+<computeroutput>&lt;?xml version="1.0" ?>
+&lt;rdf:RDF xmlns="http://my.netscape.com/rdf/simple/0.9/"
+ xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+
+&lt;channel>
+&lt;title>Slashdot&lt;/title>
+&lt;link>http://slashdot.org/&lt;/link>
+&lt;description>News for nerds, stuff that matters&lt;/description>
+&lt;/channel>
+
+&lt;image>
+&lt;title>Slashdot&lt;/title>
+&lt;url>http://images.slashdot.org/topics/topicslashdot.gif&lt;/url>
+&lt;link>http://slashdot.org/&lt;/link>
+&lt;/image>
+
+&lt;item>
+&lt;title>To HDTV or Not to HDTV?&lt;/title>
+&lt;link>http://slashdot.org/article.pl?sid=01/12/28/0421241&lt;/link>
+&lt;/item>
+
+[...snip...]</computeroutput></screen>
+<calloutlist>
+<callout arearefs="kgp.openanything.2.1">
+<para>As you saw <link linkend="dialect.extract.urllib">in a previous chapter</link>, &urlopen; takes a web page &url; and returns a file-like object.  Most importantly, this object has a &read; method which returns the &html; source of the web page.</para>
+</callout>
+<callout arearefs="kgp.openanything.2.2">
+<para>Now you pass the file-like object to &minidomparse_functionname;, which obediently calls the &read; method of the object and parses the &xml; data that the &read; method returns.  The fact that this &xml; data is now coming straight from a web page is completely irrelevant.  &minidomparse_functionname; doesn't know about web pages, and it doesn't care about web pages; it just knows about file-like objects.</para>
+</callout>
+<callout arearefs="kgp.openanything.2.3">
+<para>As soon as you're done with it, be sure to close the file-like object that &urlopen; gives you.</para>
+</callout>
+<callout arearefs="kgp.openanything.2.4">
+<para>By the way, this &url; is real, and it really is &xml;.  It's an &xml; representation of the current headlines on <ulink url="http://slashdot.org/">Slashdot</ulink>, a technical news and gossip site.</para>
+</callout>
+</calloutlist>
+</example>
+<example>
+<title>Parsing &xml; from a string (the easy but inflexible way)</title>
+<screen>
+&prompt;<userinput>contents = "&lt;grammar>&lt;ref id='bit'>&lt;p>0&lt;/p>&lt;p>1&lt;/p>&lt;/ref>&lt;/grammar>"</userinput>
+&prompt;<userinput>xmldoc = minidom.parseString(contents)</userinput> <co id="kgp.openanything.3.1"/>
+&prompt;<userinput>print xmldoc.toxml()</userinput>
+<computeroutput>&lt;?xml version="1.0" ?>
+&lt;grammar>&lt;ref id="bit">&lt;p>0&lt;/p>&lt;p>1&lt;/p>&lt;/ref>&lt;/grammar></computeroutput></screen>
+<calloutlist>
+<callout arearefs="kgp.openanything.3.1">
+<para>&minidom_modulename; has a method, &parsestring_functionname;, which takes an entire &xml; document as a string and parses it.  You can use this instead of &minidomparse_functionname; if you know you already have your entire &xml; document in a string.</para>
+</callout>
+</calloutlist>
+</example>
+<para>OK, so you can use the &minidomparse_functionname; function for parsing both local files and remote &url;s, but for parsing strings, you use... a different function.  That means that if you want to be able to take input from a file, a &url;, or a string, you'll need special logic to check whether it's a string, and call the &parsestring_functionname; function instead.  How unsatisfying.</para>
+<para>If there were a way to turn a string into a file-like object, then you could simply pass this object to &minidomparse_functionname;.  And in fact, there is a module specifically designed for doing just that: &stringio_modulename;.</para>
+<example id="kgp.openanything.stringio.example">
+<title>Introducing &stringio_modulename;</title>
+<screen>
+&prompt;<userinput>contents = "&lt;grammar>&lt;ref id='bit'>&lt;p>0&lt;/p>&lt;p>1&lt;/p>&lt;/ref>&lt;/grammar>"</userinput>
+&prompt;<userinput>import StringIO</userinput>
+&prompt;<userinput>ssock = StringIO.StringIO(contents)</userinput>   <co id="kgp.openanything.4.1"/>
+&prompt;<userinput>ssock.read()</userinput>                          <co id="kgp.openanything.4.2"/>
+<computeroutput>"&lt;grammar>&lt;ref id='bit'>&lt;p>0&lt;/p>&lt;p>1&lt;/p>&lt;/ref>&lt;/grammar>"</computeroutput>
+&prompt;<userinput>ssock.read()</userinput>                          <co id="kgp.openanything.4.3"/>
+<computeroutput>''</computeroutput>
+&prompt;<userinput>ssock.seek(0)</userinput>                         <co id="kgp.openanything.4.4"/>
+&prompt;<userinput>ssock.read(15)</userinput>                        <co id="kgp.openanything.4.5"/>
+<computeroutput>'&lt;grammar>&lt;ref i'</computeroutput>
+&prompt;<userinput>ssock.read(15)</userinput>
+<computeroutput>"d='bit'>&lt;p>0&lt;/p"</computeroutput>
+&prompt;<userinput>ssock.read()</userinput>
+<computeroutput>'>&lt;p>1&lt;/p>&lt;/ref>&lt;/grammar>'</computeroutput>
+&prompt;<userinput>ssock.close()</userinput>                         <co id="kgp.openanything.4.6"/></screen>
+<calloutlist>
+<callout arearefs="kgp.openanything.4.1">
+<para>The &stringio_modulename; module contains a single class, also called &stringio_classname;, which allows you to turn a string into a file-like object.  The &stringio_classname; class takes the string as a parameter when creating an instance.</para>
+</callout>
+<callout arearefs="kgp.openanything.4.2">
+<para>Now you have a file-like object, and you can do all sorts of file-like things with it.  Like &read;, which returns the original string.</para>
+</callout>
+<callout arearefs="kgp.openanything.4.3">
+<para>Calling &read; again returns an empty string.  This is how real file objects work too; once you read the entire file, you can't read any more without explicitly seeking to the beginning of the file.  The &stringio_classname; object works the same way.</para>
+</callout>
+<callout arearefs="kgp.openanything.4.4">
+<para>You can explicitly seek to the beginning of the string, just like seeking through a file, by using the &seek; method of the &stringio_classname; object.</para>
+</callout>
+<callout arearefs="kgp.openanything.4.5">
+<para>You can also read the string in chunks, by passing a <varname>size</varname> parameter to the &read; method.</para>
+</callout>
+<callout arearefs="kgp.openanything.4.6">
+<para>At any time, &read; will return the rest of the string that you haven't read yet.  All of this is exactly how file objects work; hence the term <emphasis>file-like object</emphasis>.</para>
+</callout>
+</calloutlist>
+</example>
+<example>
+<title>Parsing &xml; from a string (the file-like object way)</title>
+<screen>
+&prompt;<userinput>contents = "&lt;grammar>&lt;ref id='bit'>&lt;p>0&lt;/p>&lt;p>1&lt;/p>&lt;/ref>&lt;/grammar>"</userinput>
+&prompt;<userinput>ssock = StringIO.StringIO(contents)</userinput>
+&prompt;<userinput>xmldoc = minidom.parse(ssock)</userinput> <co id="kgp.openanything.5.1"/>
+&prompt;<userinput>ssock.close()</userinput>
+&prompt;<userinput>print xmldoc.toxml()</userinput>
+<computeroutput>&lt;?xml version="1.0" ?>
+&lt;grammar>&lt;ref id="bit">&lt;p>0&lt;/p>&lt;p>1&lt;/p>&lt;/ref>&lt;/grammar></computeroutput></screen>
+<calloutlist>
+<callout arearefs="kgp.openanything.5.1">
+<para>Now you can pass the file-like object (really a &stringio_classname;) to &minidomparse_functionname;, which will call the object's &read; method and happily parse away, never knowing that its input came from a hard-coded string.</para>
+</callout>
+</calloutlist>
+</example>
+<para>So now you know how to use a single function, &minidomparse_functionname;, to parse an &xml; document stored on a web page, in a local file, or in a hard-coded string.  For a web page, you use &urlopen; to get a file-like object; for a local file, you use &open;; and for a string, you use &stringio_classname;.  Now let's take it one step further and generalize <emphasis>these</emphasis> differences as well.</para>
+<example id="kgp.openanything.example">
+<title>&openanything_functionname;</title>
+<programlisting>
+&tb_openanythingdef;      <co id="kgp.openanything.6.1"/>
+&tb_urllibcomment;
+&tb_importurllib;
+&tb_tryurllib;
+&tb_urlopen; <co id="kgp.openanything.6.2"/>
+&tb_excepturllib;
+&tb_urllibpass;
+
+&tb_nativecomment;
+&tb_trynative;
+&tb_native; <co id="kgp.openanything.6.3"/>
+&tb_exceptnative;
+&tb_nativepass;
+
+&tb_stringiocomment;
+&tb_importstringio;
+&tb_stringio; <co id="kgp.openanything.6.4"/></programlisting>
+<calloutlist>
+<callout arearefs="kgp.openanything.6.1">
+<para>The &openanything_functionname; function takes a single parameter, <varname>source</varname>, and returns a file-like object.  <varname>source</varname> is a string of some sort; it can either be a &url; (like <literal>'http://slashdot.org/slashdot.rdf'</literal>), a full or partial pathname to a local file (like <literal>'binary.xml'</literal>), or a string that contains actual &xml; data to be parsed.</para>
+</callout>
+<callout arearefs="kgp.openanything.6.2">
+<para>First, you see if <varname>source</varname> is a &url;.  You do this through brute force: you try to open it as a &url; and silently ignore errors caused by trying to open something which is not a &url;.  This is actually elegant in the sense that, if &urllib; ever supports new types of &url;s in the future, you will also support them without recoding.  If &urllib; is able to open <varname>source</varname>, then the &return; kicks you out of the function immediately and the following <literal>try</literal> statements never execute.</para>
+</callout>
+<callout arearefs="kgp.openanything.6.3">
+<para>On the other hand, if &urllib; yelled at you and told you that <varname>source</varname> wasn't a valid &url;, you assume it's a path to a file on disk and try to open it.  Again, you don't do anything fancy to check whether <varname>source</varname> is a valid filename or not (the rules for valid filenames vary wildly between different platforms anyway, so you'd probably get them wrong anyway).  Instead, you just blindly open the file, and silently trap any errors.</para>
+</callout>
+<callout arearefs="kgp.openanything.6.4">
+<para>By this point, you need to assume that <varname>source</varname> is a string that has hard-coded data in it (since nothing else worked), so you use &stringio_classname; to create a file-like object out of it and return that.  (In fact, since you're using the &str; function, <varname>source</varname> doesn't even need to be a string; it could be any object, and you'll use its string representation, as defined by its &strspecial; <link linkend="fileinfo.morespecial">special method</link>.)</para>
+</callout>
+</calloutlist>
+</example>
+<para>Now you can use this &openanything_functionname; function in conjunction with &minidomparse_functionname; to make a function that takes a <varname>source</varname> that refers to an &xml; document somehow (either as a &url;, or a local filename, or a hard-coded &xml; document in a string) and parses it.</para>
+<example>
+<title>Using &openanything_functionname; in &kgp_filename;</title>
+<programlisting>
+&kgp_classdef;
+&kgp_privateload;
+&kgp_loadopen;
+&kgp_loadparse;
+&kgp_loadclose;
+&kgp_loadreturn;</programlisting>
+</example>
+</section>
+<section id="kgp.stdio">
+<?dbhtml filename="scripts_and_streams/stdin_stdout_stderr.html"?>
+<title>Standard input, output, and error</title>
+<abstract>
+<title/>
+<para>&unix; users are already familiar with the concept of standard input, standard output, and standard error.  This section is for the rest of you.</para>
+</abstract>
+<para>Standard output and standard error (commonly abbreviated &stdout; and &stderr;) are pipes that are built into every &unix; system.  When you &print; something, it goes to the &stdout; pipe; when your program crashes and prints out debugging information (like a traceback in &python;), it goes to the &stderr; pipe.  Both of these pipes are ordinarily just connected to the terminal window where you are working, so when a program prints, you see the output, and when a program crashes, you see the debugging information.  (If you're working on a system with a window-based &python; &ide;, &stdout; and &stderr; default to your <quote>Interactive Window</quote>.)</para>
+<example>
+<title>Introducing &stdout; and &stderr;</title>
+<screen>
+&prompt;<userinput>for i in range(3):</userinput>
+&continuationprompt;<userinput>print 'Dive in'</userinput>             <co id="kgp.stdio.1.1"/>
+<computeroutput>Dive in
+Dive in
+Dive in</computeroutput>
+&prompt;<userinput>import sys</userinput>
+&prompt;<userinput>for i in range(3):</userinput>
+&continuationprompt;<userinput>sys.stdout.write('Dive in')</userinput> <co id="kgp.stdio.1.2"/>
+<computeroutput>Dive inDive inDive in</computeroutput>
+&prompt;<userinput>for i in range(3):</userinput>
+&continuationprompt;<userinput>sys.stderr.write('Dive in')</userinput> <co id="kgp.stdio.1.3"/>
+<computeroutput>Dive inDive inDive in</computeroutput></screen>
+<calloutlist>
+<callout arearefs="kgp.stdio.1.1">
+<para>As you saw in <xref linkend="fileinfo.for.counter"/>, you can use &python;'s built-in &range; function to build simple counter loops that repeat something a set number of times.</para>
+</callout>
+<callout arearefs="kgp.stdio.1.2">
+<para>&stdout; is a file-like object; calling its &write; function will print out whatever string you give it.  In fact, this is what the &print; function really does; it adds a carriage return to the end of the string you're printing, and calls <function>sys.stdout.write</function>.</para>
+</callout>
+<callout arearefs="kgp.stdio.1.3">
+<para>In the simplest case, &stdout; and &stderr; send their output to the same place: the &python; &ide; (if you're in one), or the terminal (if you're running &python; from the command line).  Like &stdout;, &stderr; does not add carriage returns for you; if you want them, add them yourself.</para>
+</callout>
+</calloutlist>
+</example>
+<para>&stdout; and &stderr; are both file-like objects, like the ones you discussed in <xref linkend="kgp.openanything"/>, but they are both write-only.  They have no &read; method, only &write;.  Still, they are file-like objects, and you can assign any other file- or file-like object to them to redirect their output.</para>
+<example>
+<title>Redirecting output</title>
+<screen>
+<prompt>[you@localhost kgp]$ </prompt><userinput>python stdout.py</userinput>
+<computeroutput>Dive in</computeroutput>
+<prompt>[you@localhost kgp]$ </prompt><userinput>cat out.log</userinput>
+<computeroutput>This message will be logged instead of displayed</computeroutput></screen>
+<para>(On Windows, you can use <literal>type</literal> instead of <literal>cat</literal> to display the contents of a file.)</para>
+&para_download;
+<programlisting>
+#stdout.py
+import sys
+
+print 'Dive in'                                          <co id="kgp.stdio.2.1"/>
+saveout = sys.stdout                                     <co id="kgp.stdio.2.2"/>
+fsock = open('out.log', 'w')                             <co id="kgp.stdio.2.3"/>
+sys.stdout = fsock                                       <co id="kgp.stdio.2.4"/>
+print 'This message will be logged instead of displayed' <co id="kgp.stdio.2.5"/>
+sys.stdout = saveout                                     <co id="kgp.stdio.2.6"/>
+fsock.close()                                            <co id="kgp.stdio.2.7"/>
+</programlisting>
+<calloutlist>
+<callout arearefs="kgp.stdio.2.1">
+<para>This will print to the &ide; <quote>Interactive Window</quote> (or the terminal, if running the script from the command line).</para>
+</callout>
+<callout arearefs="kgp.stdio.2.2">
+<para>Always save &stdout; before redirecting it, so you can set it back to normal later.</para>
+</callout>
+<callout arearefs="kgp.stdio.2.3">
+<para>Open a file for writing.  If the file doesn't exist, it will be created.  If the file does exist, it will be overwritten.</para>
+</callout>
+<callout arearefs="kgp.stdio.2.4">
+<para>Redirect all further output to the new file you just opened.</para>
+</callout>
+<callout arearefs="kgp.stdio.2.5">
+<para>This will be <quote>printed</quote> to the log file only; it will not be visible in the &ide; window or on the screen.</para>
+</callout>
+<callout arearefs="kgp.stdio.2.6">
+<para>Set &stdout; back to the way it was before you mucked with it.</para>
+</callout>
+<callout arearefs="kgp.stdio.2.7">
+<para>Close the log file.</para>
+</callout>
+</calloutlist>
+</example>
+<para>Redirecting &stderr; works exactly the same way, using <function>sys.stderr</function> instead of <function>sys.stdout</function>.</para>
+<example>
+<title>Redirecting error information</title>
+<screen>
+<prompt>[you@localhost kgp]$ </prompt><userinput>python stderr.py</userinput>
+<prompt>[you@localhost kgp]$ </prompt><userinput>cat error.log</userinput>
+<computeroutput>Traceback (most recent line last):
+  File "stderr.py", line 5, in ?
+    raise Exception, 'this error will be logged'
+Exception: this error will be logged</computeroutput></screen>
+&para_download;
+<programlisting>
+#stderr.py
+import sys
+
+fsock = open('error.log', 'w')               <co id="kgp.stdio.3.1"/>
+sys.stderr = fsock                           <co id="kgp.stdio.3.2"/>
+raise Exception, 'this error will be logged' <co id="kgp.stdio.3.3"/> <co id="kgp.stdio.3.4"/>
+</programlisting>
+<calloutlist>
+<callout arearefs="kgp.stdio.3.1">
+<para>Open the log file where you want to store debugging information.</para>
+</callout>
+<callout arearefs="kgp.stdio.3.2">
+<para>Redirect standard error by assigning the file object of the newly-opened log file to &stderr;.</para>
+</callout>
+<callout arearefs="kgp.stdio.3.3">
+<para>Raise an exception.  Note from the screen output that this does <emphasis>not</emphasis> print anything on screen.  All the normal traceback information has been written to <filename>error.log</filename>.</para>
+</callout>
+<callout arearefs="kgp.stdio.3.4">
+<para>Also note that you're not explicitly closing your log file, nor are you setting &stderr; back to its original value.  This is fine, since once the program crashes (because of the exception), &python; will clean up and close the file for us, and it doesn't make any difference that &stderr; is never restored, since, as I mentioned, the program crashes and &python; ends.  Restoring the original is more important for &stdout;, if you expect to go do other stuff within the same script afterwards.</para>
+</callout>
+</calloutlist>
+</example>
+<para>Since it is so common to write error messages to standard error, there is a shorthand syntax that can be used instead of going through the hassle of redirecting it outright.</para>
+<example id="kgp.stdio.print.example">
+<title>Printing to &stderr;</title>
+<screen>
+&prompt;<userinput>print 'entering function'</userinput>
+<computeroutput>entering function</computeroutput>
+&prompt;<userinput>import sys</userinput>
+&prompt;<userinput>print >> sys.stderr, 'entering function'</userinput> <co id="kgp.stdio.6.1"/>
+<computeroutput>entering function</computeroutput>
+</screen>
+<calloutlist>
+<callout arearefs="kgp.stdio.6.1">
+<para>This shorthand syntax of the &print; statement can be used to write to any open file, or file-like object.  In this case, you can redirect a single &print; statement to &stderr; without affecting subsequent &print; statements.</para>
+</callout>
+</calloutlist>
+</example>
+<para>Standard input, on the other hand, is a read-only file object, and it represents the data flowing into the program from some previous program.  This will likely not make much sense to classic &macos; users, or even &windows; users unless you were ever fluent on the &dos; command line.  The way it works is that you can construct a chain of commands in a single line, so that one program's output becomes the input for the next program in the chain.  The first program simply outputs to standard output (without doing any special redirecting itself, just doing normal &print; statements or whatever), and the next program reads from standard input, and the operating system takes care of connecting one program's output to the next program's input.</para>
+<example>
+<title>Chaining commands</title>
+<screen>
+<prompt>[you@localhost kgp]$ </prompt><userinput>python kgp.py -g binary.xml</userinput>         <co id="kgp.stdio.4.1"/>
+<computeroutput>01100111</computeroutput>
+<prompt>[you@localhost kgp]$ </prompt><userinput>cat binary.xml</userinput>                      <co id="kgp.stdio.4.2"/>
+<computeroutput>&lt;?xml version="1.0"?>
+&lt;!DOCTYPE grammar PUBLIC "-//diveintopython.org//DTD Kant Generator Pro v1.0//EN" "kgp.dtd">
+&lt;grammar>
+&lt;ref id="bit">
+  &lt;p>0&lt;/p>
+  &lt;p>1&lt;/p>
+&lt;/ref>
+&lt;ref id="byte">
+  &lt;p>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;xref id="bit"/>\
+&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;/p>
+&lt;/ref>
+&lt;/grammar></computeroutput>
+<prompt>[you@localhost kgp]$ </prompt><userinput>cat binary.xml | python kgp.py -g -</userinput> <co id="kgp.stdio.4.3"/> <co id="kgp.stdio.4.4"/>
+<computeroutput>10110001</computeroutput></screen>
+<calloutlist>
+<callout arearefs="kgp.stdio.4.1">
+<para>As you saw in <xref linkend="kgp.divein"/>, this will print a string of eight random bits, &zero; or &one;.</para>
+</callout>
+<callout arearefs="kgp.stdio.4.2">
+<para>This simply prints out the entire contents of &binaryxml_filename;.  (&windows; users should use <literal>type</literal> instead of <literal>cat</literal>.)</para>
+</callout>
+<callout arearefs="kgp.stdio.4.3">
+<para>This prints the contents of &binaryxml_filename;, but the <quote><literal>|</literal></quote> character, called the <quote>pipe</quote> character, means that the contents will not be printed to the screen.  Instead, they will become the standard input of the next command, which in this case calls your &python; script.</para>
+</callout>
+<callout arearefs="kgp.stdio.4.4">
+<para>Instead of specifying a module (like &binaryxml_filename;), you specify <quote><literal>-</literal></quote>, which causes your script to load the grammar from standard input instead of from a specific file on disk.  (More on how this happens in the next example.)  So the effect is the same as the first syntax, where you specified the grammar filename directly, but think of the expansion possibilities here.  Instead of simply doing <literal>cat binary.xml</literal>, you could run a script that dynamically generates the grammar, then you can pipe it into your script.  It could come from anywhere: a database, or some grammar-generating meta-script, or whatever.  The point is that you don't need to change your &kgp_filename; script at all to incorporate any of this functionality.  All you need to do is be able to take grammar files from standard input, and you can separate all the other logic into another program.</para>
+</callout>
+</calloutlist>
+</example>
+<para>So how does the script <quote>know</quote> to read from standard input when the grammar file is <quote><literal>-</literal></quote>?  It's not magic; it's just code.</para>
+<example>
+<title>Reading from standard input in &kgp_filename;</title>
+<programlisting>
+def openAnything(source):
+    if source == "-":    <co id="kgp.stdio.5.1"/>
+        import sys
+        return sys.stdin
+
+    # try to open with urllib (if source is http, ftp, or file URL)
+    import urllib
+    try:
+
+[... snip ...]</programlisting>
+<calloutlist>
+<callout arearefs="kgp.stdio.5.1">
+<para>This is the <function>openAnything</function> function from &toolbox_filename;, which you previously examined in <xref linkend="kgp.openanything"/>.  All you've done is add three lines of code at the beginning of the function to check if the source is <quote><literal>-</literal></quote>; if so, you return <literal>sys.stdin</literal>.  Really, that's it!  Remember, &stdin; is a file-like object with a &read; method, so the rest of the code (in &kgp_filename;, where you call <function>openAnything</function>) doesn't change a bit.</para>
+</callout>
+</calloutlist>
+</example>
+</section>
+<section id="kgp.cache">
+<?dbhtml filename="scripts_and_streams/caching.html"?>
+<title>Caching node lookups</title>
+<abstract>
+<title/>
+<para>&kgp_filename; employs several tricks which may or may not be useful to you in your &xml; processing.  The first one takes advantage of the consistent structure of the input documents to build a cache of nodes.</para>
+</abstract>
+<para>A grammar file defines a series of &refnode; elements.  Each &refnode; contains one or more &pnode; elements, which can contain a lot of different things, including &xrefnode;s.  Whenever you encounter an &xrefnode;, you look for a corresponding &refnode; element with the same &idattr; attribute, and choose one of the &refnode; element's children and parse it.  (You'll see how this random choice is made in the next section.)</para>
+<para>This is how you build up the grammar: define &refnode; elements for the smallest pieces, then define &refnode; elements which "include" the first &refnode; elements by using &xrefnode;, and so forth.  Then you parse the "largest" reference and follow each &xrefnode;, and eventually output real text.  The text you output depends on the (random) decisions you make each time you fill in an &xrefnode;, so the output is different each time.</para>
+<para>This is all very flexible, but there is one downside: performance.  When you find an &xrefnode; and need to find the corresponding &refnode; element, you have a problem.  The &xrefnode; has an &idattr; attribute, and you want to find the &refnode; element that has that same &idattr; attribute, but there is no easy way to do that.  The slow way to do it would be to get the entire list of &refnode; elements each time, then manually loop through and look at each &idattr; attribute.  The fast way is to do that once and build a cache, in the form of a dictionary.</para>
+<example>
+<title><function>loadGrammar</function></title>
+<programlisting>
+&kgp_loadgrammardef;
+&kgp_loadgrammar;
+&kgp_initrefs; <co id="kgp.cache.1.1"/>
+&kgp_forref; <co id="kgp.cache.1.2"/>
+&kgp_refid; <co id="kgp.cache.1.3"/> <co id="kgp.cache.1.4"/></programlisting>
+<calloutlist>
+<callout arearefs="kgp.cache.1.1">
+<para>Start by creating an empty dictionary, &kgprefs;.</para>
+</callout>
+<callout arearefs="kgp.cache.1.2">
+<para>As you saw in <xref linkend="kgp.search"/>, &getelementsbytagname_functionname; returns a list of all the elements of a particular name.  You easily can get a list of all the &refnode; elements, then simply loop through that list.</para>
+</callout>
+<callout arearefs="kgp.cache.1.3">
+<para>As you saw in <xref linkend="kgp.attributes"/>, you can access individual attributes of an element by name, using standard dictionary syntax.  So the keys of the &kgprefs; dictionary will be the values of the &idattr; attribute of each &refnode; element.</para>
+</callout>
+<callout arearefs="kgp.cache.1.4">
+<para>The values of the &kgprefs; dictionary will be the &refnode; elements themselves.  As you saw in <xref linkend="kgp.parse"/>, each element, each node, each comment, each piece of text in a parsed &xml; document is an object.</para>
+</callout>
+</calloutlist>
+</example>
+<para>Once you build this cache, whenever you come across an &xrefnode; and need to find the &refnode; element with the same &idattr; attribute, you can simply look it up in &kgprefs;.</para>
+<example>
+<title>Using the &refnode; element cache</title>
+<programlisting>
+&kgp_doxrefdef;
+&kgp_id;
+&kgp_parsexref;</programlisting>
+</example>
+<para>You'll explore the &randomchildelement_functionname; function in the next section.</para>
+</section>
+<section id="kgp.child">
+<?dbhtml filename="scripts_and_streams/child_nodes.html"?>
+<title>Finding direct children of a node</title>
+<abstract>
+<title/>
+<para>Another useful techique when parsing &xml; documents is finding all the direct child elements of a particular element.  For instance, in the grammar files, a &refnode; element can have several &pnode; elements, each of which can contain many things, including other &pnode; elements.  You want to find just the &pnode; elements that are children of the &refnode;, not &pnode; elements that are children of other &pnode; elements.</para>
+</abstract>
+<para>You might think you could simply use &getelementsbytagname_functionname; for this, but you can't.  &getelementsbytagname_functionname; searches recursively and returns a single list for all the elements it finds.  Since &pnode; elements can contain other &pnode; elements, you can't use &getelementsbytagname_functionname;, because it would return nested &pnode; elements that you don't want.  To find only direct child elements, you'll need to do it yourself.</para>
+<example>
+<title>Finding direct child elements</title>
+<programlisting>
+&kgp_randomchildelementdef;
+&kgp_choices; <co id="kgp.child.1.1"/> <co id="kgp.child.1.2"/> <co id="kgp.child.1.3"/>
+&kgp_chosen; <co id="kgp.child.1.4"/>
+&kgp_returnchosen;</programlisting>
+<calloutlist>
+<callout arearefs="kgp.child.1.1">
+<para>As you saw in <xref linkend="kgp.parse.gettingchildnodes.example"/>, the &childnodes_attr; attribute returns a list of all the child nodes of an element.</para>
+</callout>
+<callout arearefs="kgp.child.1.2">
+<para>However, as you saw in <xref linkend="kgp.parse.childnodescanbetext.example"/>, the list returned by &childnodes_attr; contains all different types of nodes, including text nodes.  That's not what you're looking for here.  You only want the children that are elements.</para>
+</callout>
+<callout arearefs="kgp.child.1.3">
+<para>Each node has a <varname>nodeType</varname> attribute, which can be <literal>ELEMENT_NODE</literal>, <literal>TEXT_NODE</literal>, <literal>COMMENT_NODE</literal>, or any number of other values.  The complete list of possible values is in the <filename>__init__.py</filename> file in the <classname>xml.dom</classname> package.  (See <xref linkend="kgp.packages"/> for more on packages.)  But you're just interested in nodes that are elements, so you can filter the list to only include those nodes whose <varname>nodeType</varname> is <literal>ELEMENT_NODE</literal>.</para>
+</callout>
+<callout arearefs="kgp.child.1.4">
+<para>Once you have a list of actual elements, choosing a random one is easy.  &python; comes with a module called &random_modulename; which includes several useful functions.  The <function>random.choice</function> function takes a list of any number of items and returns a random item.  For example, if the &refnode; elements contains several &pnode; elements, then <varname>choices</varname> would be a list of &pnode; elements, and <varname>chosen</varname> would end up being assigned exactly one of them, selected at random.</para>
+</callout>
+</calloutlist>
+</example>
+</section>
+<section id="kgp.handler">
+<?dbhtml filename="scripts_and_streams/handlers_by_node_type.html"?>
+<title>Creating separate handlers by node type</title>
+<abstract>
+<title/>
+<para>The third useful &xml; processing tip involves separating your code into logical functions, based on node types and element names.  Parsed &xml; documents are made up of various types of nodes, each represented by a &python; object.  The root level of the document itself is represented by a <classname>Document</classname> object.  The <classname>Document</classname> then contains one or more <classname>Element</classname> objects (for actual &xml; tags), each of which may contain other <classname>Element</classname> objects, <classname>Text</classname> objects (for bits of text), or <classname>Comment</classname> objects (for embedded comments).  &python; makes it easy to write a dispatcher to separate the logic for each node type.</para>
+</abstract>
+<example>
+<title>Class names of parsed &xml; objects</title>
+<screen>
+&prompt;<userinput>from xml.dom import minidom</userinput>
+&prompt;<userinput>xmldoc = minidom.parse('kant.xml')</userinput> <co id="kgp.handler.1.1"/>
+&prompt;<userinput>xmldoc</userinput>
+<computeroutput>&lt;xml.dom.minidom.Document instance at 0x01359DE8></computeroutput>
+&prompt;<userinput>xmldoc.__class__</userinput>                   <co id="kgp.handler.1.2"/>
+<computeroutput>&lt;class xml.dom.minidom.Document at 0x01105D40></computeroutput>
+&prompt;<userinput>xmldoc.__class__.__name__</userinput>          <co id="kgp.handler.1.3"/>
+<computeroutput>'Document'</computeroutput></screen>
+<calloutlist>
+<callout arearefs="kgp.handler.1.1">
+<para>Assume for a moment that <filename>kant.xml</filename> is in the current directory.</para>
+</callout>
+<callout arearefs="kgp.handler.1.2">
+<para>As you saw in <xref linkend="kgp.packages"/>, the object returned by parsing an &xml; document is a <classname>Document</classname> object, as defined in the <filename>minidom.py</filename> in the <filename>xml.dom</filename> package.  As you saw in <xref linkend="fileinfo.create"/>, <literal>__class__</literal> is built-in attribute of every &python; object.</para>
+</callout>
+<callout arearefs="kgp.handler.1.3">
+<para>Furthermore, <literal>__name__</literal> is a built-in attribute of every &python; class, and it is a string.  This string is not mysterious; it's the same as the class name you type when you define a class yourself.  (See <xref linkend="fileinfo.class"/>.)</para>
+</callout>
+</calloutlist>
+</example>
+<para>Fine, so now you can get the class name of any particular &xml; node (since each &xml; node is represented as a &python; object).  How can you use this to your advantage to separate the logic of parsing each node type?  The answer is &getattr;, which you first saw in <xref linkend="apihelper.getattr"/>.</para>
+<example>
+<title><function>parse</function>, a generic &xml; node dispatcher</title>
+<programlisting>
+&kgp_parsedef; 
+&kgp_getparsemethod; <co id="kgp.handler.2.1"/> <co id="kgp.handler.2.2"/>
+&kgp_parsemethod; <co id="kgp.handler.2.3"/></programlisting>
+<calloutlist>
+<callout arearefs="kgp.handler.2.1">
+<para>First off, notice that you're constructing a larger string based on the class name of the node you were passed (in the <varname>node</varname> argument).  So if you're passed a <classname>Document</classname> node, you're constructing the string <literal>'parse_Document'</literal>, and so forth.</para>
+</callout>
+<callout arearefs="kgp.handler.2.2">
+<para>Now you can treat that string as a function name, and get a reference to the function itself using &getattr;</para>
+</callout>
+<callout arearefs="kgp.handler.2.3">
+<para>Finally, you can call that function and pass the node itself as an argument.  The next example shows the definitions of each of these functions.</para>
+</callout>
+</calloutlist>
+</example>
+<example>
+<title>Functions called by the <function>parse</function> dispatcher</title>
+<programlisting>
+&kgp_parsedocumentdef; <co id="kgp.handler.3.1"/>
+&kgp_parsedocument;
+
+&kgp_parsetextdef;<co id="kgp.handler.3.2"/>
+&kgp_text;
+&kgp_ifcapitalizenextword;
+&kgp_appendcapital;
+&kgp_appendrest;
+&kgp_resetcapital;
+&kgp_elsecapitalizenextword;
+&kgp_appendnormal;
+
+&kgp_parsecommentdef; <co id="kgp.handler.3.3"/>
+&kgp_pass;
+
+&kgp_parseelementdef;<co id="kgp.handler.3.4"/>
+&kgp_gethandlermethod;
+&kgp_handlermethod;</programlisting>
+<calloutlist>
+<callout arearefs="kgp.handler.3.1">
+<para><function>parse_Document</function> is only ever called once, since there is only one <classname>Document</classname> node in an &xml; document, and only one <classname>Document</classname> object in the parsed &xml; representation.  It simply turns around and parses the root element of the grammar file.</para>
+</callout>
+<callout arearefs="kgp.handler.3.2">
+<para><function>parse_Text</function> is called on nodes that represent bits of text.  The function itself does some special processing to handle automatic capitalization of the first word of a sentence, but otherwise simply appends the represented text to a list.</para>
+</callout>
+<callout arearefs="kgp.handler.3.3">
+<para><function>parse_Comment</function> is just a &pass;, since you don't care about embedded comments in the grammar files.  Note, however, that you still need to define the function and explicitly make it do nothing.  If the function did not exist, the generic <function>parse</function> function would fail as soon as it stumbled on a comment, because it would try to find the non-existent <function>parse_Comment</function> function.  Defining a separate function for every node type, even ones you don't use, allows the generic <function>parse</function> function to stay simple and dumb.</para>
+</callout>
+<callout arearefs="kgp.handler.3.4">
+<para>The <function>parse_Element</function> method is actually itself a dispatcher, based on the name of the element's tag.  The basic idea is the same: take what distinguishes elements from each other (their tag names) and dispatch to a separate function for each of them.  You construct a string like <literal>'do_xref'</literal> (for an <sgmltag>&lt;xref&gt;</sgmltag> tag), find a function of that name, and call it.  And so forth for each of the other tag names that might be found in the course of parsing a grammar file (<sgmltag>&lt;p&gt;</sgmltag> tags, <sgmltag>&lt;choice&gt;</sgmltag> tags).</para>
+</callout>
+</calloutlist>
+</example>
+<para>In this example, the dispatch functions <function>parse</function> and <function>parse_Element</function> simply find other methods in the same class.  If your processing is very complex (or you have many different tag names), you could break up your code into separate modules, and use dynamic importing to import each module and call whatever functions you needed.  Dynamic importing will be discussed in <xref linkend="regression"/>.</para>
+</section>
+<section id="kgp.commandline">
+<?dbhtml filename="scripts_and_streams/command_line_arguments.html"?>
+<title>Handling command-line arguments</title>
+<abstract>
+<title/>
+<para>&python; fully supports creating programs that can be run on the command line, complete with command-line arguments and either short- or long-style flags to specify various options.  None of this is &xml;-specific, but this script makes good use of command-line processing, so it seemed like a good time to mention it.</para>
+</abstract>
+<para>It's difficult to talk about command-line processing without understanding how command-line arguments are exposed to your &python; program, so let's write a simple program to see them.</para>
+<example>
+<title>Introducing <varname>sys.argv</varname></title>
+&para_download;
+<programlisting>
+#argecho.py
+import sys
+
+for arg in sys.argv: <co id="kgp.commandline.0.1"/>
+    print arg</programlisting>
+<calloutlist>
+<callout arearefs="kgp.commandline.0.1">
+<para>Each command-line argument passed to the program will be in <varname>sys.argv</varname>, which is just a list.  Here you are printing each argument on a separate line.</para>
+</callout>
+</calloutlist>
+</example>
+<example>
+<title>The contents of <varname>sys.argv</varname></title>
+<screen>
+<prompt>[you@localhost py]$ </prompt><userinput>python argecho.py</userinput>             <co id="kgp.commandline.1.1"/>
+<computeroutput>argecho.py</computeroutput>
+<prompt>[you@localhost py]$ </prompt><userinput>python argecho.py abc def</userinput>     <co id="kgp.commandline.1.2"/>
+<computeroutput>argecho.py
+abc
+def</computeroutput>
+<prompt>[you@localhost py]$ </prompt><userinput>python argecho.py --help</userinput>      <co id="kgp.commandline.1.3"/>
+<computeroutput>argecho.py
+--help</computeroutput>
+<prompt>[you@localhost py]$ </prompt><userinput>python argecho.py -m kant.xml</userinput> <co id="kgp.commandline.1.4"/>
+<computeroutput>argecho.py
+-m
+kant.xml</computeroutput></screen>
+<calloutlist>
+<callout arearefs="kgp.commandline.1.1">
+<para>The first thing to know about <varname>sys.argv</varname> is that it contains the name of the script you're calling.  You will actually use this knowledge to your advantage later, in <xref linkend="regression"/>.  Don't worry about it for now.</para>
+</callout>
+<callout arearefs="kgp.commandline.1.2">
+<para>Command-line arguments are separated by spaces, and each shows up as a separate element in the <varname>sys.argv</varname> list.</para>
+</callout>
+<callout arearefs="kgp.commandline.1.3">
+<para>Command-line flags, like <literal>--help</literal>, also show up as their own element in the <varname>sys.argv</varname> list.</para>
+</callout>
+<callout arearefs="kgp.commandline.1.4">
+<para>To make things even more interesting, some command-line flags themselves take arguments.  For instance, here you have a flag (<literal>-m</literal>) which takes an argument (<literal>kant.xml</literal>).  Both the flag itself and the flag's argument are simply sequential elements in the <varname>sys.argv</varname> list.  No attempt is made to associate one with the other; all you get is a list.</para>
+</callout>
+</calloutlist>
+</example>
+<para>So as you can see, you certainly have all the information passed on the command line, but then again, it doesn't look like it's going to be all that easy to actually use it.  For simple programs that only take a single argument and have no flags, you can simply use <literal>sys.argv[1]</literal> to access the argument.  There's no shame in this; I do it all the time.  For more complex programs, you need the &getopt_modulename; module.</para>
+<example>
+<title>Introducing &getopt_modulename;</title>
+<programlisting>
+&kgp_maindef;
+&kgp_initmaingrammar; <co id="kgp.commandline.2.1"/>
+&kgp_trygetopt;
+&kgp_getopt; <co id="kgp.commandline.2.2"/>
+&kgp_exceptgetopt; <co id="kgp.commandline.2.3"/>
+&kgp_errorusage; <co id="kgp.commandline.2.4"/>
+&kgp_errorexit;
+
+...
+
+&kgp_ifmain;
+&kgp_main;</programlisting>
+<calloutlist>
+<callout arearefs="kgp.commandline.2.1">
+<para>First off, look at the bottom of the example and notice that you're calling the <function>main</function> function with <literal>sys.argv[1:]</literal>.  Remember, <literal>sys.argv[0]</literal> is the name of the script that you're running; you don't care about that for command-line processing, so you chop it off and pass the rest of the list.</para>
+</callout>
+<callout arearefs="kgp.commandline.2.2">
+<para>This is where all the interesting processing happens.  The &getopt_functionname; function of the &getopt_modulename; module takes three parameters: the argument list (which you got from <literal>sys.argv[1:]</literal>), a string containing all the possible single-character command-line flags that this program accepts, and a list of longer command-line flags that are equivalent to the single-character versions.  This is quite confusing at first glance, and is explained in more detail below.</para>
+</callout>
+<callout arearefs="kgp.commandline.2.3">
+<para>If anything goes wrong trying to parse these command-line flags, &getopt_modulename; will raise an exception, which you catch.  You told &getopt_modulename; all the flags you understand, so this probably means that the end user passed some command-line flag that you don't understand.</para>
+</callout>
+<callout arearefs="kgp.commandline.2.4">
+<para>As is standard practice in the &unix; world, when the script is passed flags it doesn't understand, you print out a summary of proper usage and exit gracefully.  Note that I haven't shown the <function>usage</function> function here.  You would still need to code that somewhere and have it print out the appropriate summary; it's not automatic.</para>
+</callout>
+</calloutlist>
+</example>
+<para>So what are all those parameters you pass to the &getopt_functionname; function?  Well, the first one is simply the raw list of command-line flags and arguments (not including the first element, the script name, which you already chopped off before calling the <function>main</function> function).  The second is the list of short command-line flags that the script accepts.</para>
+<variablelist>
+<title><literal>"hg:d"</literal></title>
+<varlistentry>
+<term><literal>-h</literal></term>
+<listitem><para>print usage summary</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><literal>-g ...</literal></term>
+<listitem><para>use specified grammar file or URL</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><literal>-d</literal></term>
+<listitem><para>show debugging information while parsing</para></listitem>
+</varlistentry>
+</variablelist>
+<para>The first and third flags are simply standalone flags; you specify them or you don't, and they do things (print help) or change state (turn on debugging).  However, the second flag (<literal>-g</literal>) <emphasis>must</emphasis> be followed by an argument, which is the name of the grammar file to read from.  In fact it can be a filename or a web address, and you don't know which yet (you'll figure it out later), but you know it has to be <emphasis>something</emphasis>.  So you tell &getopt_modulename; this by putting a colon after the <literal>g</literal> in that second parameter to the &getopt_functionname; function.</para>
+<para>To further complicate things, the script accepts either short flags (like <literal>-h</literal>) or long flags (like <literal>--help</literal>), and you want them to do the same thing.  This is what the third parameter to &getopt_functionname; is for, to specify a list of the long flags that correspond to the short flags you specified in the second parameter.</para>
+<variablelist>
+<title><literal>["help", "grammar="]</literal></title>
+<varlistentry>
+<term><literal>--help</literal></term>
+<listitem><para>print usage summary</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><literal>--grammar ...</literal></term>
+<listitem><para>use specified grammar file or URL</para></listitem>
+</varlistentry>
+</variablelist>
+<para>Three things of note here:</para>
+<orderedlist>
+<listitem><para>All long flags are preceded by two dashes on the command line, but you don't include those dashes when calling &getopt_functionname;.  They are understood.</para></listitem>
+<listitem><para>The <literal>--grammar</literal> flag must always be followed by an additional argument, just like the <literal>-g</literal> flag.  This is notated by an equals sign, <literal>"grammar="</literal>.</para></listitem>
+<listitem><para>The list of long flags is shorter than the list of short flags, because the <literal>-d</literal> flag does not have a corresponding long version.  This is fine; only <literal>-d</literal> will turn on debugging.  But the order of short and long flags needs to be the same, so you'll need to specify all the short flags that <emphasis>do</emphasis> have corresponding long flags first, then all the rest of the short flags.</para></listitem>
+</orderedlist>
+<para>Confused yet?  Let's look at the actual code and see if it makes sense in context.</para>
+<example>
+<title>Handling command-line arguments in &kgp_filename;</title>
+<programlisting>
+&kgp_maindef; <co id="kgp.commandline.3.0"/>
+&kgp_initmaingrammar;
+&kgp_trygetopt;
+&kgp_getopt;
+&kgp_exceptgetopt;
+&kgp_errorusage;
+&kgp_errorexit;
+&kgp_foropt; <co id="kgp.commandline.3.1"/>
+&kgp_ifh; <co id="kgp.commandline.3.2"/>
+&kgp_helpusage;
+&kgp_helpexit;
+&kgp_ifd; <co id="kgp.commandline.3.3"/>
+&kgp_globaldebug;
+&kgp_setdebug;
+&kgp_ifg; <co id="kgp.commandline.3.4"/>
+&kgp_setmaingrammar;
+
+&kgp_setdefaultsource; <co id="kgp.commandline.3.5"/>
+
+&kgp_createkantgenerator;
+&kgp_nowrap;</programlisting>
+<calloutlist>
+<callout arearefs="kgp.commandline.3.0">
+<para>The <varname>grammar</varname> variable will keep track of the grammar file you're using.  You initialize it here in case it's not specified on the command line (using either the <literal>-g</literal> or the <literal>--grammar</literal> flag).</para>
+</callout>
+<callout arearefs="kgp.commandline.3.1">
+<para>The <varname>opts</varname> variable that you get back from &getopt_functionname; contains a list of tuples: <varname>flag</varname> and <varname>argument</varname>.  If the flag doesn't take an argument, then <varname>arg</varname> will simply be &none;.  This makes it easier to loop through the flags.</para>
+</callout>
+<callout arearefs="kgp.commandline.3.2">
+<para>&getopt_functionname; validates that the command-line flags are acceptable, but it doesn't do any sort of conversion between short and long flags.  If you specify the <literal>-h</literal> flag, <varname>opt</varname> will contain <literal>"-h"</literal>; if you specify the <literal>--help</literal> flag, <varname>opt</varname> will contain <literal>"--help"</literal>.  So you need to check for both.</para>
+</callout>
+<callout arearefs="kgp.commandline.3.3">
+<para>Remember, the <literal>-d</literal> flag didn't have a corresponding long flag, so you only need to check for the short form.  If you find it, you set a global variable that you'll refer to later to print out debugging information.  (I used this during the development of the script.  What, you thought all these examples worked on the first try?)</para>
+</callout>
+<callout arearefs="kgp.commandline.3.4">
+<para>If you find a grammar file, either with a <literal>-g</literal> flag or a <literal>--grammar</literal> flag, you save the argument that followed it (stored in <varname>arg</varname>) into the <varname>grammar</varname> variable, overwriting the default that you initialized at the top of the <function>main</function> function.</para>
+</callout>
+<callout arearefs="kgp.commandline.3.5">
+<para>That's it.  You've looped through and dealt with all the command-line flags.  That means that anything left must be command-line arguments.  These come back from the &getopt_functionname; function in the <varname>args</varname> variable.  In this case, you're treating them as source material for the parser.  If there are no command-line arguments specified, <varname>args</varname> will be an empty list, and <varname>source</varname> will end up as the empty string.</para>
+</callout>
+</calloutlist>
+</example>
+</section>
+<section id="kgp.alltogether">
+<?dbhtml filename="scripts_and_streams/all_together.html"?>
+<title>Putting it all together</title>
+<abstract>
+<title/>
+<para>You've covered a lot of ground.  Let's step back and see how all the pieces fit together.</para>
+</abstract>
+<para>To start with, this is a script that <link linkend="kgp.commandline">takes its arguments on the command line</link>, using the &getopt_modulename; module.</para>
+<informalexample>
+<programlisting>
+&kgp_maindef;
+...
+&kgp_trygetopt;
+&kgp_getopt;
+&kgp_exceptgetopt;
+...
+&kgp_foropt;
+...</programlisting>
+</informalexample>
+<para>You create a new instance of the <classname>KantGenerator</classname> class, and pass it the grammar file and source that may or may not have been specified on the command line.</para>
+<informalexample>
+<programlisting>
+&kgp_createkantgenerator;</programlisting>
+</informalexample>
+<para>The <classname>KantGenerator</classname> instance automatically loads the grammar, which is an &xml; file.  You use your custom &openanything_functionname; function to open the file (which <link linkend="kgp.openanything">could be stored in a local file or a remote web server</link>), then use the built-in &minidom_modulename; parsing functions to <link linkend="kgp.parse">parse the &xml; into a tree of &python; objects</link>.</para>
+<informalexample>
+<programlisting>
+&kgp_privateload;
+&kgp_loadopen;
+&kgp_loadparse;
+&kgp_loadclose;</programlisting>
+</informalexample>
+<para>Oh, and along the way, you take advantage of your knowledge of the structure of the &xml; document to <link linkend="kgp.cache">set up a little cache of references</link>, which are just elements in the &xml; document.</para>
+<informalexample>
+<programlisting>
+&kgp_loadgrammardef;
+&kgp_forref;
+&kgp_refid;</programlisting>
+</informalexample>
+<para>If you specified some source material on the command line, you use that; otherwise you rip through the grammar looking for the "top-level" reference (that isn't referenced by anything else) and use that as a starting point.</para>
+<informalexample>
+<programlisting>
+&kgp_defaultsourcedef;
+&kgp_initxrefs;
+&kgp_forxref;
+&kgp_xrefid;
+&kgp_xrefkeys;
+&kgp_standalonexrefs;
+&kgp_returndefaultsource;</programlisting>
+</informalexample>
+<para>Now you rip through the source material.  The source material is also &xml;, and you parse it one node at a time.  To keep the code separated and more maintainable, you use <link linkend="kgp.handler">separate handlers for each node type</link>.</para>
+<informalexample>
+<programlisting>
+&kgp_parseelementdef;
+&kgp_gethandlermethod;
+&kgp_handlermethod;</programlisting>
+</informalexample>
+<para>You bounce through the grammar, <link linkend="kgp.child">parsing all the children</link> of each &pnode; element,</para>
+<informalexample>
+<programlisting>
+&kgp_dopdef;
+...
+&kgp_ifdoit;
+&kgp_parsep;</programlisting>
+</informalexample>
+<para>replacing &choicenode; elements with a random child,</para>
+<informalexample>
+<programlisting>
+&kgp_dochoicedef;
+&kgp_parsechoice;</programlisting>
+</informalexample>
+<para>and replacing &xrefnode; elements with a random child of the corresponding &refnode; element, which you previously cached.</para>
+<informalexample>
+<programlisting>
+&kgp_doxrefdef;
+&kgp_id;
+&kgp_parsexref;</programlisting>
+</informalexample>
+<para>Eventually, you parse your way down to plain text,</para>
+<informalexample>
+<programlisting>
+&kgp_parsetextdef;
+&kgp_text;
+...
+&kgp_appendnormal;</programlisting>
+</informalexample>
+<para>which you print out.</para>
+<informalexample>
+<programlisting>
+&kgp_maindef;
+...
+&kgp_createkantgenerator;
+&kgp_nowrap;</programlisting>
+</informalexample>
+</section>
+<section id="kgp.summary">
+<?dbhtml filename="scripts_and_streams/summary.html"?>
+<title>Summary</title>
+<abstract>
+<title/>
+<para>&python; comes with powerful libraries for parsing and manipulating &xml; documents.  The &minidom_modulename; takes an &xml; file and parses it into &python; objects, providing for random access to arbitrary elements.  Furthermore, this chapter shows how &python; can be used to create a "real" standalone command-line script, complete with command-line flags, command-line arguments, error handling, even the ability to take input from the piped result of a previous program.</para>
+</abstract>
+<para>Before moving on to the next chapter, you should be comfortable doing all of these things:</para>
+<itemizedlist>
+<listitem><para><link linkend="kgp.stdio">Chaining programs</link> with standard input and output</para></listitem>
+<listitem><para><link linkend="kgp.handler">Defining dynamic dispatchers</link> with &getattr;.</para></listitem>
+<listitem><para><link linkend="kgp.commandline">Using command-line flags</link> and validating them with &getopt_modulename;</para></listitem>
+</itemizedlist>
+</section>
+</chapter>
+<!--
+* unicode
+* getElementsByTagName
+* accessing element attributes
+* sys.stderr, sys.stdout, sys.stdin (brief explanation for Windows weenies)
+* toolbox.openAnything (abstracting input sources)
+* tips and tricks
+  * caching ref nodes by name in a dictionary (name from id attribute)
+  * finding child elements (e.ELEMENT_NODE)
+  * separating handlers
+    * by node type (Document, Element, Comment, Text)
+    * by element name
+* handling command-line arguments
+  * printing usage help
+  * specifying a grammar
+  * specifying a source
+  X setting debug flag
+<prompt>[you@localhost kgp]$ </prompt><userinput>python kgp.py -d -g binary.xml</userinput>
+<computeroutput>1 available choices: [u'&lt;p>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;/p>']
+Chosen: &lt;p>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;xref id="bit"/>&lt;/p>
+2 available choices: [u'&lt;p>0&lt;/p>', u'&lt;p>1&lt;/p>']
+Chosen: &lt;p>0&lt;/p>
+2 available choices: [u'&lt;p>0&lt;/p>', u'&lt;p>1&lt;/p>']
+Chosen: &lt;p>1&lt;/p>
+2 available choices: [u'&lt;p>0&lt;/p>', u'&lt;p>1&lt;/p>']
+Chosen: &lt;p>1&lt;/p>
+2 available choices: [u'&lt;p>0&lt;/p>', u'&lt;p>1&lt;/p>']
+Chosen: &lt;p>0&lt;/p>
+2 available choices: [u'&lt;p>0&lt;/p>', u'&lt;p>1&lt;/p>']
+Chosen: &lt;p>0&lt;/p>
+2 available choices: [u'&lt;p>0&lt;/p>', u'&lt;p>1&lt;/p>']
+Chosen: &lt;p>0&lt;/p>
+2 available choices: [u'&lt;p>0&lt;/p>', u'&lt;p>1&lt;/p>']
+Chosen: &lt;p>1&lt;/p>
+2 available choices: [u'&lt;p>0&lt;/p>', u'&lt;p>1&lt;/p>']
+Chosen: &lt;p>1&lt;/p>
+01100011</computeroutput>
+ 
+* putting it all together
+* summary
+-->

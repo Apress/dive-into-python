@@ -1,0 +1,793 @@
+<?xml version="1.0" encoding="utf-8"?>
+<chapter id="apihelper">
+<?dbhtml filename="power_of_introspection/index.html"?>
+<title>The Power Of Introspection</title>
+<titleabbrev id="apihelper.numberonly">Chapter 4</titleabbrev>
+<abstract>
+<title/>
+<para>This chapter covers one of &python;'s strengths: introspection.  As you know, <link linkend="odbchelper.objects">everything in &python; is an object</link>, and introspection is code looking at other modules and functions in memory as objects, getting information about them, and manipulating them.  Along the way, you'll define functions with no name, call functions with arguments out of order, and reference functions whose names you don't even know ahead of time.</para>
+</abstract>
+<section id="apihelper.divein">
+<title>Diving In</title>
+<abstract>
+<title/>
+<para>Here is a complete, working &python; program.  You should understand a good deal about it just by looking at it.  The numbered lines illustrate concepts covered in <xref linkend="odbchelper"/>.  Don't worry if the rest of the code looks intimidating; you'll learn all about it throughout this chapter.</para>
+</abstract>
+<example>
+<title>&apihelper_filename;</title>
+&para_download;
+<programlisting>
+&apihelper_funcdef; <co id="apihelper.intro.1.1"/> <co id="apihelper.intro.1.2"/> <co id="apihelper.intro.1.3"/>
+&apihelper_docstring;
+&apihelper_docstring2;
+&apihelper_docstring3;
+&apihelper_methods;
+&apihelper_lambda;
+&apihelper_main;
+
+&apihelper_ifname;                <co id="apihelper.intro.1.4"/> <co id="apihelper.intro.1.5"/>
+&apihelper_printdoc;</programlisting>
+<calloutlist>
+<callout arearefs="apihelper.intro.1.1">
+<para>This module has one function, &info;.  According to its <link linkend="odbchelper.funcdef">function declaration</link>, it takes three parameters: <varname>object</varname>, <varname>spacing</varname>, and <varname>collapse</varname>.  The last two are actually optional parameters, as you'll see shortly.</para>
+</callout>
+<callout arearefs="apihelper.intro.1.2">
+<para>The &info; function has a multi-line <link linkend="odbchelper.docstring">&docstring;</link> that succinctly describes the function's purpose.  Note that no return value is mentioned; this function will be used solely for its effects, rather than its value.</para>
+</callout>
+<callout arearefs="apihelper.intro.1.3">
+<para>Code within the function is <link linkend="odbchelper.indenting">indented</link>.</para>
+</callout>
+<callout arearefs="apihelper.intro.1.4">
+<para>The <literal>&if; &name;</literal> <link linkend="odbchelper.ifnametrick">trick</link> allows this program do something useful when run by itself, without interfering with its use as a module for other programs.  In this case, the program simply prints out the &docstring; of the &info; function.</para>
+</callout>
+<callout arearefs="apihelper.intro.1.5">
+<para><link linkend="odbchelper.ifnametrick">&if; statements</link> use &comparisonequals; for comparison, and parentheses are not required.</para>
+</callout>
+</calloutlist>
+</example>
+<para>The &info; function is designed to be used by you, the programmer, while working in the &python; &ide;.  It takes any object that has functions or methods (like a module, which has functions, or a list, which has methods) and prints out the functions and their &docstring;s.</para>
+<example>
+<title>Sample Usage of &apihelper_filename;</title>
+<screen>&apihelper_output;</screen>
+</example>
+<para>By default the output is formatted to be easy to read.  Multi-line &docstring;s are collapsed into a single long line, but this option can be changed by specifying <constant>0</constant> for the <parameter>collapse</parameter> argument.  If the function names are longer than 10 characters, you can specify a larger value for the <parameter>spacing</parameter> argument to make the output easier to read.</para>
+<example>
+<title>Advanced Usage of &apihelper_filename;</title>
+<screen>&prompt;<userinput>import &odbchelper_name;</userinput>
+&prompt;<userinput>info(&odbchelper_name;)</userinput>
+<computeroutput>&odbchelper_funcname; Build a connection string from a dictionary Returns string.</computeroutput>
+&prompt;<userinput>info(&odbchelper_name;, 30)</userinput>
+<computeroutput>&odbchelper_funcname;          Build a connection string from a dictionary Returns string.</computeroutput>
+&prompt;<userinput>info(&odbchelper_name;, 30, 0)</userinput>
+<computeroutput>&odbchelper_funcname;          Build a connection string from a dictionary
+    
+    Returns string.
+</computeroutput></screen>
+</example>
+</section>
+<section id="apihelper.optional">
+<?dbhtml filename="power_of_introspection/optional_arguments.html"?>
+<title>Using Optional and Named Arguments</title>
+<abstract>
+<title/>
+<para>&python; allows function arguments to have default values; if the function is called without the argument, the argument gets its default value.  Futhermore, arguments can be specified in any order by using named arguments.  Stored procedures in &sqlserver; &tsql; can do this, so if you're a &sqlserver; scripting guru, you can skim this part.</para>
+</abstract>
+<informalexample>
+<!--<title>&info;, a Function with Two Optional Arguments</title>-->
+<para>Here is an example of &info;, a function with two optional arguments:</para>
+<programlisting>
+&apihelper_funcdef;</programlisting>
+</informalexample>
+<para><varname>spacing</varname> and <varname>collapse</varname> are optional, because they have default values defined.  <varname>object</varname> is required, because it has no default value.  If &info; is called with only one argument, <varname>spacing</varname> defaults to <constant>10</constant> and <varname>collapse</varname> defaults to &one;.  If &info; is called with two arguments, <varname>collapse</varname> still defaults to &one;.</para>
+<para>Say you want to specify a value for <varname>collapse</varname> but want to accept the default value for <varname>spacing</varname>.  In most languages, you would be out of luck, because you would need to call the function with three arguments.  But in &python;, arguments can be specified by name, in any order.</para>
+<example>
+<title>Valid Calls of &info;</title>
+<programlisting>
+info(&odbchelper_name;)                    <co id="apihelper_args.1.1"/>
+info(&odbchelper_name;, 12)                <co id="apihelper_args.1.2"/>
+info(&odbchelper_name;, collapse=0)        <co id="apihelper_args.1.3"/>
+info(spacing=15, object=&odbchelper_name;) <co id="apihelper_args.1.4"/></programlisting>
+<calloutlist>
+<callout arearefs="apihelper_args.1.1">
+<para>With only one argument, <varname>spacing</varname> gets its default value of <literal>10</literal> and <varname>collapse</varname> gets its default value of &one;.</para>
+</callout>
+<callout arearefs="apihelper_args.1.2">
+<para>With two arguments, <varname>collapse</varname> gets its default value of &one;.</para>
+</callout>
+<callout arearefs="apihelper_args.1.3">
+<para>Here you are naming the <varname>collapse</varname> argument explicitly and specifying its value.  <varname>spacing</varname> still gets its default value of <literal>10</literal>.</para>
+</callout>
+<callout arearefs="apihelper_args.1.4">
+<para>Even required arguments (like <varname>object</varname>, which has no default value) can be named, and named arguments can appear in any order.</para>
+</callout>
+</calloutlist>
+</example>
+<para>This looks totally whacked until you realize that arguments are simply a dictionary.  The <quote>normal</quote> method of calling functions without argument names is actually just a shorthand where &python; matches up the values with the argument names in the order they're specified in the function declaration.  And most of the time, you'll call functions the <quote>normal</quote> way, but you always have the additional flexibility if you need it.</para>
+<note id="tip.arguments">
+<title>Calling Functions is Flexible</title>
+<para>The only thing you need to do to call a function is specify a value (somehow) for each required argument; the manner and order in which you do that is up to you.</para>
+</note>
+<itemizedlist role="furtherreading">
+<title>Further Reading on Optional Arguments</title>
+<listitem><para>&pythontutorial; discusses exactly <ulink url="&url_pythontutorial;node6.html#SECTION006710000000000000000">when and how default arguments are evaluated</ulink>, which matters when the default value is a list or an expression with side effects.</para></listitem>
+</itemizedlist>
+</section>
+<section id="apihelper.builtin">
+<?dbhtml filename="power_of_introspection/built_in_functions.html"?>
+<title>Using &type;, &str;, &dir;, and Other Built-In Functions</title>
+<abstract>
+<title/>
+<para>&python; has a small set of extremely useful built-in functions.  All other functions are partitioned off into modules.  This was actually a conscious design decision, to keep the core language from getting bloated like other scripting languages (cough cough, &vb;).</para>
+</abstract>
+<section>
+<title>The &type; Function</title>
+<para>The &type; function returns the datatype of any arbitrary object.  The possible types are listed in the <filename class="headerfile">types</filename> module.  This is useful for helper functions that can handle several types of data.</para>
+<example id="apihelper.type.intro">
+<title>Introducing &type;</title>
+<screen>&prompt;<userinput>type(1)</userinput>           <co id="apihelper.builtin.1.1"/>
+<computeroutput>&lt;type 'int'></computeroutput>
+&prompt;<userinput>li = []</userinput>
+&prompt;<userinput>type(li)</userinput>          <co id="apihelper.builtin.1.2"/>
+<computeroutput>&lt;type 'list'></computeroutput>
+&prompt;<userinput>import odbchelper</userinput>
+&prompt;<userinput>type(odbchelper)</userinput>  <co id="apihelper.builtin.1.3"/>
+<computeroutput>&lt;type 'module'></computeroutput>
+&prompt;<userinput>import types</userinput>      <co id="apihelper.builtin.1.4"/>
+&prompt;<userinput>type(odbchelper) == types.ModuleType</userinput>
+<computeroutput>True</computeroutput></screen>
+<calloutlist>
+<callout arearefs="apihelper.builtin.1.1">
+<para>&type; takes anything -- and I mean anything -- and returns its datatype.  Integers, strings, lists, dictionaries, tuples, functions, classes, modules, even types are acceptable.</para>
+</callout>
+<callout arearefs="apihelper.builtin.1.2">
+<para>&type; can take a variable and return its datatype.</para>
+</callout>
+<callout arearefs="apihelper.builtin.1.3">
+<para>&type; also works on modules.</para>
+</callout>
+<callout arearefs="apihelper.builtin.1.4">
+<para>You can use the constants in the <filename class="headerfile">types</filename> module to compare types of objects.  This is what the &info; function does, as you'll see shortly.</para>
+</callout>
+</calloutlist>
+</example>
+</section>
+<section>
+<title>The &str; Function</title>
+<para>The &str; coerces data into a string.  Every datatype can be coerced into a string.</para>
+<example id="apihelper.str.intro">
+<title>Introducing &str;</title>
+<screen>
+&prompt;<userinput>str(1)</userinput>          <co id="apihelper.builtin.2.1"/>
+<computeroutput>'1'</computeroutput>
+&prompt;<userinput>horsemen = ['war', 'pestilence', 'famine']</userinput>
+&prompt;<userinput>horsemen</userinput>
+<computeroutput>['war', 'pestilence', 'famine']</computeroutput>
+&prompt;<userinput>horsemen.append('&powerbuilder;')</userinput>
+&prompt;<userinput>str(horsemen)</userinput>   <co id="apihelper.builtin.2.2"/>
+<computeroutput>"['war', 'pestilence', 'famine', '&powerbuilder;']"</computeroutput>
+&prompt;<userinput>str(odbchelper)</userinput> <co id="apihelper.builtin.2.3"/>
+<computeroutput>"&lt;module 'odbchelper' from 'c:\\docbook\\dip\\py\\odbchelper.py'>"</computeroutput>
+&prompt;<userinput>str(None)</userinput>       <co id="apihelper.builtin.2.4"/>
+<computeroutput>'None'</computeroutput></screen>
+<calloutlist>
+<callout arearefs="apihelper.builtin.2.1">
+<para>For simple datatypes like integers, you would expect &str; to work, because almost every language has a function to convert an integer to a string.</para>
+</callout>
+<callout arearefs="apihelper.builtin.2.2">
+<para>However, &str; works on any object of any type.  Here it works on a list which you've constructed in bits and pieces.</para>
+</callout>
+<callout arearefs="apihelper.builtin.2.3">
+<para>&str; also works on modules.  Note that the string representation of the module includes the pathname of the module on disk, so yours will be different.</para>
+</callout>
+<callout arearefs="apihelper.builtin.2.4">
+<para>A subtle but important behavior of &str; is that it works on &none;, the &python; null value.  It returns the string <literal>'None'</literal>.  You'll use this to your advantage in the &info; function, as you'll see shortly.</para>
+</callout>
+</calloutlist>
+</example>
+<para>At the heart of the &info; function is the powerful &dir; function.  &dir; returns a list of the attributes and methods of any object: modules, functions, strings, lists, dictionaries... pretty much anything.</para>
+<example id="apihelper.dir.intro">
+<title>Introducing &dir;</title>
+<screen>&prompt;<userinput>li = []</userinput>
+&prompt;<userinput>dir(li)</userinput>           <co id="apihelper.builtin.3.1"/>
+<computeroutput>['append', 'count', 'extend', 'index', 'insert',
+'pop', 'remove', 'reverse', 'sort']</computeroutput>
+&prompt;<userinput>d = {}</userinput>
+&prompt;<userinput>dir(d)</userinput>            <co id="apihelper.builtin.3.2"/>
+<computeroutput>['clear', 'copy', 'get', 'has_key', 'items', 'keys', 'setdefault', 'update', 'values']</computeroutput>
+&prompt;<userinput>import &odbchelper_name;</userinput>
+&prompt;<userinput>dir(&odbchelper_name;)</userinput>   <co id="apihelper.builtin.3.3"/>
+<computeroutput>['__builtins__', '__doc__', '__file__', '__name__', '&odbchelper_funcname;']</computeroutput></screen>
+<calloutlist>
+<callout arearefs="apihelper.builtin.3.1">
+<para><varname>li</varname> is a list, so <literal>&dir;(<varname>li</varname>)</literal> returns a list of all the methods of a list.  Note that the returned list contains the names of the methods as strings, not the methods themselves.</para>
+</callout>
+<callout arearefs="apihelper.builtin.3.2">
+<para><varname>d</varname> is a dictionary, so <literal>&dir;(<varname>d</varname>)</literal> returns a list of the names of dictionary methods.  At least one of these, <link linkend="odbchelper.items">&keys;</link>, should look familiar.</para>
+</callout>
+<callout arearefs="apihelper.builtin.3.3">
+<para>This is where it really gets interesting. &odbchelper_modulename; is a module, so <literal>&dir;(&odbchelper_modulename;)</literal> returns a list of all kinds of stuff defined in the module, including built-in attributes, like <link linkend="odbchelper.ifnametrick">&name;</link>, <link linkend="odbchelper.import">&doc;</link>, and whatever other attributes and methods you define.  In this case, &odbchelper_modulename; has only one user-defined method, the &odbchelper_function; function described in <xref linkend="odbchelper" endterm="odbchelper.numberonly"/>.</para>
+</callout>
+</calloutlist>
+</example>
+<para>Finally, the &callable; function takes any object and returns &true; if the object can be called, or &false; otherwise.  Callable objects include functions, class methods, even classes themselves.  (More on classes in the next chapter.)</para>
+<example id="apihelper.builtin.callable">
+<title>Introducing &callable;</title>
+<screen>
+&prompt;<userinput>import string</userinput>
+&prompt;<userinput>string.punctuation</userinput>           <co id="apihelper.builtin.4.1"/>
+<computeroutput>'!"#$&pct;&amp;\'()*+,-./:;&lt;=&gt;?@[\\]^_`{|}~'</computeroutput>
+&prompt;<userinput>string.join</userinput>                  <co id="apihelper.builtin.4.2"/>
+<computeroutput>&lt;function join at 00C55A7C&gt;</computeroutput>
+&prompt;<userinput>callable(string.punctuation)</userinput> <co id="apihelper.builtin.4.3"/>
+<computeroutput>False</computeroutput>
+&prompt;<userinput>callable(string.join)</userinput>        <co id="apihelper.builtin.4.4"/>
+<computeroutput>True</computeroutput>
+&prompt;<userinput>print string.join.__doc__</userinput>    <co id="apihelper.builtin.4.5"/>
+<computeroutput>join(list [,sep]) -> string
+
+    Return a string composed of the words in list, with
+    intervening occurrences of sep.  The default separator is a
+    single space.
+
+    (joinfields and join are synonymous)</computeroutput></screen>
+<calloutlist>
+<callout arearefs="apihelper.builtin.4.1">
+<para>The functions in the &string; module are deprecated (although many people still use the &join; function), but the module contains a lot of useful constants like this <varname>string.punctuation</varname>, which contains all the standard punctuation characters.</para>
+</callout>
+<callout arearefs="apihelper.builtin.4.2">
+<para><link linkend="odbchelper.join"><function>string.join</function></link> is a function that joins a list of strings.</para>
+</callout>
+<callout arearefs="apihelper.builtin.4.3">
+<para><varname>string.punctuation</varname> is not callable; it is a string.  (A string does have callable methods, but the string itself is not callable.)</para>
+</callout>
+<callout arearefs="apihelper.builtin.4.4">
+<para><function>string.join</function> is callable; it's a function that takes two arguments.</para>
+</callout>
+<callout arearefs="apihelper.builtin.4.5">
+<para>Any callable object may have a &docstring;.  By using the &callable; function on each of an object's attributes, you can determine which attributes you care about (methods, functions, classes) and which you want to ignore (constants and so on) without knowing anything about the object ahead of time.</para>
+</callout>
+</calloutlist>
+</example>
+</section>
+<section>
+<title>Built-In Functions</title>
+<para>&type;, &str;, &dir;, and all the rest of &python;'s built-in functions are grouped into a special module called &builtins;.  (That's two underscores before and after.)  If it helps, you can think of &python; automatically executing <literal>from __builtin__ import *</literal> on startup, which imports all the <quote>built-in</quote> functions into the namespace so you can use them directly.</para>
+<para>The advantage of thinking like this is that you can access all the built-in functions and attributes as a group by getting information about the <filename class="headerfile">__builtin__</filename> module.  And guess what, &python; has a function called &info;.  Try it yourself and skim through the list now.  We'll dive into some of the more important functions later.  (Some of the built-in error classes, like <link linkend="odbchelper.tuplemethods"><errorcode>AttributeError</errorcode></link>, should already look familiar.)</para>
+<example id="apihelper.builtin.list">
+<title>Built-in Attributes and Functions</title>
+<screen>&prompt;<userinput>from apihelper import info</userinput>
+&prompt;<userinput>import __builtin__</userinput>
+&prompt;<userinput>info(__builtin__, 20)</userinput>
+<computeroutput>ArithmeticError      Base class for arithmetic errors.
+AssertionError       Assertion failed.
+AttributeError       Attribute not found.
+EOFError             Read beyond end of file.
+EnvironmentError     Base class for I/O related errors.
+Exception            Common base class for all exceptions.
+FloatingPointError   Floating point operation failed.
+IOError              I/O operation failed.
+
+[...snip...]</computeroutput></screen>
+</example>
+<note id="tip.manuals">
+<title>&python; is self-documenting</title>
+<para>&python; comes with excellent reference manuals, which you should peruse thoroughly to learn all the modules &python; has to offer.  But unlike most languages, where you would find yourself referring back to the manuals or man pages to remind yourself how to use these modules, &python; is largely self-documenting.</para>
+</note>
+<itemizedlist role="furtherreading">
+<title>Further Reading on Built-In Functions</title>
+<listitem><para>&pythonlibraryreference; documents <ulink url="&url_pythonlibraryreference;built-in-funcs.html">all the built-in functions</ulink> and <ulink url="&url_pythonlibraryreference;module-exceptions.html">all the built-in exceptions</ulink>.</para></listitem>
+</itemizedlist>
+</section>
+</section>
+<section id="apihelper.getattr">
+<?dbhtml filename="power_of_introspection/getattr.html"?>
+<title>Getting Object References With &getattr;</title>
+<abstract>
+<title/>
+<para>You already know that <link linkend="odbchelper.objects">&python; functions are objects</link>.  What you don't know is that you can get a reference to a function without knowing its name until run-time, by using the &getattr; function.</para>
+</abstract>
+<example id="apihelper.getattr.intro">
+<title>Introducing &getattr;</title>
+<screen>&prompt;<userinput>li = ["Larry", "Curly"]</userinput>
+&prompt;<userinput>li.pop</userinput>                       <co id="apihelper.getattr.1.1"/>
+<computeroutput>&lt;built-in method pop of list object at 010DF884></computeroutput>
+&prompt;<userinput>getattr(li, "pop")</userinput>           <co id="apihelper.getattr.1.2"/>
+<computeroutput>&lt;built-in method pop of list object at 010DF884></computeroutput>
+&prompt;<userinput>getattr(li, "append")("Moe")</userinput> <co id="apihelper.getattr.1.3"/>
+&prompt;<userinput>li</userinput>
+<computeroutput>["Larry", "Curly", "Moe"]</computeroutput>
+&prompt;<userinput>getattr({}, "clear")</userinput>         <co id="apihelper.getattr.1.4"/>
+<computeroutput>&lt;built-in method clear of dictionary object at 00F113D4></computeroutput>
+&prompt;<userinput>getattr((), "pop")</userinput>           <co id="apihelper.getattr.1.5"/>
+<computeroutput role="traceback">&traceback;
+AttributeError: 'tuple' object has no attribute 'pop'</computeroutput></screen>
+<calloutlist>
+<callout arearefs="apihelper.getattr.1.1">
+<para>This gets a reference to the &pop; method of the list.  Note that this is not calling the &pop; method; that would be <literal>li.pop()</literal>.  This is the method itself.</para>
+</callout>
+<callout arearefs="apihelper.getattr.1.2">
+<para>This also returns a reference to the &pop; method, but this time, the method name is specified as a string argument to the &getattr; function.  &getattr; is an incredibly useful built-in function that returns any attribute of any object.  In this case, the object is a list, and the attribute is the &pop; method.</para>
+</callout>
+<callout arearefs="apihelper.getattr.1.3">
+<para>In case it hasn't sunk in just how incredibly useful this is, try this: the return value of &getattr; <emphasis>is</emphasis> the method, which you can then call just as if you had said <literal>li.append("Moe")</literal> directly.  But you didn't call the function directly; you specified the function name as a string instead.</para>
+</callout>
+<callout arearefs="apihelper.getattr.1.4">
+<para>&getattr; also works on dictionaries.</para>
+</callout>
+<callout arearefs="apihelper.getattr.1.5">
+<para>In theory, &getattr; would work on tuples, except that <link linkend="odbchelper.tuplemethods">tuples have no methods</link>, so &getattr; will raise an exception no matter what attribute name you give.</para>
+</callout>
+</calloutlist>
+</example>
+<section>
+<title>&getattr; with Modules</title>
+<para>&getattr; isn't just for built-in datatypes.  It also works on modules.</para>
+<example id="apihelper.getattr.example">
+<title>The &getattr; Function in &apihelper_filename;</title>
+<screen>&prompt;<userinput>import &odbchelper_name;</userinput>
+&prompt;<userinput>&odbchelper_name;.&odbchelper_funcname;</userinput>             <co id="apihelper.getattr.2.1"/>
+<computeroutput>&lt;function &odbchelper_funcname; at 00D18DD4></computeroutput>
+&prompt;<userinput>getattr(&odbchelper_name;, "&odbchelper_funcname;")</userinput> <co id="apihelper.getattr.2.2"/>
+<computeroutput>&lt;function &odbchelper_funcname; at 00D18DD4></computeroutput>
+&prompt;<userinput>object = &odbchelper_name;</userinput>
+&prompt;<userinput>method = "&odbchelper_funcname;"</userinput>
+&prompt;<userinput>getattr(object, method)</userinput>                      <co id="apihelper.getattr.2.3"/>
+<computeroutput>&lt;function &odbchelper_funcname; at 00D18DD4></computeroutput>
+&prompt;<userinput>type(getattr(object, method))</userinput>                <co id="apihelper.getattr.2.4"/>
+<computeroutput>&lt;type 'function'></computeroutput>
+&prompt;<userinput>import types</userinput>
+&prompt;<userinput>type(getattr(object, method)) == types.FunctionType</userinput>
+<computeroutput>True</computeroutput>
+&prompt;<userinput>callable(getattr(object, method))</userinput>            <co id="apihelper.getattr.2.5"/>
+<computeroutput>True</computeroutput></screen>
+<calloutlist>
+<callout arearefs="apihelper.getattr.2.1">
+<para>This returns a reference to the &odbchelper_function; function in the &odbchelper_modulename; module, which you studied in <xref linkend="odbchelper"/>.  (The hex address you see is specific to my machine; your output will be different.)</para>
+</callout>
+<callout arearefs="apihelper.getattr.2.2">
+<para>Using &getattr;, you can get the same reference to the same function.  In general, <literal>&getattr;(<replaceable>object</replaceable>, "<replaceable>attribute</replaceable>")</literal> is equivalent to <literal><replaceable>object</replaceable>.<replaceable>attribute</replaceable></literal>.  If <replaceable>object</replaceable> is a module, then <replaceable>attribute</replaceable> can be anything defined in the module: a function, class, or global variable.</para>
+</callout>
+<callout arearefs="apihelper.getattr.2.3">
+<para>And this is what you actually use in the &info; function.  <varname>object</varname> is passed into the function as an argument; <varname>method</varname> is a string which is the name of a method or function.</para>
+</callout>
+<callout arearefs="apihelper.getattr.2.4">
+<para>In this case, <varname>method</varname> is the name of a function, which you can prove by getting its <link linkend="apihelper.type.intro">&type;</link>.</para>
+</callout>
+<callout arearefs="apihelper.getattr.2.5">
+<para>Since <varname>method</varname> is a function, it is <link linkend="apihelper.builtin.callable">callable</link>.</para>
+</callout>
+</calloutlist>
+</example>
+</section>
+<section>
+<title>&getattr; As a Dispatcher</title>
+<para>A common usage pattern of &getattr; is as a dispatcher.  For example, if you had a program that could output data in a variety of different formats, you could define separate functions for each output format and use a single dispatch function to call the right one.</para>
+<para>For example, let's imagine a program that prints site statistics in &html;, &xml;, and plain text formats.  The choice of output format could be specified on the command line, or stored in a configuration file.  A <filename>statsout</filename> module defines three functions, <function>output_html</function>, <function>output_xml</function>, and <function>output_text</function>.  Then the main program defines a single output function, like this:</para>
+<example id="apihelper.getattr.dispatch">
+<title>Creating a Dispatcher with &getattr;</title>
+<programlisting>
+import statsout
+
+def output(data, format="text"):                              <co id="apihelper.getattr.3.1"/>
+    output_function = getattr(statsout, "output_%s" % format) <co id="apihelper.getattr.3.2"/>
+    return output_function(data)                              <co id="apihelper.getattr.3.3"/>
+</programlisting>
+</example>
+<calloutlist>
+<callout arearefs="apihelper.getattr.3.1">
+<para>The <function>output</function> function takes one required argument, <varname>data</varname>, and one optional argument, <varname>format</varname>.  If <varname>format</varname> is not specified, it defaults to <literal>text</literal>, and you will end up calling the plain text output function.</para>
+</callout>
+<callout arearefs="apihelper.getattr.3.2">
+<para>You concatenate the <varname>format</varname> argument with "output_" to produce a function name, and then go get that function from the <filename>statsout</filename> module.  This allows you to easily extend the program later to support other output formats, without changing this dispatch function.  Just add another function to <filename>statsout</filename> named, for instance, <function>output_pdf</function>, and pass "pdf" as the <varname>format</varname> into the <function>output</function> function.</para>
+</callout>
+<callout arearefs="apihelper.getattr.3.3">
+<para>Now you can simply call the output function in the same way as any other function.  The <varname>output_function</varname> variable is a reference to the appropriate function from the <filename>statsout</filename> module.</para>
+</callout>
+</calloutlist>
+<para>Did you see the bug in the previous example?  This is a very loose coupling of strings and functions, and there is no error checking.  What happens if the user passes in a format that doesn't have a corresponding function defined in <filename>statsout</filename>?  Well, &getattr; will return &none;, which will be assigned to <varname>output_function</varname> instead of a valid function, and the next line that attempts to call that function will crash and raise an exception.  That's bad.</para>
+<para>Luckily, &getattr; takes an optional third argument, a default value.</para>
+<example id="apihelper.getattr.default">
+<title>&getattr; Default Values</title>
+<programlisting>
+import statsout
+
+def output(data, format="text"):
+    output_function = getattr(statsout, "output_%s" % format, statsout.output_text)
+    return output_function(data) <co id="apihelper.getattr.4.1"/>
+</programlisting>
+<calloutlist>
+<callout arearefs="apihelper.getattr.4.1">
+<para>This function call is guaranteed to work, because you added a third argument to the call to &getattr;.  The third argument is a default value that is returned if the attribute or method specified by the second argument wasn't found.</para>
+</callout>
+</calloutlist>
+</example>
+<para>As you can see, &getattr; is quite powerful.  It is the heart of introspection, and you'll see even more powerful examples of it in later chapters.</para>
+</section>
+</section>
+<section id="apihelper.filter">
+<?dbhtml filename="power_of_introspection/filtering_lists.html"?>
+<title>Filtering Lists</title>
+<abstract>
+<title/>
+<para>As you know, &python; has powerful capabilities for mapping lists into other lists, via list comprehensions (<xref linkend="odbchelper.map"/>).  This can be combined with a filtering mechanism, where some elements in the list are mapped while others are skipped entirely.</para>
+</abstract>
+<informalexample>
+<!--<title>List Filtering Syntax</title>-->
+<para>Here is the list filtering syntax:</para>
+<programlisting>
+[<replaceable>mapping-expression</replaceable> for <replaceable>element</replaceable> in <replaceable>source-list</replaceable> if <replaceable>filter-expression</replaceable>]</programlisting>
+</informalexample>
+<para>This is an extension of the <link linkend="odbchelper.map">list comprehensions</link> that you know and love.  The first two thirds are the same; the last part, starting with the &if;, is the filter expression.  A filter expression can be any expression that evaluates true or false (which in &python; can be <link linkend="tip.boolean">almost anything</link>).  Any element for which the filter expression evaluates true will be included in the mapping.  All other elements are ignored, so they are never put through the mapping expression and are not included in the output list.</para>
+<example>
+<title>Introducing List Filtering</title>
+<screen>&prompt;<userinput>li = ["a", "mpilgrim", "foo", "b", "c", "b", "d", "d"]</userinput>
+&prompt;<userinput>[elem for elem in li if len(elem) > 1]</userinput>       <co id="apihelper.filter.1.1"/>
+<computeroutput>['mpilgrim', 'foo']</computeroutput>
+&prompt;<userinput>[elem for elem in li if elem != "b"]</userinput>         <co id="apihelper.filter.1.2"/>
+<computeroutput>['a', 'mpilgrim', 'foo', 'c', 'd', 'd']</computeroutput>
+&prompt;<userinput>[elem for elem in li if li.count(elem) == 1]</userinput> <co id="apihelper.filter.1.3"/>
+<computeroutput>['a', 'mpilgrim', 'foo', 'c']</computeroutput></screen>
+<calloutlist>
+<callout arearefs="apihelper.filter.1.1">
+<para>The mapping expression here is simple (it just returns the value of each element), so concentrate on the filter expression.  As &python; loops through the list, it runs each element through the filter expression.  If the filter expression is true, the element is mapped and the result of the mapping expression is included in the returned list.  Here, you are filtering out all the one-character strings, so you're left with a list of all the longer strings.</para>
+</callout>
+<callout arearefs="apihelper.filter.1.2">
+<para>Here, you are filtering out a specific value, <literal>b</literal>.  Note that this filters all occurrences of <literal>b</literal>, since each time it comes up, the filter expression will be false.</para>
+</callout>
+<callout arearefs="apihelper.filter.1.3">
+<para>&count; is a list method that returns the number of times a value occurs in a list.  You might think that this filter would eliminate duplicates from a list, returning a list containing only one copy of each value in the original list.  But it doesn't, because values that appear twice in the original list (in this case, <literal>b</literal> and <literal>d</literal>) are excluded completely.  There are ways of eliminating duplicates from a list, but filtering is not the solution.</para>
+</callout>
+</calloutlist>
+</example>
+<informalexample id="apihelper.filter.care">
+<!--<title>Filtering a List in &apihelper_filename;</title>-->
+<para>Let's get back to this line from &apihelper_filename;:</para>
+<programlisting>
+&apihelper_methods;</programlisting>
+</informalexample>
+<para>This looks complicated, and it is complicated, but the basic structure is the same.  The whole filter expression returns a list, which is assigned to the <varname>methodList</varname> variable.  The first half of the expression is the list mapping part.  The mapping expression is an identity expression, which it returns the value of each element.  <literal>&dir;(<varname>object</varname>)</literal> returns a list of <varname>object</varname>'s attributes and methods -- that's the list you're mapping.  So the only new part is the filter expression after the &if;.</para>
+<para>The filter expression looks scary, but it's not.  You already know about <link linkend="apihelper.builtin.callable">&callable;</link>, <link linkend="apihelper.getattr.intro">&getattr;</link>, and <link linkend="odbchelper.tuplemethods">&in;</link>.  As you saw in the <link linkend="apihelper.getattr">previous section</link>, the expression <literal>&apihelper_getattr;</literal> returns a function object if <varname>object</varname> is a module and <varname>method</varname> is the name of a function in that module.</para>
+<para>So this expression takes an object (named <varname>object</varname>).  Then it gets a list of the names of the object's attributes, methods, functions, and a few other things.  Then it filters that list to weed out all the stuff that you don't care about.  You do the weeding out by taking the name of each attribute/method/function and getting a reference to the real thing, via the &getattr; function.  Then you check to see if that object is callable, which will be any methods and functions, both built-in (like the &pop; method of a list) and user-defined (like the &odbchelper_function; function of the &odbchelper_modulename; module).  You don't care about other attributes, like the &name; attribute that's built in to every module.</para>
+<itemizedlist role="furtherreading">
+<title>Further Reading on Filtering Lists</title>
+<listitem><para>&pythontutorial; discusses another way to filter lists <ulink url="&url_pythontutorial;node7.html#SECTION007130000000000000000">using the built-in <function>filter</function> function</ulink>.</para></listitem>
+</itemizedlist>
+</section>
+<section id="apihelper.andor">
+<?dbhtml filename="power_of_introspection/and_or.html"?>
+<title>The Peculiar Nature of &andfunction; and &orfunction;</title>
+<abstract>
+<title/>
+<para>In &python;, &andfunction; and &orfunction; perform boolean logic as you would expect, but they do not return boolean values; instead, they return one of the actual values they are comparing.</para>
+</abstract>
+<example id="apihelper.andor.intro.example">
+<title>Introducing &andfunction;</title>
+<screen>&prompt;<userinput>'a' and 'b'</userinput>         <co id="apihelper.andor.1.1"/>
+<computeroutput>'b'</computeroutput>
+&prompt;<userinput>'' and 'b'</userinput>          <co id="apihelper.andor.1.2"/>
+<computeroutput>''</computeroutput>
+&prompt;<userinput>'a' and 'b' and 'c'</userinput> <co id="apihelper.andor.1.3"/>
+<computeroutput>'c'</computeroutput></screen>
+<calloutlist>
+<callout arearefs="apihelper.andor.1.1">
+<para>When using &andfunction;, values are evaluated in a boolean context from left to right.  &zero;, <literal>''</literal>, <literal>[]</literal>, <literal>()</literal>, <literal>{}</literal>, and &none; are false in a boolean context; everything else is true.  Well, almost everything.  By default, instances of classes are true in a boolean context, but you can define special methods in your class to make an instance evaluate to false.  You'll learn all about classes and special methods in <xref linkend="fileinfo" endterm="fileinfo.numberonly"/>.  If all values are true in a boolean context, &andfunction; returns the last value.  In this case, &andfunction; evaluates <literal>'a'</literal>, which is true, then <literal>'b'</literal>, which is true, and returns <literal>'b'</literal>.</para>
+</callout>
+<callout arearefs="apihelper.andor.1.2">
+<para>If any value is false in a boolean context, &andfunction; returns the first false value.  In this case, <literal>''</literal> is the first false value.</para>
+</callout>
+<callout arearefs="apihelper.andor.1.3">
+<para>All values are true, so &andfunction; returns the last value, <literal>'c'</literal>.</para>
+</callout>
+</calloutlist>
+</example>
+<example>
+<title>Introducing &orfunction;</title>
+<screen>&prompt;<userinput>'a' or 'b'</userinput>          <co id="apihelper.andor.2.1"/>
+<computeroutput>'a'</computeroutput>
+&prompt;<userinput>'' or 'b'</userinput>           <co id="apihelper.andor.2.2"/>
+<computeroutput>'b'</computeroutput>
+&prompt;<userinput>'' or [] or {}</userinput>      <co id="apihelper.andor.2.3"/>
+<computeroutput>{}</computeroutput>
+&prompt;<userinput>def sidefx():</userinput>
+&continuationprompt;<userinput>print "in sidefx()"</userinput>
+&continuationprompt;<userinput>return 1</userinput>
+&prompt;<userinput>'a' or sidefx()</userinput>     <co id="apihelper.andor.2.4"/>
+<computeroutput>'a'</computeroutput></screen>
+<calloutlist>
+<callout arearefs="apihelper.andor.2.1">
+<para>When using &orfunction;, values are evaluated in a boolean context from left to right, just like &andfunction;.  If any value is true, &orfunction; returns that value immediately.  In this case, <literal>'a'</literal> is the first true value.</para>
+</callout>
+<callout arearefs="apihelper.andor.2.2">
+<para>&orfunction; evaluates <literal>''</literal>, which is false, then <literal>'b'</literal>, which is true, and returns <literal>'b'</literal>.</para>
+</callout>
+<callout arearefs="apihelper.andor.2.3">
+<para>If all values are false, &orfunction; returns the last value.  &orfunction; evaluates <literal>''</literal>, which is false, then <literal>[]</literal>, which is false, then <literal>{}</literal>, which is false, and returns <literal>{}</literal>.</para>
+</callout>
+<callout arearefs="apihelper.andor.2.4">
+<para>Note that &orfunction; evaluates values only until it finds one that is true in a boolean context, and then it ignores the rest.  This distinction is important if some values can have side effects.  Here, the function <function>sidefx</function> is never called, because &orfunction; evaluates <literal>'a'</literal>, which is true, and returns <literal>'a'</literal> immediately.</para>
+</callout>
+</calloutlist>
+</example>
+<para>If you're a &c; hacker, you are certainly familiar with the &candor; expression, which evaluates to <varname>a</varname> if <replaceable>bool</replaceable> is true, and <varname>b</varname> otherwise.  Because of the way &andfunction; and &orfunction; work in &python;, you can accomplish the same thing.</para>
+<section>
+<title>Using the &andor; Trick</title>
+<example id="apihelper.andortrick.intro">
+<title>Introducing the &andor; Trick</title>
+<screen>&prompt;<userinput>a = "first"</userinput>
+&prompt;<userinput>b = "second"</userinput>
+&prompt;<userinput>1 and a or b</userinput> <co id="apihelper.andor.3.1"/>
+<computeroutput>'first'</computeroutput>
+&prompt;<userinput>0 and a or b</userinput> <co id="apihelper.andor.3.2"/>
+<computeroutput>'second'</computeroutput>
+</screen>
+<calloutlist>
+<callout arearefs="apihelper.andor.3.1">
+<para>This syntax looks similar to the &candor; expression in &c;.  The entire expression is evaluated from left to right, so the &andfunction; is evaluated first.  <literal>1 and 'first'</literal> evalutes to <literal>'first'</literal>, then <literal>'first' or 'second'</literal> evalutes to <literal>'first'</literal>.</para>
+</callout>
+<callout arearefs="apihelper.andor.3.2">
+<para><literal>0 and 'first'</literal> evalutes to &false;, and then <literal>0 or 'second'</literal> evaluates to <literal>'second'</literal>.</para>
+</callout>
+</calloutlist>
+</example>
+<para>However, since this &python; expression is simply boolean logic, and not a special construct of the language, there is one extremely important difference between this &andor; trick in &python; and the &candor; syntax in &c;.  If the value of <varname>a</varname> is false, the expression will not work as you would expect it to.  (Can you tell I was bitten by this?  More than once?)</para>
+<example>
+<title>When the &andor; Trick Fails</title>
+<screen>&prompt;<userinput>a = ""</userinput>
+&prompt;<userinput>b = "second"</userinput>
+&prompt;<userinput>1 and a or b</userinput>         <co id="apihelper.andor.4.1"/>
+<computeroutput>'second'</computeroutput></screen>
+<calloutlist>
+<callout arearefs="apihelper.andor.4.1">
+<para>Since <varname>a</varname> is an empty string, which &python; considers false in a boolean context, <literal>1 and ''</literal> evalutes to <literal>''</literal>, and then <literal>'' or 'second'</literal> evalutes to <literal>'second'</literal>.  Oops!  That's not what you wanted.</para>
+</callout>
+</calloutlist>
+</example>
+<para>The &andor; trick, <literal><replaceable>bool</replaceable> and <varname>a</varname> or <varname>b</varname></literal>, will not work like the &c; expression &candor; when <varname>a</varname> is false in a boolean context.</para>
+<para>The real trick behind the &andor; trick, then, is to make sure that the value of <varname>a</varname> is never false.  One common way of doing this is to turn <varname>a</varname> into <literal>[<varname>a</varname>]</literal> and <varname>b</varname> into <literal>[<varname>b</varname>]</literal>, then taking the first element of the returned list, which will be either <varname>a</varname> or <varname>b</varname>.</para>
+<example>
+<title>Using the &andor; Trick Safely</title>
+<screen>&prompt;<userinput>a = ""</userinput>
+&prompt;<userinput>b = "second"</userinput>
+&prompt;<userinput>(1 and [a] or [b])[0]</userinput> <co id="apihelper.andor.5.1"/>
+<computeroutput>''</computeroutput></screen>
+<calloutlist>
+<callout arearefs="apihelper.andor.5.1">
+<para>Since <literal>[<varname>a</varname>]</literal> is a non-empty list, it is never false.  Even if <varname>a</varname> is &zero; or <literal>''</literal> or some other false value, the list <literal>[<varname>a</varname>]</literal> is true because it has one element.</para>
+</callout>
+</calloutlist>
+</example>
+<para>By now, this trick may seem like more trouble than it's worth.  You could, after all, accomplish the same thing with an &if; statement, so why go through all this fuss?  Well, in many cases, you are choosing between two constant values, so you can use the simpler syntax and not worry, because you know that the <varname>a</varname> value will always be true.  And even if you need to use the more complicated safe form, there are good reasons to do so.  For example, there are some cases in &python; where &if; statements are not allowed, such as in &lambdafunction; functions.</para>
+<itemizedlist role="furtherreading">
+<title>Further Reading on the &andor; Trick</title>
+<listitem><para>&pythoncookbook; discusses <ulink url="&url_pythoncookbook;Recipe/52310">alternatives to the &andor; trick</ulink>.</para></listitem>
+</itemizedlist>
+</section>
+</section>
+<section id="apihelper.lambda">
+<?dbhtml filename="power_of_introspection/lambda_functions.html"?>
+<title>Using &lambdafunction; Functions</title>
+<abstract>
+<title/>
+<para>&python; supports an interesting syntax that lets you define one-line mini-functions on the fly.  Borrowed from &lisp;, these so-called &lambdafunction; functions can be used anywhere a function is required.</para>
+</abstract>
+<example>
+<title>Introducing &lambdafunction; Functions</title>
+<screen>&prompt;<userinput>def f(x):</userinput>
+&continuationprompt;<userinput>return x*2</userinput>
+&continuationprompt;<userinput/>
+&prompt;<userinput>f(3)</userinput>
+<computeroutput>6</computeroutput>
+&prompt;<userinput>g = lambda x: x*2</userinput>  <co id="apihelper.lambda.1.2"/>
+&prompt;<userinput>g(3)</userinput>
+<computeroutput>6</computeroutput>
+&prompt;<userinput>(lambda x: x*2)(3)</userinput> <co id="apihelper.lambda.1.3"/>
+<computeroutput>6</computeroutput></screen>
+<calloutlist>
+<callout arearefs="apihelper.lambda.1.2">
+<para>This is a &lambdafunction; function that accomplishes the same thing as the normal function above it.  Note the abbreviated syntax here: there are no parentheses around the argument list, and the <literal>return</literal> keyword is missing (it is implied, since the entire function can only be one expression).  Also, the function has no name, but it can be called through the variable it is assigned to.</para>
+</callout>
+<callout arearefs="apihelper.lambda.1.3">
+<para>You can use a &lambdafunction; function without even assigning it to a variable.  This may not be the most useful thing in the world, but it just goes to show that a lambda is just an in-line function.</para>
+</callout>
+</calloutlist>
+</example>
+<para>To generalize, a &lambdafunction; function is a function that takes any number of arguments (including <link linkend="apihelper.optional">optional arguments</link>) and returns the value of a single expression.  &lambdafunction; functions can not contain commands, and they can not contain more than one expression.  Don't try to squeeze too much into a &lambdafunction; function; if you need something more complex, define a normal function instead and make it as long as you want.</para>
+<note id="tip.lambda">
+<title>&lambdafunction; is Optional</title>
+<para>&lambdafunction; functions are a matter of style.  Using them is never required; anywhere you could use them, you could define a separate normal function and use that instead.  I use them in places where I want to encapsulate specific, non-reusable code without littering my code with a lot of little one-line functions.</para>
+</note>
+<section>
+<title>Real-World &lambdafunction; Functions</title>
+<informalexample>
+<!--<title>&lambdafunction; Functions in &apihelper_filename;</title>-->
+<para>Here are the &lambdafunction; functions in &apihelper_filename;:</para>
+<programlisting>
+&apihelper_lambda;</programlisting>
+</informalexample>
+<para>Notice that this uses the simple form of the <link linkend="apihelper.andor">&andor;</link> trick, which is okay, because a &lambdafunction; function is always true <link linkend="tip.boolean">in a boolean context</link>.  (That doesn't mean that a &lambdafunction; function can't return a false value.  The function is always true; its return value could be anything.)</para>
+<para>Also notice that you're using the &split; function with no arguments.  You've already seen it used with <link linkend="odbchelper.split.example">one or two arguments</link>, but without any arguments it splits on whitespace.</para>
+<example>
+<title>&split; With No Arguments</title>
+<screen>&prompt;<userinput>s = "this   is\na\ttest"</userinput>  <co id="apihelper.split.1.1"/>
+&prompt;<userinput>print s</userinput>
+<computeroutput>this   is
+a	test</computeroutput>
+&prompt;<userinput>print s.split()</userinput>           <co id="apihelper.split.1.2"/>
+<computeroutput>['this', 'is', 'a', 'test']</computeroutput>
+&prompt;<userinput>print " ".join(s.split())</userinput> <co id="apihelper.split.1.3"/>
+<computeroutput>'this is a test'</computeroutput></screen>
+<calloutlist>
+<callout arearefs="apihelper.split.1.1">
+<para>This is a multiline string, defined by escape characters instead of <link linkend="odbchelper.triplequotes">triple quotes</link>.  <literal>\n</literal> is a carriage return, and <literal>\t</literal> is a tab character.</para>
+</callout>
+<callout arearefs="apihelper.split.1.2">
+<para>&split; without any arguments splits on whitespace.  So three spaces, a carriage return, and a tab character are all the same.</para>
+</callout>
+<callout arearefs="apihelper.split.1.3">
+<para>You can normalize whitespace by splitting a string with &split; and then rejoining it with &join;, using a single space as a delimiter.  This is what the &info; function does to collapse multi-line &docstring;s into a single line.</para>
+</callout>
+</calloutlist>
+</example>
+<para>So what is the &info; function actually doing with these &lambdafunction; functions, &split;s, and &andor; tricks?</para>
+<informalexample id="apihelper.funcassign">
+<!--<title>Assigning a Function to a Variable</title>-->
+<programlisting>
+&apihelper_lambda;</programlisting>
+</informalexample>
+<para><varname>processFunc</varname> is now a function, but which function it is depends on the value of the <varname>collapse</varname> variable.  If <varname>collapse</varname> is true, <literal><varname>processFunc</varname>(<replaceable>string</replaceable>)</literal> will collapse whitespace; otherwise, <literal><varname>processFunc</varname>(<replaceable>string</replaceable>)</literal> will return its argument unchanged.</para>
+<para>To do this in a less robust language, like &vb;, you would probably create a function that took a string and a <parameter>collapse</parameter> argument and used an &if; statement to decide whether to collapse the whitespace or not, then returned the appropriate value.  This would be inefficient, because the function would need to handle every possible case.  Every time you called it, it would need to decide whether to collapse whitespace before it could give you what you wanted.  In &python;, you can take that decision logic out of the function and define a &lambdafunction; function that is custom-tailored to give you exactly (and only) what you want.  This is more efficient, more elegant, and less prone to those nasty oh-I-thought-those-arguments-were-reversed kinds of errors.</para>
+<itemizedlist role="furtherreading">
+<title>Further Reading on &lambdafunction; Functions</title>
+<listitem><para>&pythonknowledgebase; discusses using &lambdafunction; to <ulink url="&url_pythonknowledgebase;view.phtml/aid/6081/fid/241">call functions indirectly</ulink>.</para></listitem>
+<listitem><para>&pythontutorial; shows how to <ulink url="&url_pythontutorial;node6.html#SECTION006740000000000000000">access outside variables from inside a &lambdafunction; function</ulink>.  (<ulink url="&url_pythonpeps;pep-0227.html"><acronym>PEP</acronym> 227</ulink> explains how this will change in future versions of &python;.)</para></listitem>
+<listitem><para>&pythonfaq; has examples of <ulink url="&url_pythonorg;cgi-bin/faqw.py?query=4.15&amp;querytype=simple&amp;casefold=yes&amp;req=search">obfuscated one-liners using &lambdafunction;</ulink>.</para></listitem>
+</itemizedlist>
+</section>
+</section>
+<section id="apihelper.alltogether">
+<?dbhtml filename="power_of_introspection/all_together.html"?>
+<title>Putting It All Together</title>
+<abstract>
+<title/>
+<para>The last line of code, the only one you haven't deconstructed yet, is the one that does all the work.  But by now the work is easy, because everything you need is already set up just the way you need it.  All the dominoes are in place; it's time to knock them down.</para>
+</abstract>
+<informalexample>
+<!--<title>The Meat of &apihelper_filename;</title>-->
+<para>This is the meat of &apihelper_filename;:</para>
+<programlisting>
+&apihelper_main;</programlisting>
+</informalexample>
+<para>Note that this is one command, split over multiple lines, but it doesn't use the line continuation character (<literal>\</literal>).  Remember when I said that <link linkend="tip.implicitmultiline">some expressions can be split into multiple lines</link> without using a backslash?  A list comprehension is one of those expressions, since the entire expression is contained in square brackets.</para>
+<para>Now, let's take it from the end and work backwards.  The </para><programlisting>
+for method in methodList</programlisting><para>shows that this is a <link linkend="odbchelper.map">list comprehension</link>.  As you know, <varname>methodList</varname> is a list of <link linkend="apihelper.filter.care">all the methods you care about</link> in <varname>object</varname>.  So you're looping through that list with <varname>method</varname>.</para>
+<example>
+<title>Getting a &docstring; Dynamically</title>
+<screen>&prompt;<userinput>import &odbchelper_name;</userinput>
+&prompt;<userinput>object = &odbchelper_name;</userinput>                   <co id="apihelper.alltogether.1.1"/>
+&prompt;<userinput>method = '&odbchelper_funcname;'</userinput>      <co id="apihelper.alltogether.1.2"/>
+&prompt;<userinput>getattr(object, method)</userinput>               <co id="apihelper.alltogether.1.3"/>
+<computeroutput>&lt;function buildConnectionString at 010D6D74></computeroutput>
+&prompt;<userinput>print getattr(object, method).__doc__</userinput> <co id="apihelper.alltogether.1.4"/>
+<computeroutput>&odbchelper_docstring;</computeroutput></screen>
+<calloutlist>
+<callout arearefs="apihelper.alltogether.1.1">
+<para>In the &info; function, <varname>object</varname> is the object you're getting help on, passed in as an argument.</para>
+</callout>
+<callout arearefs="apihelper.alltogether.1.2">
+<para>As you're looping through <varname>methodList</varname>, <varname>method</varname> is the name of the current method.</para>
+</callout>
+<callout arearefs="apihelper.alltogether.1.3">
+<para>Using the <link linkend="apihelper.getattr">&getattr;</link> function, you're getting a reference to the <replaceable>method</replaceable> function in the <replaceable>object</replaceable> module.</para>
+</callout>
+<callout arearefs="apihelper.alltogether.1.4">
+<para>Now, printing the actual &docstring; of the method is easy.</para>
+</callout>
+</calloutlist>
+</example>
+<para>The next piece of the puzzle is the use of &str; around the &docstring;.  As you may recall, &str; is a built-in function that <link linkend="apihelper.builtin">coerces data into a string</link>.  But a &docstring; is always a string, so why bother with the &str; function?  The answer is that not every function has a &docstring;, and if it doesn't, its &doc; attribute is &none;.</para>
+<example>
+<title>Why Use &str; on a &docstring;?</title>
+<screen>&prompt;<userinput>>>> def foo(): print 2</userinput>
+&prompt;<userinput>>>> foo()</userinput>
+<computeroutput>2</computeroutput>
+&prompt;<userinput>>>> foo.__doc__</userinput>     <co id="apihelper.alltogether.2.1"/>
+&prompt;<userinput>foo.__doc__ == None</userinput> <co id="apihelper.alltogether.2.2"/>
+<computeroutput>True</computeroutput>
+&prompt;<userinput>str(foo.__doc__)</userinput>    <co id="apihelper.alltogether.2.3"/>
+<computeroutput>'None'</computeroutput>
+</screen>
+<calloutlist>
+<callout arearefs="apihelper.alltogether.2.1">
+<para>You can easily define a function that has no &docstring;, so its &doc; attribute is &none;.  Confusingly, if you evaluate the &doc; attribute directly, the &python; &ide; prints nothing at all, which makes sense if you think about it, but is still unhelpful.</para>
+</callout>
+<callout arearefs="apihelper.alltogether.2.2">
+<para>You can verify that the value of the &doc; attribute is actually &none; by comparing it directly.</para>
+</callout>
+<callout arearefs="apihelper.alltogether.2.3">
+<para>The &str; function takes the null value and returns a string representation of it, <literal>'None'</literal>.</para>
+</callout>
+</calloutlist>
+</example>
+<note id="compare.isnull.sql" role="compare" vendor="sql">
+<title>&python; &vs; &sql;: null value comparisons</title>
+<para>In &sql;, you must use <literal>IS NULL</literal> instead of <literal>= NULL</literal> to compare a null value.  In &python;, you can use either <literal>== None</literal> or <literal>is None</literal>, but <literal>is None</literal> is faster.</para>
+</note>
+<para>Now that you are guaranteed to have a string, you can pass the string to <varname>processFunc</varname>, which you have <link linkend="apihelper.lambda">already defined</link> as a function that either does or doesn't collapse whitespace.  Now you see why it was important to use &str; to convert a &none; value into a string representation.  <varname>processFunc</varname> is assuming a string argument and calling its &split; method, which would crash if you passed it &none; because &none; doesn't have a &split; method.</para>
+<para>Stepping back even further, you see that you're using string formatting again to concatenate the return value of <varname>processFunc</varname> with the return value of <varname>method</varname>'s &ljust; method.  This is a new string method that you haven't seen before.</para>
+<example>
+<title>Introducing &ljust;</title>
+<screen>&prompt;<userinput>s = 'buildConnectionString'</userinput>
+&prompt;<userinput>s.ljust(30)</userinput> <co id="apihelper.alltogether.3.1"/>
+<computeroutput>'buildConnectionString         '</computeroutput>
+&prompt;<userinput>s.ljust(20)</userinput> <co id="apihelper.alltogether.3.2"/>
+<computeroutput>'buildConnectionString'</computeroutput></screen>
+<calloutlist>
+<callout arearefs="apihelper.alltogether.3.1">
+<para>&ljust; pads the string with spaces to the given length.  This is what the <function>info</function> function uses to make two columns of output and line up all the &docstring;s in the second column.</para>
+</callout>
+<callout arearefs="apihelper.alltogether.3.2">
+<para>If the given length is smaller than the length of the string, &ljust; will simply return the string unchanged.  It never truncates the string.</para>
+</callout>
+</calloutlist>
+</example>
+<para>You're almost finished.  Given the padded method name from the &ljust; method and the (possibly collapsed) &docstring; from the call to <varname>processFunc</varname>, you concatenate the two and get a single string.  Since you're mapping <varname>methodList</varname>, you end up with a list of strings.  Using the &join; method of the string <literal>"\n"</literal>, you join this list into a single string, with each element of the list on a separate line, and print the result.</para>
+<example>
+<title>Printing a List</title>
+<screen>&prompt;<userinput>li = ['a', 'b', 'c']</userinput>
+&prompt;<userinput>print "\n".join(li)</userinput> <co id="apihelper.alltogether.4.1"/>
+<computeroutput>a
+b
+c</computeroutput></screen>
+<calloutlist>
+<callout arearefs="apihelper.alltogether.4.1">
+<para>This is also a useful debugging trick when you're working with lists.  And in &python;, you're always working with lists.</para>
+</callout>
+</calloutlist>
+</example>
+<para>That's the last piece of the puzzle.  You should now understand this code.</para>
+<informalexample>
+<!--<title>The Meat of &apihelper_filename;, Revisited</title>-->
+<programlisting>
+&apihelper_main;</programlisting>
+</informalexample>
+</section>
+<section id="apihelper.summary">
+<?dbhtml filename="power_of_introspection/summary.html"?>
+<title>Summary</title>
+<abstract>
+<title/>
+<para>The &apihelper_filename; program and its output should now make perfect sense.</para>
+</abstract>
+<informalexample>
+<!--<title>&apihelper_filename;</title>-->
+<programlisting>
+&apihelper_funcdef;
+&apihelper_docstring;
+&apihelper_docstring2;
+&apihelper_docstring3;
+&apihelper_methods;
+&apihelper_lambda;
+&apihelper_main;
+
+&apihelper_ifname;
+&apihelper_printdoc;</programlisting>
+</informalexample>
+<informalexample>
+<!--<title>Output of &apihelper_filename;</title>-->
+<para>Here is the output of &apihelper_filename;:</para>
+<screen>&apihelper_output;</screen>
+</informalexample>
+<highlights>
+<para>Before diving into the next chapter, make sure you're comfortable doing all of these things:</para>
+<itemizedlist>
+<listitem><para>Defining and calling functions with <link linkend="apihelper.optional">optional and named arguments</link></para></listitem>
+<listitem><para>Using <link linkend="apihelper.str.intro">&str;</link> to coerce any arbitrary value into a string representation</para></listitem>
+<listitem><para>Using <link linkend="apihelper.getattr">&getattr;</link> to get references to functions and other attributes dynamically</para></listitem>
+<listitem><para>Extending the list comprehension syntax to do <link linkend="apihelper.filter">list filtering</link></para></listitem>
+<listitem><para>Recognizing <link linkend="apihelper.andor">the &andor; trick</link> and using it safely</para></listitem>
+<listitem><para>Defining <link linkend="apihelper.lambda">&lambdafunction; functions</link></para></listitem>
+<listitem><para><link linkend="apihelper.funcassign">Assigning functions to variables</link> and calling the function by referencing the variable.  I can't emphasize this enough, because this mode of thought is vital to advancing your understanding of &python;.  You'll see more complex applications of this concept throughout this book.</para></listitem>
+</itemizedlist>
+</highlights>
+</section>
+</chapter>

@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="utf-8"?>
+<chapter id="install">
+<?dbhtml filename="installing_python/index.html"?>
+<title>Installing &python;</title>
+<titleabbrev id="install.numberonly">Chapter 1</titleabbrev>
+<abstract>
+<title/>
+<para>Welcome to &python;.  Let's dive in.  In this chapter, you'll install the version of &python; that's right for you.</para>
+</abstract>
+<section id="install.choosing">
+<title>Which &python; is right for you?</title>
+<abstract>
+<title></title>
+<para>The first thing you need to do with &python; is install it.  Or do you?</para>
+</abstract>
+<para>If you're using an account on a hosted server, your ISP may have already installed &python;.  Most popular Linux distributions come with &python; in the default installation.  &macosx; 10.2 and later includes a command-line version of &python;, although you'll probably want to install a version that includes a more Mac-like graphical interface.</para>
+<para>&windows; does not come with any version of &python;, but don't despair!  There are several ways to point-and-click your way to &python; on &windows;.</para>
+<para>As you can see already, &python; runs on a great many operating systems.  The full list includes &windows;, &macos;, &macosx;, and all varieties of free &unix;-compatible systems like &linux;.  There are also versions that run on &solaris;, &as400;, &amiga;, &os2;, &beos;, and a plethora of other platforms you've probably never even heard of.</para>
+<para>What's more, &python; programs written on one platform can, with a little care, run on <emphasis>any</emphasis> supported platform.  For instance, I regularly develop &python; programs on &windows; and later deploy them on &linux;.</para>
+<para>So back to the question that started this section, <quote>Which &python; is right for you?</quote>  The answer is whichever one runs on the computer you already have.</para>
+</section>
+<section id="install.windows">
+<?dbhtml filename="installing_python/windows.html"?>
+<title>&python; on &windows;</title>
+<abstract>
+<title/>
+<para>On &windows;, you have a couple choices for installing &python;.</para>
+</abstract>
+<para>&activestate; makes a &windows; installer for &python; called &activepython;, which includes a complete version of &python;, an &ide; with a &python;-aware code editor, plus some &windows; extensions for &python; that allow complete access to &windows;-specific services, &apis;, and the &windows; Registry.</para>
+<para>&activepython; is freely downloadable, although it is not open source.  It is the &ide; I used to learn &python;, and I recommend you try it unless you have a specific reason not to.  One such reason might be that &activestate; is generally several months behind in updating their &activepython; installer when new version of &python; are released.  If you absolutely need the latest version of &python; and &activepython; is still a version behind as you read this, you'll want to use the second option for installing &python; on &windows;.</para>
+<para>The second option is the <quote>official</quote> &python; installer, distributed by the people who develop &python; itself.  It is freely downloadable and open source, and it is always current with the latest version of &python;.</para>
+<procedure>
+<title>Option 1: Installing &activepython;</title>
+<para>Here is the procedure for installing &activepython;:</para>
+<step><para>Download &activepython; from <ulink url="&url_activepython;"/>.</para></step>
+<step><para>If you are using &win95;, &win98;, or &winme;, you will also need to download and install <ulink url="http://download.microsoft.com/download/WindowsInstaller/Install/2.0/W9XMe/EN-US/InstMsiA.exe">Windows Installer 2.0</ulink> before installing &activepython;.</para></step>
+<step><para>Double-click the installer, <filename>ActivePython-2.2.2-224-win32-ix86.msi</filename>.</para></step>
+<step><para>Step through the installer program.</para></step>
+<step><para>If space is tight, you can do a custom installation and deselect the documentation, but I don't recommend this unless you absolutely can't spare the 14MB.</para></step>
+<step><para>After the installation is complete, close the installer and choose <menuchoice><guimenu>Start</guimenu><guimenuitem>Programs</guimenuitem><guimenuitem>ActiveState ActivePython 2.2</guimenuitem><guimenuitem>PythonWin IDE</guimenuitem></menuchoice>.  You'll see something like the following:</para></step>
+</procedure>
+<informalexample>
+<screen>
+<computeroutput>PythonWin 2.2.2 (#37, Nov 26 2002, 10:24:37) [MSC 32 bit (Intel)] on win32.
+Portions Copyright 1994-2001 Mark Hammond (mhammond@skippinet.com.au) -
+see 'Help/About PythonWin' for further copyright information.</computeroutput>
+&prompt;
+</screen>
+</informalexample>
+<procedure>
+<title>Option 2: Installing &python; from &pythonorg;</title>
+<step><para>Download the latest &python; &windows; installer by going to <ulink url="&url_pythondownload;"/> and selecting the highest version number listed, then downloading the <literal>.exe</literal> installer.</para></step>
+<step><para>Double-click the installer, <filename>Python-2.xxx.yyy.exe</filename>.  The name will depend on the version of &python; available when you read this.</para></step>
+<step><para>Step through the installer program.</para></step>
+<step><para>If disk space is tight, you can deselect the HTMLHelp file, the utility scripts (<filename>Tools/</filename>), and/or the test suite (<filename>Lib/test/</filename>).</para></step>
+<step><para>If you do not have administrative rights on your machine, you can select <guibutton>Advanced Options</guibutton>, then choose <guilabel>Non-Admin Install</guilabel>.  This just affects where Registry entries and Start menu shortcuts are created.</para></step>
+<step><para>After the installation is complete, close the installer and select <menuchoice><guimenu>Start</guimenu><guimenuitem>Programs</guimenuitem><guimenuitem>Python 2.3</guimenuitem><guimenuitem>IDLE (Python GUI)</guimenuitem></menuchoice>.  You'll see something like the following:</para></step>
+</procedure>
+<informalexample>
+<screen>
+<computeroutput>Python 2.3.2 (#49, Oct  2 2003, 20:02:00) [MSC v.1200 32 bit (Intel)] on win32
+Type "copyright", "credits" or "license()" for more information.
+
+    ****************************************************************
+    Personal firewall software may warn about the connection IDLE
+    makes to its subprocess using this computer's internal loopback
+    interface.  This connection is not visible on any external
+    interface and no data is sent to or received from the Internet.
+    ****************************************************************
+    
+IDLE 1.0</computeroutput>
+&prompt;
+</screen>
+</informalexample>
+</section>
+<section id="install.macosx">
+<?dbhtml filename="installing_python/macosx.html"?>
+<title>&python; on &macosx;</title>
+<abstract>
+<title/>
+<para>On &macosx;, you have two choices for installing &python;: install it, or don't install it.  You probably want to install it.</para>
+</abstract>
+<para>&macosx; 10.2 and later comes with a command-line version of &python; preinstalled.  If you are comfortable with the command line, you can use this version for the first third of the book.  However, the preinstalled version does not come with an &xml; parser, so when you get to the &xml; chapter, you'll need to install the full version.</para>
+<para>Rather than using the preinstalled version, you'll probably want to install the latest version, which also comes with a graphical interactive shell.</para>
+<procedure>
+<title>Running the Preinstalled Version of &python; on &macosx;</title>
+<para>To use the preinstalled version of &python;, follow these steps:</para>
+<step><para>Open the <filename>/Applications</filename> folder.</para></step>
+<step><para>Open the <filename>Utilities</filename> folder.</para></step>
+<step><para>Double-click <filename>Terminal</filename> to open a terminal window and get to a command line.</para></step>
+<step><para>Type <userinput>python</userinput> at the command prompt.</para></step>
+</procedure>
+<para>Try it out:</para>
+<informalexample>
+<!--<title>Using the pre-installed version of &python; on &macosx;</title>-->
+<screen>
+<computeroutput>Welcome to Darwin!</computeroutput>
+<prompt>[localhost:~] you% </prompt><userinput>python</userinput>
+<computeroutput>Python 2.2 (#1, 07/14/02, 23:25:09)
+[GCC Apple cpp-precomp 6.14] on darwin
+Type "help", "copyright", "credits", or "license" for more information.</computeroutput>
+&prompt;<userinput>[press Ctrl+D to get back to the command prompt]</userinput>
+<prompt>[localhost:~] you% </prompt>
+</screen>
+</informalexample>
+<procedure>
+<title>Installing the Latest Version of &python; on &macosx;</title>
+<para>Follow these steps to download and install the latest version of &python;:</para>
+<step><para>Download the <filename>MacPython-OSX</filename> disk image from <ulink url="&url_mac;"/>.</para></step>
+<step><para>If your browser has not already done so, double-click <filename>MacPython-OSX-2.3-1.dmg</filename> to mount the disk image on your desktop.</para></step>
+<step><para>Double-click the installer, <filename>MacPython-OSX.pkg</filename>.</para></step>
+<step><para>The installer will prompt you for your administrative username and password.</para></step>
+<step><para>Step through the installer program.</para></step>
+<step><para>After installation is complete, close the installer and open the <filename>/Applications</filename> folder.</para></step>
+<step><para>Open the <filename>MacPython-2.3</filename> folder</para></step>
+<step><para>Double-click <filename>PythonIDE</filename> to launch &python;.</para></step>
+</procedure>
+<para>The &macpython; &ide; should display a splash screen, then take you to the interactive shell.  If the interactive shell does not appear, select <menuchoice><shortcut><keycombo><keycap>Cmd</keycap><keysym>0</keysym></keycombo></shortcut><guimenu>Window</guimenu><guimenuitem>Python Interactive</guimenuitem></menuchoice>.  The opening window will look something like this:</para>
+<informalexample>
+<!--<title>The &macpython; &ide; on &macosx;</title>-->
+<screen>
+<computeroutput>Python 2.3 (#2, Jul 30 2003, 11:45:28)
+[GCC 3.1 20020420 (prerelease)]
+Type "copyright", "credits" or "license" for more information.
+MacPython IDE 1.0.1</computeroutput>
+&prompt;
+</screen>
+</informalexample>
+<para>Note that once you install the latest version, the pre-installed version is still present.  If you are running scripts from the command line, you need to be aware which version of &python; you are using.</para>
+<example>
+<title>Two versions of &python;</title>
+<screen>
+<prompt>[localhost:~] you% </prompt><userinput>python</userinput>
+<computeroutput>Python 2.2 (#1, 07/14/02, 23:25:09)
+[GCC Apple cpp-precomp 6.14] on darwin
+Type "help", "copyright", "credits", or "license" for more information.</computeroutput>
+&prompt;<userinput>[press Ctrl+D to get back to the command prompt]</userinput>
+<prompt>[localhost:~] you% </prompt><userinput>/usr/local/bin/python</userinput>
+<computeroutput>Python 2.3 (#2, Jul 30 2003, 11:45:28)
+[GCC 3.1 20020420 (prerelease)] on darwin
+Type "help", "copyright", "credits", or "license" for more information.</computeroutput>
+&prompt;<userinput>[press Ctrl+D to get back to the command prompt]</userinput>
+<prompt>[localhost:~] you% </prompt>
+</screen>
+</example>
+</section>
+<section id="install.macos9">
+<?dbhtml filename="installing_python/macos9.html"?>
+<title>&python; on &macos9;</title>
+<abstract>
+<title/>
+<para>&macos9; does not come with any version of &python;, but installation is very simple, and there is only one choice.</para>
+</abstract>
+<procedure>
+<!--<title>Installing on &macos9;</title>-->
+<para>Follow these steps to install &python; on &macos9;:</para>
+<step><para>Download the <filename>MacPython23full.bin</filename> file from <ulink url="&url_mac;"/>.</para></step>
+<step><para>If your browser does not decompress the file automatically, double-click <filename>MacPython23full.bin</filename> to decompress the file with <application>Stuffit Expander</application>.</para></step>
+<step><para>Double-click the installer, <filename>MacPython23full</filename>.</para></step>
+<step><para>Step through the installer program.</para></step>
+<step><para>AFter installation is complete, close the installer and open the <filename>/Applications</filename> folder.</para></step>
+<step><para>Open the <filename>MacPython-OS9 2.3</filename> folder.</para></step>
+<step><para>Double-click <filename>Python IDE</filename> to launch &python;.</para></step>
+</procedure>
+<para>The &macpython; &ide; should display a splash screen, and then take you to the interactive shell.  If the interactive shell does not appear, select <menuchoice><shortcut><keycombo><keycap>Cmd</keycap><keysym>0</keysym></keycombo></shortcut><guimenu>Window</guimenu><guimenuitem>Python Interactive</guimenuitem></menuchoice>.  You'll see a screen like this:</para>
+<informalexample>
+<!--<title>The &macpython; &ide; on &macos9;</title>-->
+<screen>
+<computeroutput>Python 2.3 (#2, Jul 30 2003, 11:45:28)
+[GCC 3.1 20020420 (prerelease)]
+Type "copyright", "credits" or "license" for more information.
+MacPython IDE 1.0.1</computeroutput>
+&prompt;
+</screen>
+</informalexample>
+</section>
+<section id="install.redhat">
+<?dbhtml filename="installing_python/redhat.html"?>
+<title>&python; on &redhatlinux;</title>
+<para>Installing under UNIX-compatible operating systems such as &linux; is easy if you're willing to install a binary package.  Pre-built binary packages are available for most popular &linux; distributions.  Or you can always compile from source.</para>
+<abstract>
+<title/>
+<para>Download the latest &python; &rpm; by going to <ulink url="&url_pythondownload;"/> and selecting the highest version number listed, then selecting the <filename>rpms/</filename> directory within that.  Then download the &rpm; with the highest version number.  You can install it with the <command>rpm</command> command, as shown here:</para>
+</abstract>
+<example>
+<title>Installing on &redhat9;</title>
+<screen>
+<prompt>localhost:~$ </prompt><userinput>su -</userinput>
+<prompt>Password: </prompt><userinput>[enter your root password]</userinput>
+<prompt>[root@localhost root]# </prompt><userinput>wget http://python.org/ftp/python/2.3/rpms/redhat-9/python2.3-2.3-5pydotorg.i386.rpm</userinput>
+<computeroutput>Resolving python.org... done.
+Connecting to python.org[194.109.137.226]:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 7,495,111 [application/octet-stream]
+...</computeroutput>
+<prompt>[root@localhost root]# </prompt><userinput>rpm -Uvh python2.3-2.3-5pydotorg.i386.rpm</userinput>
+<computeroutput>Preparing...                ########################################### [100%]
+   1:python2.3              ########################################### [100%]</computeroutput>
+<prompt>[root@localhost root]# </prompt><userinput>python</userinput>          <co id="install.unix.1.1"/>
+<computeroutput>Python 2.2.2 (#1, Feb 24 2003, 19:13:11)
+[GCC 3.2.2 20030222 (Red Hat Linux 3.2.2-4)] on linux2
+Type "help", "copyright", "credits", or "license" for more information.</computeroutput>
+&prompt;<userinput>[press Ctrl+D to exit]</userinput>
+<prompt>[root@localhost root]# </prompt><userinput>python2.3</userinput>       <co id="install.unix.1.2"/>
+<computeroutput>Python 2.3 (#1, Sep 12 2003, 10:53:56)
+[GCC 3.2.2 20030222 (Red Hat Linux 3.2.2-5)] on linux2
+Type "help", "copyright", "credits", or "license" for more information.</computeroutput>
+&prompt;<userinput>[press Ctrl+D to exit]</userinput>
+<prompt>[root@localhost root]# </prompt><userinput>which python2.3</userinput> <co id="install.unix.1.3"/>
+<computeroutput>/usr/bin/python2.3</computeroutput>
+</screen>
+<calloutlist>
+<callout arearefs="install.unix.1.1">
+<para>Whoops!  Just typing <userinput>python</userinput> gives you the older version of &python; -- the one that was installed by default.  That's not the one you want.</para>
+</callout>
+<callout arearefs="install.unix.1.2">
+<para>At the time of this writing, the newest version is called <userinput>python2.3</userinput>.  You'll probably want to change the path on the first line of the sample scripts to point to the newer version.</para>
+</callout>
+<callout arearefs="install.unix.1.3">
+<para>This is the complete path of the newer version of &python; that you just installed.  Use this on the <literal>#!</literal> line (the first line of each script) to ensure that scripts are running under the latest version of &python;, and be sure to type <userinput>python2.3</userinput> to get into the interactive shell.</para>
+</callout>
+</calloutlist>
+</example>
+</section>
+<section id="install.debian">
+<?dbhtml filename="installing_python/debian.html"?>
+<title>&python; on &debiangnulinux;</title>
+<abstract>
+<title/>
+<para>If you are lucky enough to be running &debiangnulinux;, you install &python; through the <command>apt</command> command.</para>
+</abstract>
+<example>
+<title>Installing on &debiangnulinux;</title>
+<screen>
+<prompt>localhost:~$ </prompt><userinput>su -</userinput>
+<prompt>Password: </prompt><userinput>[enter your root password]</userinput>
+<prompt>localhost:~# </prompt><userinput>apt-get install python</userinput>
+<computeroutput>Reading Package Lists... Done
+Building Dependency Tree... Done
+The following extra packages will be installed:
+  python2.3
+Suggested packages:
+  python-tk python2.3-doc
+The following NEW packages will be installed:
+  python python2.3
+0 upgraded, 2 newly installed, 0 to remove and 3 not upgraded.
+Need to get 0B/2880kB of archives.
+After unpacking 9351kB of additional disk space will be used.</computeroutput>
+<prompt>Do you want to continue? [Y/n] </prompt><userinput>Y</userinput>
+<computeroutput>Selecting previously deselected package python2.3.
+(Reading database ... 22848 files and directories currently installed.)
+Unpacking python2.3 (from .../python2.3_2.3.1-1_i386.deb) ...
+Selecting previously deselected package python.
+Unpacking python (from .../python_2.3.1-1_all.deb) ...
+Setting up python (2.3.1-1) ...
+Setting up python2.3 (2.3.1-1) ...
+Compiling python modules in /usr/lib/python2.3 ...
+Compiling optimized python modules in /usr/lib/python2.3 ...</computeroutput>
+<prompt>localhost:~# </prompt><userinput>exit</userinput>
+<computeroutput>logout</computeroutput>
+<prompt>localhost:~$ </prompt><userinput>python</userinput>
+<computeroutput>Python 2.3.1 (#2, Sep 24 2003, 11:39:14)
+[GCC 3.3.2 20030908 (Debian prerelease)] on linux2
+Type "help", "copyright", "credits" or "license" for more information.</computeroutput>
+&prompt;<userinput>[press Ctrl+D to exit]</userinput>
+</screen>
+</example>
+</section>
+<section id="install.source">
+<?dbhtml filename="installing_python/source.html"?>
+<title>&python; Installation from Source</title>
+<abstract>
+<title/>
+<para>If you prefer to build from source, you can download the &python; source code from <ulink url="&url_pythondownload;"/>.  Select the highest version number listed, download the <filename>.tgz</filename> file), and then do the usual <userinput>configure</userinput>, <userinput>make</userinput>, <userinput>make install</userinput> dance.</para>
+</abstract>
+<example>
+<title>Installing from source</title>
+<screen>
+<prompt>localhost:~$ </prompt><userinput>su -</userinput>
+<prompt>Password: </prompt><userinput>[enter your root password]</userinput>
+<prompt>localhost:~# </prompt><userinput>wget http://www.python.org/ftp/python/2.3/Python-2.3.tgz</userinput>
+<computeroutput>Resolving www.python.org... done.
+Connecting to www.python.org[194.109.137.226]:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 8,436,880 [application/x-tar]
+...</computeroutput>
+<prompt>localhost:~# </prompt><userinput>tar xfz Python-2.3.tgz</userinput>
+<prompt>localhost:~# </prompt><userinput>cd Python-2.3</userinput>
+<prompt>localhost:~/Python-2.3# </prompt><userinput>./configure</userinput>
+<computeroutput>checking MACHDEP... linux2
+checking EXTRAPLATDIR...
+checking for --without-gcc... no
+...</computeroutput>
+<prompt>localhost:~/Python-2.3# </prompt><userinput>make</userinput>
+<computeroutput>gcc -pthread -c -fno-strict-aliasing -DNDEBUG -g -O3 -Wall -Wstrict-prototypes
+-I. -I./Include  -DPy_BUILD_CORE -o Modules/python.o Modules/python.c
+gcc -pthread -c -fno-strict-aliasing -DNDEBUG -g -O3 -Wall -Wstrict-prototypes
+-I. -I./Include  -DPy_BUILD_CORE -o Parser/acceler.o Parser/acceler.c
+gcc -pthread -c -fno-strict-aliasing -DNDEBUG -g -O3 -Wall -Wstrict-prototypes
+-I. -I./Include  -DPy_BUILD_CORE -o Parser/grammar1.o Parser/grammar1.c
+...</computeroutput>
+<prompt>localhost:~/Python-2.3# </prompt><userinput>make install</userinput>
+<computeroutput>/usr/bin/install -c python /usr/local/bin/python2.3
+...</computeroutput>
+<prompt>localhost:~/Python-2.3# </prompt><userinput>exit</userinput>
+<computeroutput>logout</computeroutput>
+<prompt>localhost:~$ </prompt><userinput>which python</userinput>
+<computeroutput>/usr/local/bin/python</computeroutput>
+<prompt>localhost:~$ </prompt><userinput>python</userinput>
+<computeroutput>Python 2.3.1 (#2, Sep 24 2003, 11:39:14)
+[GCC 3.3.2 20030908 (Debian prerelease)] on linux2
+Type "help", "copyright", "credits" or "license" for more information.</computeroutput>
+&prompt;<userinput>[press Ctrl+D to get back to the command prompt]</userinput>
+<prompt>localhost:~$ </prompt>
+</screen>
+</example>
+</section>
+<section id="install.shell">
+<?dbhtml filename="installing_python/shell.html"?>
+<title>The Interactive Shell</title>
+<abstract>
+<title/>
+<para>Now that you have &python; installed, what's this interactive shell thing you're running?</para>
+</abstract>
+<para>It's like this: &python; leads a double life.  It's an interpreter for scripts that you can run from the command line or run like applications, by double-clicking the scripts.  But it's also an interactive shell that can evaluate arbitrary statements and expressions.  This is extremely useful for debugging, quick hacking, and testing.  I even know some people who use the &python; interactive shell in lieu of a calculator!</para>
+<para>Launch the &python; interactive shell in whatever way works on your platform, and let's dive in with the steps shown here:</para>
+<example>
+<title>First Steps in the Interactive Shell</title>
+<screen>
+&prompt;<userinput>1 + 1</userinput>               <co id="install.shell.1.1"/>
+<computeroutput>2</computeroutput>
+&prompt;<userinput>print 'hello world'</userinput> <co id="install.shell.1.2"/>
+<computeroutput>hello world</computeroutput>
+&prompt;<userinput>x = 1</userinput>               <co id="install.shell.1.3"/>
+&prompt;<userinput>y = 2</userinput>
+&prompt;<userinput>x + y</userinput>
+<computeroutput>3</computeroutput>
+</screen>
+<calloutlist>
+<callout arearefs="install.shell.1.1">
+<para>The &python; interactive shell can evaluate arbitrary &python; expressions, including any basic arithmetic expression.</para>
+</callout>
+<callout arearefs="install.shell.1.2">
+<para>The interactive shell can execute arbitrary &python; statements, including the <command>print</command> statement.</para>
+</callout>
+<callout arearefs="install.shell.1.3">
+<para>You can also assign values to variables, and the values will be remembered as long as the shell is open (but not any longer than that).</para>
+</callout>
+</calloutlist>
+</example>
+</section>
+<section id="install.summary">
+<?dbhtml filename="installing_python/summary.html"?>
+<title>Summary</title>
+<abstract>
+<title/>
+<para>You should now have a version of &python; installed that works for you.</para>
+</abstract>
+<para>Depending on your platform, you may have more than one version of &python; intsalled.  If so, you need to be aware of your paths.  If simply typing <command>python</command> on the command line doesn't run the version of &python; that you want to use, you may need to enter the full pathname of your preferred version.</para>
+<para>Congratulations, and welcome to &python;.</para>
+</section>
+</chapter>

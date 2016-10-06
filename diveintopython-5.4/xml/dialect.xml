@@ -1,0 +1,847 @@
+<?xml version="1.0" encoding="utf-8"?>
+<chapter id="dialect">
+<?dbhtml filename="html_processing/index.html"?>
+<title>&html; Processing</title>
+<titleabbrev id="dialect.numberonly">Chapter 8</titleabbrev>
+<section id="dialect.divein">
+<title>Diving in</title>
+<abstract>
+<title/>
+<para>I often see questions on &clp; like <quote>How can I list all the [headers|images|links] in my &html; document?</quote>  <quote>How do I parse/translate/munge the text of my &html; document but leave the tags alone?</quote>  <quote>How can I add/remove/quote attributes of all my &html; tags at once?</quote>  This chapter will answer all of these questions.</para>
+</abstract>
+<para>Here is a complete, working &python; program in two parts.  The first part, &basehtml_filename;, is a generic tool to help you process &html; files by walking through the tags and text blocks.  The second part, &dialect_filename;, is an example of how to use &basehtml_filename; to translate the text of an &html; document but leave the tags alone.  Read the &docstring;s and comments to get an overview of what's going on.  Most of it will seem like black magic, because it's not obvious how any of these class methods ever get called.  Don't worry, all will be revealed in due time.</para>
+<example id="dialect.basehtml.listing">
+<title>&basehtml_filename;</title>
+&para_download;
+<programlisting>
+&basehtml_code;</programlisting>
+</example>
+<example>
+<title>&dialect_filename;</title>
+<programlisting>
+&dialect_code;</programlisting>
+</example>
+<example>
+<title>Output of &dialect_filename;</title>
+<para>Running this script will translate <xref linkend="odbchelper.list"/> into <ulink url="../native_data_types/chef.html">mock Swedish Chef-speak</ulink> (from The Muppets), <ulink url="../native_data_types/fudd.html">mock Elmer Fudd-speak</ulink> (from Bugs Bunny cartoons), and <ulink url="../native_data_types/olde.html">mock Middle English</ulink> (loosely based on Chaucer's <citetitle>The Canterbury Tales</citetitle>).  If you look at the &html; source of the output pages, you'll see that all the &html; tags and attributes are untouched, but the text between the tags has been <quote>translated</quote> into the mock language.  If you look closer, you'll see that, in fact, only the titles and paragraphs were translated; the code listings and screen examples were left untouched.</para>
+<programlisting>
+&lt;div class="abstract">
+&lt;p>Lists awe &lt;span class="application">Pydon&lt;/span>'s wowkhowse datatype.
+If youw onwy expewience wif wists is awways in
+&lt;span class="application">Visuaw Basic&lt;/span> ow (God fowbid) de datastowe
+in &lt;span class="application">Powewbuiwdew&lt;/span>, bwace youwsewf fow
+&lt;span class="application">Pydon&lt;/span> wists.&lt;/p>
+&lt;/div>
+</programlisting>
+</example>
+</section>
+<section id="dialect.sgmllib">
+<?dbhtml filename="html_processing/introducing_sgmllib.html"?>
+<title>Introducing &sgmllib_filename;</title>
+<abstract>
+<title/>
+<para>&html; processing is broken into three steps: breaking down the &html; into its constituent pieces, fiddling with the pieces, and reconstructing the pieces into &html; again.  The first step is done by &sgmllib_filename;, a part of the standard &python; library.</para>
+</abstract>
+<para>The key to understanding this chapter is to realize that &html; is not just text, it is structured text.  The structure is derived from the more-or-less-hierarchical sequence of start tags and end tags.  Usually you don't work with &html; this way; you work with it <emphasis>textually</emphasis> in a text editor, or <emphasis>visually</emphasis> in a web browser or web authoring tool.  &sgmllib_filename; presents &html; <emphasis>structurally</emphasis>.</para>
+<para>&sgmllib_filename; contains one important class: &sgmlparser;.  &sgmlparser; parses &html; into useful pieces, like start tags and end tags.  As soon as it succeeds in breaking down some data into a useful piece, it calls a method on itself based on what it found.  In order to use the parser, you subclass the &sgmlparser; class and override these methods.  This is what I meant when I said that it presents &html; <emphasis>structurally</emphasis>: the structure of the &html; determines the sequence of method calls and the arguments passed to each method.</para>
+<para>&sgmlparser; parses &html; into 8 kinds of data, and calls a separate method for each of them:</para>
+<variablelist>
+<varlistentry>
+<term>Start tag</term>
+<listitem><para>An &html; tag that starts a block, like <sgmltag>&lt;html></sgmltag>, <sgmltag>&lt;head></sgmltag>, <sgmltag>&lt;body></sgmltag>, or <sgmltag>&lt;pre></sgmltag>, or a standalone tag like <sgmltag>&lt;br></sgmltag> or <sgmltag>&lt;img></sgmltag>.  When it finds a start tag <replaceable>tagname</replaceable>, &sgmlparser; will look for a method called <function>start_<replaceable>tagname</replaceable></function> or <function>do_<replaceable>tagname</replaceable></function>.  For instance, when it finds a <sgmltag>&lt;pre></sgmltag> tag, it will look for a <function>start_pre</function> or <function>do_pre</function> method.  If found, &sgmlparser; calls this method with a list of the tag's attributes; otherwise, it calls &unknown_starttag; with the tag name and list of attributes.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>End tag</term>
+<listitem><para>An &html; tag that ends a block, like <sgmltag>&lt;/html></sgmltag>, <sgmltag>&lt;/head></sgmltag>, <sgmltag>&lt;/body></sgmltag>, or <sgmltag>&lt;/pre></sgmltag>.  When it finds an end tag, &sgmlparser; will look for a method called <function>end_<replaceable>tagname</replaceable></function>.  If found, &sgmlparser; calls this method, otherwise it calls &unknown_endtag; with the tag name.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>Character reference</term>
+<listitem><para>An escaped character referenced by its decimal or hexadecimal equivalent, like <literal>&amp;#160;</literal>.  When found, &sgmlparser; calls &handle_charref; with the text of the decimal or hexadecimal character equivalent.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>Entity reference</term>
+<listitem><para>An &html; entity, like <literal>&amp;copy;</literal>.  When found, &sgmlparser; calls &handle_entityref; with the name of the &html; entity.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>Comment</term>
+<listitem><para>An &html; comment, enclosed in <literal>&lt;!-- ... --></literal>.  When found, &sgmlparser; calls &handle_comment; with the body of the comment.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>Processing instruction</term>
+<listitem><para>An &html; processing instruction, enclosed in <literal>&lt;? ... ></literal>.  When found, &sgmlparser; calls &handle_pi; with the body of the processing instruction.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>Declaration</term>
+<listitem><para>An &html; declaration, such as a &doctype;, enclosed in <literal>&lt;! ... ></literal>.  When found, &sgmlparser; calls &handle_decl; with the body of the declaration.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>Text data</term>
+<listitem><para>A block of text.  Anything that doesn't fit into the other 7 categories.  When found, &sgmlparser; calls &handle_data; with the text.</para></listitem>
+</varlistentry>
+</variablelist>
+<important>
+<title>Language evolution: &doctype;</title>
+<para>&python; 2.0 had a bug where &sgmlparser; would not recognize declarations at all (&handle_decl; would never be called), which meant that &doctype;s were silently ignored.  This is fixed in &python; 2.1.</para>
+</important>
+<para>&sgmllib_filename; comes with a test suite to illustrate this.  You can run &sgmllib_filename;, passing the name of an &html; file on the command line, and it will print out the tags and other elements as it parses them.  It does this by subclassing the &sgmlparser; class and defining &unknown_starttag;, &unknown_endtag;, &handle_data; and other methods which simply print their arguments.</para>
+<tip id="tip.commandline.windows">
+<title>Specifying command line arguments in &windows;</title>
+<para>In the &activepython; &ide; on &windows;, you can specify command line arguments in the <quote>Run script</quote> dialog.  Separate multiple arguments with spaces.</para>
+</tip>
+<example>
+<title>Sample test of &sgmllib_filename;</title>
+<para>Here is a snippet from the table of contents of the &html; version of this book.  Of course your paths may vary.  (If you haven't downloaded the &html; version of the book, you can do so at <ulink url="&url_diveintopython;"/>.</para>
+<screen>
+<prompt>c:\python23\lib></prompt> <userinput>type "c:\downloads\diveintopython\html\toc\index.html"</userinput>
+<literal>
+&lt;!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+&lt;html lang="en">
+   &lt;head>
+      &lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   
+      &lt;title>Dive Into Python&lt;/title>
+      &lt;link rel="stylesheet" href="diveintopython.css" type="text/css">
+
+... rest of file omitted for brevity ...
+</literal></screen>
+<para>Running this through the test suite of &sgmllib_filename; yields this output:</para>
+<screen>
+<prompt>c:\python23\lib></prompt> <userinput>python sgmllib.py "c:\downloads\diveintopython\html\toc\index.html"</userinput>
+<computeroutput>data: '\n\n'
+start tag: &lt;html lang="en" >
+data: '\n   '
+start tag: &lt;head>
+data: '\n      '
+start tag: &lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" >
+data: '\n   \n      '
+start tag: &lt;title>
+data: 'Dive Into Python'
+end tag: &lt;/title>
+data: '\n      '
+start tag: &lt;link rel="stylesheet" href="diveintopython.css" type="text/css" >
+data: '\n      '
+
+... rest of output omitted for brevity ...
+</computeroutput></screen>
+</example>
+<para>Here's the roadmap for the rest of the chapter:</para>
+<itemizedlist>
+<listitem><para>Subclass &sgmlparser; to create classes that extract interesting data out of &html; documents.</para></listitem>
+<listitem><para>Subclass &sgmlparser; to create &basehtml_classname;, which overrides all 8 handler methods and uses them to reconstruct the original &html; from the pieces.</para></listitem>
+<listitem><para>Subclass &basehtml_classname; to create &dialect_classname;, which adds some methods to process specific &html; tags specially, and overrides the &handle_data; method to provide a framework for processing the text blocks between the &html; tags.</para></listitem>
+<listitem><para>Subclass &dialect_classname; to create classes that define text processing rules used by <function>&dialect_name;.handle_data</function>.</para></listitem>
+<listitem><para>Write a test suite that grabs a real web page from &diveintopythonorg; and processes it.</para></listitem>
+</itemizedlist>
+<para>Along the way, you'll also learn about &locals;, &globals;, and dictionary-based string formatting.</para>
+</section>
+<section id="dialect.extract">
+<?dbhtml filename="html_processing/extracting_data.html"?>
+<title>Extracting data from &html; documents</title>
+<abstract>
+<title/>
+<para>To extract data from &html; documents, subclass the &sgmlparser; class and define methods for each tag or entity you want to capture.</para>
+</abstract>
+<para>The first step to extracting data from an &html; document is getting some &html;.  If you have some &html; lying around on your hard drive, you can use <link linkend="fileinfo.files">file functions</link> to read it, but the real fun begins when you get &html; from live web pages.</para>
+<example id="dialect.extract.urllib">
+<title>Introducing &urllib;</title>
+<screen>
+&prompt;<userinput>import urllib</userinput>                                       <co id="dialect.extract.1.1"/>
+&prompt;<userinput>sock = urllib.urlopen("http://diveintopython.org/")</userinput> <co id="dialect.extract.1.2"/>
+&prompt;<userinput>htmlSource = sock.read()</userinput>                            <co id="dialect.extract.1.3"/>
+&prompt;<userinput>sock.close()</userinput>                                        <co id="dialect.extract.1.4"/>
+&prompt;<userinput>print htmlSource</userinput>                                    <co id="dialect.extract.1.5"/>
+<computeroutput>&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;&lt;html&gt;&lt;head&gt;
+      &lt;meta http-equiv='Content-Type' content='text/html; charset=ISO-8859-1'&gt;
+   &lt;title&gt;Dive Into Python&lt;/title&gt;
+&lt;link rel='stylesheet' href='diveintopython.css' type='text/css'&gt;
+&lt;link rev='made' href='mailto:mark@diveintopython.org'&gt;
+&lt;meta name='keywords' content='Python, Dive Into Python, tutorial, object-oriented, programming, documentation, book, free'&gt;
+&lt;meta name='description' content='a free Python tutorial for experienced programmers'&gt;
+&lt;/head&gt;
+&lt;body bgcolor='white' text='black' link='#0000FF' vlink='#840084' alink='#0000FF'&gt;
+&lt;table cellpadding='0' cellspacing='0' border='0' width='100%'&gt;
+&lt;tr&gt;&lt;td class='header' width='1%' valign='top'&gt;diveintopython.org&lt;/td&gt;
+&lt;td width='99%' align='right'&gt;&lt;hr size='1' noshade&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td class='tagline' colspan='2'&gt;Python&amp;nbsp;for&amp;nbsp;experienced&amp;nbsp;programmers&lt;/td&gt;&lt;/tr&gt;</computeroutput>
+
+[...snip...]</screen>
+<calloutlist>
+<callout arearefs="dialect.extract.1.1">
+<para>The &urllib; module is part of the standard &python; library.  It contains functions for getting information about and actually retrieving data from Internet-based &url;s (mainly web pages).</para>
+</callout>
+<callout arearefs="dialect.extract.1.2">
+<para>The simplest use of &urllib; is to retrieve the entire text of a web page using the &urlopen; function.  Opening a &url; is similar to <link linkend="fileinfo.files">opening a file</link>.  The return value of &urlopen; is a file-like object, which has some of the same methods as a file object.</para>
+</callout>
+<callout arearefs="dialect.extract.1.3">
+<para>The simplest thing to do with the file-like object returned by &urlopen; is &read;, which reads the entire &html; of the web page into a single string.  The object also supports &readlines;, which reads the text line by line into a list.</para>
+</callout>
+<callout arearefs="dialect.extract.1.4">
+<para>When you're done with the object, make sure to &close; it, just like a normal file object.</para>
+</callout>
+<callout arearefs="dialect.extract.1.5">
+<para>You now have the complete &html; of the home page of &diveintopythonorg; in a string, and you're ready to parse it.</para>
+</callout>
+</calloutlist>
+</example>
+<example id="dialect.extract.links">
+<title>Introducing &urllister_filename;</title>
+&para_download;
+<programlisting>
+from sgmllib import SGMLParser
+
+class URLLister(SGMLParser):
+    def reset(self):                              <co id="dialect.extract.2.1"/>
+        SGMLParser.reset(self)
+        self.urls = []
+
+    def start_a(self, attrs):                     <co id="dialect.extract.2.2"/>
+        href = [v for k, v in attrs if k=='href'] <co id="dialect.extract.2.3"/> <co id="dialect.extract.2.4"/>
+        if href:
+            self.urls.extend(href)</programlisting>
+<calloutlist>
+<callout arearefs="dialect.extract.2.1">
+<para><function>reset</function> is called by the &init; method of &sgmlparser;, and it can also be called manually once an instance of the parser has been created.  So if you need to do any initialization, do it in &reset;, not in &init;, so that it will be re-initialized properly when someone re-uses a parser instance.</para>
+</callout>
+<callout arearefs="dialect.extract.2.2">
+<para><function>start_a</function> is called by &sgmlparser; whenever it finds an <sgmltag>&lt;a&gt;</sgmltag> tag.  The tag may contain an <literal>href</literal> attribute, and/or other attributes, like <literal>name</literal> or <literal>title</literal>.  The <varname>attrs</varname> parameter is a list of tuples, <literal>[(<replaceable>attribute</replaceable>, <replaceable>value</replaceable>), (<replaceable>attribute</replaceable>, <replaceable>value</replaceable>), ...]</literal>.  Or it may be just an <sgmltag>&lt;a&gt;</sgmltag>, a valid (if useless) &html; tag, in which case <varname>attrs</varname> would be an empty list.</para>
+</callout>
+<callout arearefs="dialect.extract.2.3">
+<para>You can find out whether this <sgmltag>&lt;a&gt;</sgmltag> tag has an <literal>href</literal> attribute with a simple <link linkend="odbchelper.multiassign">multi-variable</link> <link linkend="odbchelper.map">list comprehension</link>.</para>
+</callout>
+<callout arearefs="dialect.extract.2.4">
+<para>String comparisons like <literal>k=='href'</literal> are always case-sensitive, but that's safe in this case, because &sgmlparser; converts attribute names to lowercase while building <varname>attrs</varname>.</para>
+</callout>
+</calloutlist>
+</example>
+<example id="dialect.feed.example">
+<title>Using &urllister_filename;</title>
+<screen>
+&prompt;<userinput>import urllib, urllister</userinput>
+&prompt;<userinput>usock = urllib.urlopen("http://diveintopython.org/")</userinput>
+&prompt;<userinput>parser = urllister.URLLister()</userinput>
+&prompt;<userinput>parser.feed(usock.read())</userinput>         <co id="dialect.extract.3.1"/>
+&prompt;<userinput>usock.close()</userinput>                     <co id="dialect.extract.3.2"/>
+&prompt;<userinput>parser.close()</userinput>                    <co id="dialect.extract.3.3"/>
+&prompt;<userinput>for url in parser.urls: print url</userinput> <co id="dialect.extract.3.4"/>
+<computeroutput>toc/index.html
+#download
+#languages
+toc/index.html
+appendix/history.html
+download/diveintopython-html-5.0.zip
+download/diveintopython-pdf-5.0.zip
+download/diveintopython-word-5.0.zip
+download/diveintopython-text-5.0.zip
+download/diveintopython-html-flat-5.0.zip
+download/diveintopython-xml-5.0.zip
+download/diveintopython-common-5.0.zip
+</computeroutput>
+
+... rest of output omitted for brevity ...</screen>
+<calloutlist>
+<callout arearefs="dialect.extract.3.1">
+<para>Call the <function>feed</function> method, defined in &sgmlparser;, to get &html; into the parser.<footnote><para>The technical term for a parser like &sgmlparser; is a <emphasis>consumer</emphasis>: it consumes &html; and breaks it down.  Presumably, the name <function>feed</function> was chosen to fit into the whole <quote>consumer</quote> motif.  Personally, it makes me think of an exhibit in the zoo where there's just a dark cage with no trees or plants or evidence of life of any kind, but if you stand perfectly still and look really closely you can make out two beady eyes staring back at you from the far left corner, but you convince yourself that that's just your mind playing tricks on you, and the only way you can tell that the whole thing isn't just an empty cage is a small innocuous sign on the railing that reads, <quote>Do not feed the parser.</quote>  But maybe that's just me.  In any event, it's an interesting mental image.</para></footnote>  It takes a string, which is what <function>usock.read()</function> returns.</para>
+</callout>
+<callout arearefs="dialect.extract.3.2">
+<para>Like files, you should &close; your &url; objects as soon as you're done with them.</para>
+</callout>
+<callout arearefs="dialect.extract.3.3">
+<para>You should &close; your parser object, too, but for a different reason.  You've read all the data and fed it to the parser, but the <function>feed</function> method isn't guaranteed to have actually processed all the &html; you give it; it may buffer it, waiting for more.  Be sure to call &close; to flush the buffer and force everything to be fully parsed.</para>
+</callout>
+<callout arearefs="dialect.extract.3.4">
+<para>Once the parser is &close;d, the parsing is complete, and <varname>parser.urls</varname> contains a list of all the linked &url;s in the &html; document.  (Your output may look different, if the download links have been updated by the time you read this.)</para>
+</callout>
+</calloutlist>
+</example>
+</section>
+<section id="dialect.basehtml">
+<?dbhtml filename="html_processing/basehtmlprocessor.html"?>
+<title>Introducing &basehtml_filename;</title>
+<abstract>
+<title/>
+<para>&sgmlparser; doesn't produce anything by itself.  It parses and parses and parses, and it calls a method for each interesting thing it finds, but the methods don't do anything.  &sgmlparser; is an &html; <emphasis>consumer</emphasis>: it takes &html; and breaks it down into small, structured pieces.  As you saw in the <link linkend="dialect.extract">previous section</link>, you can subclass &sgmlparser; to define classes that catch specific tags and produce useful things, like a list of all the links on a web page.  Now you'll take this one step further by defining a class that catches everything &sgmlparser; throws at it and reconstructs the complete &html; document.  In technical terms, this class will be an &html; <emphasis>producer</emphasis>.</para>
+</abstract>
+<para>&basehtml_classname; subclasses &sgmlparser; and provides all 8 essential handler methods: &unknown_starttag;, &unknown_endtag;, &handle_charref;, &handle_entityref;, &handle_comment;, &handle_pi;, &handle_decl;, and &handle_data;.</para>
+<example id="dialect.basehtml.intro">
+<title>Introducing &basehtml_classname;</title>
+<programlisting>
+&basehtml_classdef;
+&basehtml_resetdef; <co id="dialect.basehtml.1.1"/>
+&basehtml_resetcode;
+&basehtml_resetcallsuper;
+
+&basehtml_starttagdef; <co id="dialect.basehtml.1.2"/>
+&basehtml_starttagjoin;
+&basehtml_starttagcode;
+
+&basehtml_endtagdef; <co id="dialect.basehtml.1.3"/>
+&basehtml_endtagcode;
+
+&basehtml_charrefdef; <co id="dialect.basehtml.1.4"/>
+&basehtml_charrefcode;
+
+&basehtml_entityrefdef; <co id="dialect.basehtml.1.5"/>
+&basehtml_entityrefcode;
+&basehtml_entityrefif;
+&basehtml_entityrefsemicolon;
+
+&basehtml_dataref; <co id="dialect.basehtml.1.6"/>
+&basehtml_datacode;
+
+&basehtml_commentdef; <co id="dialect.basehtml.1.7"/>
+&basehtml_commentcode;
+
+&basehtml_pidef; <co id="dialect.basehtml.1.8"/>
+&basehtml_picode;
+
+&basehtml_decldef;
+&basehtml_declcode;</programlisting>
+<calloutlist>
+<callout arearefs="dialect.basehtml.1.1">
+<para>&reset;, called by <function>SGMLParser.__init__</function>, initializes &selfpieces; as an empty list before <link linkend="fileinfo.init.code.example">calling the ancestor method</link>.  &selfpieces; is a <link linkend="fileinfo.userdict.init.example">data attribute</link> which will hold the pieces of the &html; document you're constructing.  Each handler method will reconstruct the &html; that &sgmlparser; parsed, and each method will append that string to &selfpieces;.  Note that &selfpieces; is a list.  You might be tempted to define it as a string and just keep appending each piece to it.  That would work, but &python; is much more efficient at dealing with lists.<footnote><para>The reason &python; is better at lists than strings is that lists are mutable but strings are immutable.  This means that appending to a list just adds the element and updates the index.  Since strings can not be changed after they are created, code like <literal>s = s + newpiece</literal> will create an entirely new string out of the concatenation of the original and the new piece, then throw away the original string.  This involves a lot of expensive memory management, and the amount of effort involved increases as the string gets longer, so doing <literal>s = s + newpiece</literal> in a loop is deadly.  In technical terms, appending <varname>n</varname> items to a list is <literal>O(n)</literal>, while appending <varname>n</varname> items to a string is <literal>O(n<superscript>2</superscript>)</literal>.</para></footnote></para>
+</callout>
+<callout arearefs="dialect.basehtml.1.2">
+<para>Since &basehtml_classname; does not define any methods for specific tags (like the <function>start_a</function> method in <link linkend="dialect.extract.links">&urllister_classname;</link>), &sgmlparser; will call &unknown_starttag; for every start tag.  This method takes the tag (<varname>tag</varname>) and the list of attribute name/value pairs (<varname>attrs</varname>), reconstructs the original &html;, and appends it to &selfpieces;.<!--<footnote><para>Technically, what &basehtml_classname; constructs is not guaranteed to be character-for-character identical to the original &html;, but it is <emphasis>equivalent</emphasis> to the original &html;.  &sgmlparser; converts the tag and the attribute names (but not the attribute values) to lowercase, so the string that &unknown_starttag; constructs may not be identical to the original tag, but that shouldn't make any difference because &html; specifies that tags and attribute names are case-insensitive.</para></footnote>-->  The <link linkend="odbchelper.stringformatting">string formatting</link> here is a little strange; you'll untangle that (and also the odd-looking &locals; function) later in this chapter.</para>
+</callout>
+<callout arearefs="dialect.basehtml.1.3">
+<para>Reconstructing end tags is much simpler; just take the tag name and wrap it in the <literal>&lt;/...&gt;</literal> brackets.</para>
+</callout>
+<callout arearefs="dialect.basehtml.1.4">
+<para>When &sgmlparser; finds a character reference, it calls &handle_charref; with the bare reference.  If the &html; document contains the reference <literal>&amp;&hash;160;</literal>, <varname>ref</varname> will be <literal>160</literal>.  Reconstructing the original complete character reference just involves wrapping <varname>ref</varname> in <literal>&amp;&hash;...;</literal> characters.</para>
+</callout>
+<callout arearefs="dialect.basehtml.1.5">
+<para>Entity references are similar to character references, but without the hash mark.  Reconstructing the original entity reference requires wrapping <varname>ref</varname> in <literal>&amp;...;</literal> characters.  (Actually, as an erudite reader pointed out to me, it's slightly more complicated than this.  Only certain standard &html; entites end in a semicolon; other similar-looking entities do not.  Luckily for us, the set of standard &html; entities is defined in a dictionary in a &python; module called &htmlentitydefs;.  Hence the extra &if; statement.)</para>
+</callout>
+<callout arearefs="dialect.basehtml.1.6">
+<para>Blocks of text are simply appended to &selfpieces; unaltered.</para>
+</callout>
+<callout arearefs="dialect.basehtml.1.7">
+<para>&html; comments are wrapped in <literal>&lt;!--...--&gt;</literal> characters.</para>
+</callout>
+<callout arearefs="dialect.basehtml.1.8">
+<para>Processing instructions are wrapped in <literal>&lt;?...&gt;</literal> characters.</para>
+</callout>
+</calloutlist>
+</example>
+<important>
+<title>Processing &html; with embedded script</title>
+<para>The &html; specification requires that all non-&html; (like client-side &javascript;) must be enclosed in &html; comments, but not all web pages do this properly (and all modern web browsers are forgiving if they don't).  &basehtml_classname; is not forgiving; if script is improperly embedded, it will be parsed as if it were &html;.  For instance, if the script contains less-than and equals signs, &sgmlparser; may incorrectly think that it has found tags and attributes.  &sgmlparser; always converts tags and attribute names to lowercase, which may break the script, and &basehtml_classname; always encloses attribute values in double quotes (even if the original &html; document used single quotes or no quotes), which will certainly break the script.  Always protect your client-side script within &html; comments.</para>
+</important>
+<example id="dialect.output.example">
+<title>&basehtml_classname; output</title>
+<programlisting>
+&basehtml_outputdef; <co id="dialect.basehtml.2.1"/>
+&basehtml_outputdoc;
+&basehtml_outputcode; <co id="dialect.basehtml.2.2"/></programlisting>
+<calloutlist>
+<callout arearefs="dialect.basehtml.2.1">
+<para>This is the one method in &basehtml_classname; that is never called by the ancestor &sgmlparser;.  Since the other handler methods store their reconstructed &html; in &selfpieces;, this function is needed to join all those pieces into one string.  As noted before, &python; is great at lists and mediocre at strings, so you only create the complete string when somebody explicitly asks for it.</para>
+</callout>
+<callout arearefs="dialect.basehtml.2.2">
+<para>If you prefer, you could use the &join; method of the &string; module instead: <literal>string.join(self.pieces, "")</literal></para>
+</callout>
+</calloutlist>
+</example>
+<itemizedlist role="furtherreading">
+<title>Further reading</title>
+<listitem><para>&w3c; discusses <ulink url="&url_w3c;TR/REC-html40/charset.html#entities">character and entity references</ulink>.</para></listitem>
+<listitem><para>&pythonlibraryreference; confirms your suspicions that <ulink url="&url_pythonlibraryreference;module-htmlentitydefs.html">the &htmlentitydefs; module</ulink> is exactly what it sounds like.</para></listitem>
+</itemizedlist>
+</section>
+<section id="dialect.locals">
+<?dbhtml filename="html_processing/locals_and_globals.html"?>
+<title>&locals; and &globals;</title>
+<abstract>
+<title/>
+<para>Let's digress from <acronym>HTML</acronym> processing for a minute and talk about how &python; handles variables.  &python; has two built-in functions, &locals; and &globals;, which provide dictionary-based access to local and global variables.</para>
+</abstract>
+<para>Remember &locals;?  You first saw it here:</para>
+<informalexample>
+<programlisting>
+&basehtml_starttagdef;
+&basehtml_starttagjoin;
+&basehtml_starttagcode;
+</programlisting>
+</informalexample>
+<para>No, wait, you can't learn about &locals; yet.  First, you need to learn about namespaces.  This is dry stuff, but it's important, so pay attention.</para>
+<para>&python; uses what are called namespaces to keep track of variables.  A namespace is just like a dictionary where the keys are names of variables and the dictionary values are the values of those variables.  In fact, you can access a namespace as a &python; dictionary, as you'll see in a minute.</para>
+<para>At any particular point in a &python; program, there are several namespaces available.  Each function has its own namespace, called the local namespace, which keeps track of the function's variables, including function arguments and locally defined variables.  Each module has its own namespace, called the global namespace, which keeps track of the module's variables, including functions, classes, any other imported modules, and module-level variables and constants.  And there is the built-in namespace, accessible from any module, which holds built-in functions and exceptions.</para>
+<para>When a line of code asks for the value of a variable <varname>x</varname>, &python; will search for that variable in all the available namespaces, in order:</para>
+<orderedlist>
+<listitem><para>local namespace - specific to the current function or class method.  If the function defines a local variable <varname>x</varname>, or has an argument <varname>x</varname>, &python; will use this and stop searching.</para></listitem>
+<listitem><para>global namespace - specific to the current module.  If the module has defined a variable, function, or class called <varname>x</varname>, &python; will use that and stop searching.</para></listitem>
+<listitem><para>built-in namespace - global to all modules.  As a last resort, &python; will assume that <varname>x</varname> is the name of built-in function or variable.</para></listitem>
+</orderedlist>
+<para>If &python; doesn't find <varname>x</varname> in any of these namespaces, it gives up and raises a <errorcode>NameError</errorcode> with the message <errorname>There is no variable named 'x'</errorname>, which you saw back in <xref linkend="odbchelper.unboundvariable"/>, but you didn't appreciate how much work &python; was doing before giving you that error.</para>
+<important>
+<title>Language evolution: nested scopes</title>
+<para>&python; 2.2 introduced a subtle but important change that affects the namespace search order: nested scopes.  In versions of &python; prior to 2.2, when you reference a variable within a <link linkend="fileinfo.nested">nested function</link> or <link linkend="apihelper.lambda">&lambdafunction; function</link>, &python; will search for that variable in the current (nested or &lambdafunction;) function's namespace, then in the module's namespace.  &python; 2.2 will search for the variable in the current (nested or &lambdafunction;) function's namespace, <emphasis>then in the parent function's namespace</emphasis>, then in the module's namespace.  &python; 2.1 can work either way; by default, it works like &python; 2.0, but you can add the following line of code at the top of your module to make your module work like &python; 2.2:</para>
+<programlisting>
+from __future__ import nested_scopes</programlisting>
+</important>
+<para>Are you confused yet?  Don't despair!  This is really cool, I promise.  Like many things in &python;, namespaces are <emphasis>directly accessible at run-time</emphasis>.  How?  Well, the local namespace is accessible via the built-in &locals; function, and the global (module level) namespace is accessible via the built-in &globals; function.</para>
+<example>
+<title>Introducing &locals;</title>
+<screen>&prompt;<userinput>def foo(arg):</userinput> <co id="dialect.locals.1.1"/>
+&continuationprompt;<userinput>x = 1</userinput>
+&continuationprompt;<userinput>print locals()</userinput>
+&continuationprompt;
+&prompt;<userinput>foo(7)</userinput>        <co id="dialect.locals.1.2"/>
+<computeroutput>{'arg': 7, 'x': 1}</computeroutput>
+&prompt;<userinput>foo('bar')</userinput>    <co id="dialect.locals.1.3"/>
+<computeroutput>{'arg': 'bar', 'x': 1}</computeroutput></screen>
+<calloutlist>
+<callout arearefs="dialect.locals.1.1">
+<para>The function <function>foo</function> has two variables in its local namespace: <varname>arg</varname>, whose value is passed in to the function, and <varname>x</varname>, which is defined within the function.</para>
+</callout>
+<callout arearefs="dialect.locals.1.2">
+<para>&locals; returns a dictionary of name/value pairs.  The keys of this dictionary are the names of the variables as strings; the values of the dictionary are the actual values of the variables.  So calling <function>foo</function> with <literal>7</literal> prints the dictionary containing the function's two local variables: <varname>arg</varname> (<literal>7</literal>) and <varname>x</varname> (&one;).</para>
+</callout>
+<callout arearefs="dialect.locals.1.3">
+<para>Remember, &python; has dynamic typing, so you could just as easily pass a string in for <varname>arg</varname>; the function (and the call to &locals;) would still work just as well.  &locals; works with all variables of all datatypes.</para>
+</callout>
+</calloutlist>
+</example>
+<para>What &locals; does for the local (function) namespace, &globals; does for the global (module) namespace.  &globals; is more exciting, though, because a module's namespace is more exciting.<footnote><para>I don't get out much.</para></footnote>  Not only does the module's namespace include module-level variables and constants, it includes all the functions and classes defined in the module.  Plus, it includes anything that was imported into the module.</para>
+<para>Remember the difference between <link linkend="fileinfo.fromimport">&frommoduleimport;</link> and <link linkend="odbchelper.import">&importmodule;</link>?  With &importmodule;, the module itself is imported, but it retains its own namespace, which is why you need to use the module name to access any of its functions or attributes: <literal><replaceable>module</replaceable>.<replaceable>function</replaceable></literal>.  But with &frommoduleimport;, you're actually importing specific functions and attributes from another module into your own namespace, which is why you access them directly without referencing the original module they came from.  With the &globals; function, you can actually see this happen.</para>
+<example id="dialect.globals.example">
+<title>Introducing &globals;</title>
+<para>Look at the following block of code at the bottom of &basehtml_filename;:</para>
+<programlisting>
+if __name__ == "__main__":
+    for k, v in globals().items():             <co id="dialect.locals.2.1"/>
+        print k, "=", v</programlisting>
+<calloutlist>
+<callout arearefs="dialect.locals.2.1">
+<para>Just so you don't get intimidated, remember that you've seen all this before.  The &globals; function returns a dictionary, and you're <link linkend="dictionaryiter.example">iterating through the dictionary</link> using the &items; method and <link linkend="odbchelper.multiassign">multi-variable assignment</link>.  The only thing new here is the &globals; function.</para>
+</callout>
+</calloutlist>
+<para>Now running the script from the command line gives this output (note that your output may be slightly different, depending on your platform and where you installed &python;):</para>
+<screen><prompt>c:\docbook\dip\py></prompt> <userinput>python BaseHTMLProcessor.py</userinput></screen>
+<programlisting>
+SGMLParser = sgmllib.SGMLParser                <co id="dialect.locals.3.1"/>
+htmlentitydefs = &lt;module 'htmlentitydefs' from 'C:\Python23\lib\htmlentitydefs.py'&gt; <co id="dialect.locals.3.2"/>
+BaseHTMLProcessor = __main__.BaseHTMLProcessor <co id="dialect.locals.3.3"/>
+__name__ = __main__                            <co id="dialect.locals.3.4"/>
+... rest of output omitted for brevity...</programlisting>
+<calloutlist>
+<callout arearefs="dialect.locals.3.1">
+<para>&sgmlparser; was imported from &sgmllib_modulename;, using &frommoduleimport;.  That means that it was imported directly into the module's namespace, and here it is.</para>
+</callout>
+<callout arearefs="dialect.locals.3.2">
+<para>Contrast this with &htmlentitydefs;, which was imported using &import;.  That means that the &htmlentitydefs; module itself is in the namespace, but the <varname>entitydefs</varname> variable defined within &htmlentitydefs; is not.</para>
+</callout>
+<callout arearefs="dialect.locals.3.3">
+<para>This module only defines one class, &basehtml_classname;, and here it is.  Note that the value here is <link linkend="fileinfo.classattributes.intro">the class itself</link>, not a specific instance of the class.</para>
+</callout>
+<callout arearefs="dialect.locals.3.4">
+<para>Remember the <link linkend="odbchelper.ifnametrick"><literal>if &name;</literal> trick</link>?  When running a module (as opposed to importing it from another module), the built-in &name; attribute is a special value, &main;.  Since you ran this module as a script from the command line, &name; is &main;, which is why the little test code to print the &globals; got executed.</para>
+</callout>
+</calloutlist>
+</example>
+<note id="tip.localsbyname">
+<title>Accessing variables dynamically</title>
+<para>Using the &locals; and &globals; functions, you can get the value of arbitrary variables dynamically, providing the variable name as a string.  This mirrors the functionality of the <link linkend="apihelper.getattr">&getattr;</link> function, which allows you to access arbitrary functions dynamically by providing the function name as a string.</para>
+</note>
+<para>There is one other important difference between the &locals; and &globals; functions, which you should learn now before it bites you.  It will bite you anyway, but at least then you'll remember learning it.</para>
+<example id="dialect.locals.readonly.example">
+<title>&locals; is read-only, &globals; is not</title>
+<programlisting>
+def foo(arg):
+    x = 1
+    print locals()    <co id="dialect.locals.4.1"/>
+    locals()["x"] = 2 <co id="dialect.locals.4.2"/>
+    print "x=",x      <co id="dialect.locals.4.3"/>
+
+z = 7
+print "z=",z
+foo(3)
+globals()["z"] = 8    <co id="dialect.locals.4.4"/>
+print "z=",z          <co id="dialect.locals.4.5"/>
+</programlisting>
+<calloutlist>
+<callout arearefs="dialect.locals.4.1">
+<para>Since <function>foo</function> is called with <literal>3</literal>, this will print <literal>{'arg': 3, 'x': 1}</literal>.  This should not be a surprise.</para>
+</callout>
+<callout arearefs="dialect.locals.4.2">
+<para>&locals; is a function that returns a dictionary, and here you are setting a value in that dictionary.  You might think that this would change the value of the local variable <varname>x</varname> to <literal>2</literal>, but it doesn't.  &locals; does not actually return the local namespace, it returns a copy.  So changing it does nothing to the value of the variables in the local namespace.</para>
+</callout>
+<callout arearefs="dialect.locals.4.3">
+<para>This prints <literal>x= 1</literal>, not <literal>x= 2</literal>.</para>
+</callout>
+<callout arearefs="dialect.locals.4.4">
+<para>After being burned by &locals;, you might think that this <emphasis>wouldn't</emphasis> change the value of <varname>z</varname>, but it does.  Due to internal differences in how &python; is implemented (which I'd rather not go into, since I don't fully understand them myself), &globals; returns the actual global namespace, not a copy: the exact opposite behavior of &locals;.  So any changes to the dictionary returned by &globals; directly affect your global variables.</para>
+</callout>
+<callout arearefs="dialect.locals.4.5">
+<para>This prints <literal>z= 8</literal>, not <literal>z= 7</literal>.</para>
+</callout>
+</calloutlist>
+</example>
+</section>
+<section id="dialect.dictsub">
+<?dbhtml filename="html_processing/dictionary_based_string_formatting.html"?>
+<title>Dictionary-based string formatting</title>
+<para>Why did you learn about &locals; and &globals;?  So you can learn about dictionary-based string formatting.  As you recall, <link linkend="odbchelper.stringformatting">regular string formatting</link> provides an easy way to insert values into strings.  Values are listed in a tuple and inserted in order into the string in place of each formatting marker.  While this is efficient, it is not always the easiest code to read, especially when multiple values are being inserted.  You can't simply scan through the string in one pass and understand what the result will be; you're constantly switching between reading the string and reading the tuple of values.</para>
+<abstract>
+<title/>
+<para>There is an alternative form of string formatting that uses dictionaries instead of tuples of values.</para>
+</abstract>
+<example>
+<title>Introducing dictionary-based string formatting</title>
+<screen>
+&prompt;<userinput>params = {"server":"mpilgrim", "database":"master", "uid":"sa", "pwd":"secret"}</userinput>
+&prompt;<userinput>"%(pwd)s" % params</userinput>                                    <co id="dialect.dictsub.1.1"/>
+<computeroutput>'secret'</computeroutput>
+&prompt;<userinput>"%(pwd)s is not a good password for %(uid)s" % params</userinput> <co id="dialect.dictsub.1.2"/>
+<computeroutput>'secret is not a good password for sa'</computeroutput>
+&prompt;<userinput>"%(database)s of mind, %(database)s of body" % params</userinput> <co id="dialect.dictsub.1.3"/>
+<computeroutput>'master of mind, master of body'</computeroutput></screen>
+<calloutlist>
+<callout arearefs="dialect.dictsub.1.1">
+<para>Instead of a tuple of explicit values, this form of string formatting uses a dictionary, <varname>params</varname>.  And instead of a simple <literal>&pct;s</literal> marker in the string, the marker contains a name in parentheses.  This name is used as a key in the <varname>params</varname> dictionary and subsitutes the corresponding value, <literal>secret</literal>, in place of the <literal>&pct;(pwd)s</literal> marker.</para>
+</callout>
+<callout arearefs="dialect.dictsub.1.2">
+<para>Dictionary-based string formatting works with any number of named keys.  Each key must exist in the given dictionary, or the formatting will fail with a <errorcode>KeyError</errorcode>.</para>
+</callout>
+<callout arearefs="dialect.dictsub.1.3">
+<para>You can even specify the same key twice; each occurrence will be replaced with the same value.</para>
+</callout>
+</calloutlist>
+</example>
+<para>So why would you use dictionary-based string formatting?  Well, it does seem like overkill to set up a dictionary of keys and values simply to do string formatting in the next line; it's really most useful when you happen to have a dictionary of meaningful keys and values already.  Like <link linkend="dialect.locals">&locals;</link>.</para>
+<example id="dialect.unknownstarttag">
+<title>Dictionary-based string formatting in &basehtml_filename;</title>
+<programlisting>
+&basehtml_commentdef;
+&basehtml_commentcode; <co id="dialect.dictsub.2.1"/>
+</programlisting>
+<calloutlist>
+<callout arearefs="dialect.dictsub.2.1">
+<para>Using the built-in &locals; function is the most common use of dictionary-based string formatting.  It means that you can use the names of local variables within your string (in this case, <varname>text</varname>, which was passed to the class method as an argument) and each named variable will be replaced by its value.  If <varname>text</varname> is <literal>'Begin page footer'</literal>, the string formatting <literal>"&lt;!--&pct;(text)s-->" &pct; locals()</literal> will resolve to the string <literal>'&lt;!--Begin page footer-->'</literal>.</para>
+</callout>
+</calloutlist>
+</example>
+<example>
+<title>More dictionary-based string formatting</title>
+<programlisting>
+&basehtml_starttagdef;
+&basehtml_starttagjoin; <co id="dialect.dictsub.3.1"/>
+&basehtml_starttagcode;                      <co id="dialect.dictsub.3.2"/>
+</programlisting>
+<calloutlist>
+<callout arearefs="dialect.dictsub.3.1">
+<para>When this method is called, <varname>attrs</varname> is a list of key/value tuples, just like the <link linkend="odbchelper.items">&items; of a dictionary</link>, which means you can use <link linkend="odbchelper.multiassign">multi-variable assignment</link> to iterate through it.  This should be a familiar pattern by now, but there's a lot going on here, so let's break it down:</para>
+<orderedlist numeration="loweralpha">
+<listitem><para>Suppose <varname>attrs</varname> is <literal>[('href', 'index.html'), ('title', 'Go to home page')]</literal>.</para></listitem>
+<listitem><para>In the first round of the list comprehension, <varname>key</varname> will get <literal>'href'</literal>, and <varname>value</varname> will get <literal>'index.html'</literal>.</para></listitem>
+<listitem><para>The string formatting <literal>'&nbsp;&pct;s="&pct;s"' &pct; (key, value)</literal> will resolve to <literal>'&nbsp;href="index.html"'</literal>.  This string becomes the first element of the list comprehension's return value.</para></listitem>
+<listitem><para>In the second round, <varname>key</varname> will get <literal>'title'</literal>, and <varname>value</varname> will get <literal>'Go to home page'</literal>.</para></listitem>
+<listitem><para>The string formatting will resolve to <literal>' title="Go to home page"'</literal>.</para></listitem>
+<listitem><para>The list comprehension returns a list of these two resolved strings, and <varname>strattrs</varname> will join both elements of this list together to form <literal>'&nbsp;href="index.html" title="Go to home page"'</literal>.</para></listitem>
+</orderedlist>
+</callout>
+<callout arearefs="dialect.dictsub.3.2">
+<para>Now, using dictionary-based string formatting, you insert the value of <varname>tag</varname> and <varname>strattrs</varname> into a string.  So if <varname>tag</varname> is <literal>'a'</literal>, the final result would be <literal>'&lt;a href="index.html" title="Go to home page">'</literal>, and that is what gets appended to &selfpieces;.</para>
+</callout>
+</calloutlist>
+</example>
+<important>
+<title>Performance issues with &locals;</title>
+<para>Using dictionary-based string formatting with &locals; is a convenient way of making complex string formatting expressions more readable, but it comes with a price.  There is a slight performance hit in making the call to &locals;, since <link linkend="dialect.locals.readonly.example">&locals; builds a copy</link> of the local namespace.</para>
+</important>
+</section>
+<section id="dialect.quoting">
+<?dbhtml filename="html_processing/quoting_attribute_values.html"?>
+<title>Quoting attribute values</title>
+<abstract>
+<para>A common question on &clp; is <quote>I have a bunch of &html; documents with unquoted attribute values, and I want to properly quote them all.  How can I do this?</quote><footnote><para>All right, it's not that common a question.  It's not up there with <quote>What editor should I use to write &python; code?</quote> (answer: &emacs;) or <quote>Is &python; better or worse than &perl;?</quote> (answer: <quote>&perl; is worse than &python; because people wanted it worse.</quote> -Larry Wall, 10/14/1998)  But questions about &html; processing pop up in one form or another about once a month, and among those questions, this is a popular one.</para></footnote>  (This is generally precipitated by a project manager who has found the &html;-is-a-standard religion joining a large project and proclaiming that all pages must validate against an &html; validator.  Unquoted attribute values are a common violation of the &html; standard.)  Whatever the reason, unquoted attribute values are easy to fix by feeding &html; through &basehtml_classname;.</para>
+</abstract>
+<para>&basehtml_classname; consumes &html; (since it's descended from &sgmlparser;) and produces equivalent &html;, but the &html; output is not identical to the input.  Tags and attribute names will end up in lowercase, even if they started in uppercase or mixed case, and attribute values will be enclosed in double quotes, even if they started in single quotes or with no quotes at all.  It is this last side effect that you can take advantage of.</para>
+<example id="dialect.quoting.example">
+<title>Quoting attribute values</title>
+<screen>
+&prompt;<userinput>htmlSource = """</userinput>        <co id="dialect.basehtml.3.1"/>
+&continuationprompt;&lt;html>
+&continuationprompt;&lt;head>
+&continuationprompt;&lt;title>Test page&lt;/title>
+&continuationprompt;&lt;/head>
+&continuationprompt;&lt;body>
+&continuationprompt;&lt;ul>
+&continuationprompt;&lt;li>&lt;a href=index.html>Home&lt;/a>&lt;/li>
+&continuationprompt;&lt;li>&lt;a href=toc.html>Table of contents&lt;/a>&lt;/li>
+&continuationprompt;&lt;li>&lt;a href=history.html>Revision history&lt;/a>&lt;/li>
+&continuationprompt;&lt;/body>
+&continuationprompt;&lt;/html>
+&continuationprompt;<userinput>"""</userinput>
+&prompt;<userinput>from BaseHTMLProcessor import BaseHTMLProcessor</userinput>
+&prompt;<userinput>parser = BaseHTMLProcessor()</userinput>
+&prompt;<userinput>parser.feed(htmlSource)</userinput> <co id="dialect.basehtml.3.2"/>
+&prompt;<userinput>print parser.output()</userinput>   <co id="dialect.basehtml.3.3"/>
+<computeroutput>&lt;html>
+&lt;head>
+&lt;title>Test page&lt;/title>
+&lt;/head>
+&lt;body>
+&lt;ul>
+&lt;li>&lt;a href="index.html">Home&lt;/a>&lt;/li>
+&lt;li>&lt;a href="toc.html">Table of contents&lt;/a>&lt;/li>
+&lt;li>&lt;a href="history.html">Revision history&lt;/a>&lt;/li>
+&lt;/body>
+&lt;/html></computeroutput></screen>
+<calloutlist>
+<callout arearefs="dialect.basehtml.3.1">
+<para>Note that the attribute values of the <literal>href</literal> attributes in the <sgmltag>&lt;a&gt;</sgmltag> tags are not properly quoted.  (Also note that you're using <link linkend="odbchelper.triplequotes">triple quotes</link> for something other than a &docstring;.  And directly in the &ide;, no less.  They're very useful.)</para>
+</callout>
+<callout arearefs="dialect.basehtml.3.2">
+<para>Feed the parser.</para>
+</callout>
+<callout arearefs="dialect.basehtml.3.3">
+<para>Using the <function>output</function> function defined in &basehtml_classname;, you get the output as a single string, complete with quoted attribute values.  While this may seem anti-climactic, think about how much has actually happened here: &sgmlparser; parsed the entire &html; document, breaking it down into tags, refs, data, and so forth; &basehtml_classname; used those elements to reconstruct pieces of &html; (which are still stored in <varname>parser.pieces</varname>, if you want to see them); finally, you called <function>parser.output</function>, which joined all the pieces of &html; into one string.</para>
+</callout>
+</calloutlist>
+</example>
+</section>
+<section id="dialect.dialectizer">
+<?dbhtml filename="html_processing/dialect.html"?>
+<title>Introducing &dialect_filename;</title>
+<abstract>
+<title/>
+<para>&dialect_classname; is a simple (and silly) descendant of &basehtml_classname;.  It runs blocks of text through a series of substitutions, but it makes sure that anything within a <literal>&pre_starttag;...&pre_endtag;</literal> block passes through unaltered.</para>
+</abstract>
+<para>To handle the &pre_starttag; blocks, you define two methods in &dialect_classname;: <function>start_pre</function> and <function>end_pre</function>.</para>
+<example id="dialect.specifictags.example">
+<title>Handling specific tags</title>
+<programlisting>
+&dialect_startpredef; <co id="dialect.dialectizer.1.1"/>
+&dialect_startprecode; <co id="dialect.dialectizer.1.2"/>
+&dialect_startprecall; <co id="dialect.dialectizer.1.3"/>
+
+&dialect_endpredef; <co id="dialect.dialectizer.1.4"/>
+&dialect_endprecall; <co id="dialect.dialectizer.1.5"/>
+&dialect_endprecode; <co id="dialect.dialectizer.1.6"/></programlisting>
+<calloutlist>
+<callout arearefs="dialect.dialectizer.1.1">
+<para><function>start_pre</function> is called every time &sgmlparser; finds a &pre_starttag; tag in the &html; source.  (In a minute, you'll see exactly how this happens.)  The method takes a single parameter, <varname>attrs</varname>, which contains the attributes of the tag (if any).  <varname>attrs</varname> is a list of key/value tuples, just like <link linkend="dialect.unknownstarttag">&unknown_starttag;</link> takes.</para>
+</callout>
+<callout arearefs="dialect.dialectizer.1.2">
+<para>In the <function>reset</function> method, you initialize a data attribute that serves as a counter for &pre_starttag; tags.  Every time you hit a &pre_starttag; tag, you increment the counter; every time you hit a &pre_endtag; tag, you'll decrement the counter.  (You could just use this as a flag and set it to &one; and reset it to &zero;, but it's just as easy to do it this way, and this handles the odd (but possible) case of nested &pre_starttag; tags.)  In a minute, you'll see how this counter is put to good use.</para>
+</callout>
+<callout arearefs="dialect.dialectizer.1.3">
+<para>That's it, that's the only special processing you do for &pre_starttag; tags.  Now you pass the list of attributes along to &unknown_starttag; so it can do the default processing.</para>
+</callout>
+<callout arearefs="dialect.dialectizer.1.4">
+<para><function>end_pre</function> is called every time &sgmlparser; finds a &pre_endtag; tag.  Since end tags can not contain attributes, the method takes no parameters.</para>
+</callout>
+<callout arearefs="dialect.dialectizer.1.5">
+<para>First, you want to do the default processing, just like any other end tag.</para>
+</callout>
+<callout arearefs="dialect.dialectizer.1.6">
+<para>Second, you decrement your counter to signal that this &pre_starttag; block has been closed.</para>
+</callout>
+</calloutlist>
+</example>
+<para>At this point, it's worth digging a little further into &sgmlparser;.  I've claimed repeatedly (and you've taken it on faith so far) that &sgmlparser; looks for and calls specific methods for each tag, if they exist.  For instance, you just saw the definition of <function>start_pre</function> and <function>end_pre</function> to handle &pre_starttag; and &pre_endtag;.  But how does this happen?  Well, it's not magic, it's just good &python; coding.</para>
+<example id="dialect.dialectizer.example">
+<title>&sgmlparser;</title>
+<programlisting>
+&sgmlparser_starttagdef; <co id="dialect.dialectizer.2.1"/>
+&sgmlparser_starttry;
+&sgmlparser_startgetattr; <co id="dialect.dialectizer.2.2"/>
+&sgmlparser_startexcept; <co id="dialect.dialectizer.2.3"/>
+&sgmlparser_starttry2;
+&sgmlparser_startgetattr2; <co id="dialect.dialectizer.2.4"/>
+&sgmlparser_startexcept2;
+&sgmlparser_startcall; <co id="dialect.dialectizer.2.5"/>
+&sgmlparser_startreturn;
+&sgmlparser_startelse;
+&sgmlparser_starthandle; <co id="dialect.dialectizer.2.6"/>
+&sgmlparser_startreturn2;
+&sgmlparser_startelse2;
+&sgmlparser_startstack;
+&sgmlparser_starthandle2;
+&sgmlparser_startreturn3; <co id="dialect.dialectizer.2.7"/>
+
+&sgmlparser_handledef;
+&sgmlparser_handlecode; <co id="dialect.dialectizer.2.8"/></programlisting>
+<calloutlist>
+<callout arearefs="dialect.dialectizer.2.1">
+<para>At this point, &sgmlparser; has already found a start tag and parsed the attribute list.  The only thing left to do is figure out whether there is a specific handler method for this tag, or whether you should fall back on the default method (&unknown_starttag;).</para>
+</callout>
+<callout arearefs="dialect.dialectizer.2.2">
+<para>The <quote>magic</quote> of &sgmlparser; is nothing more than your old friend, <link linkend="apihelper.getattr">&getattr;</link>.  What you may not have realized before is that &getattr; will find methods defined in descendants of an object as well as the object itself.  Here the object is &self;, the current instance.  So if <varname>tag</varname> is <literal>'pre'</literal>, this call to &getattr; will look for a <function>start_pre</function> method on the current instance, which is an instance of the &dialect_classname; class.</para>
+</callout>
+<callout arearefs="dialect.dialectizer.2.3">
+<para>&getattr; raises an &attributeerror; if the method it's looking for doesn't exist in the object (or any of its descendants), but that's okay, because you wrapped the call to &getattr; inside a <link linkend="fileinfo.exception">&tryexcept;</link> block and explicitly caught the &attributeerror;.</para>
+</callout>
+<callout arearefs="dialect.dialectizer.2.4">
+<para>Since you didn't find a <function>start_xxx</function> method, you'll also look for a <function>do_xxx</function> method before giving up.  This alternate naming scheme is generally used for standalone tags, like <sgmltag>&lt;br></sgmltag>, which have no corresponding end tag.  But you can use either naming scheme; as you can see, &sgmlparser; tries both for every tag.  (You shouldn't define both a <function>start_xxx</function> and <function>do_xxx</function> handler method for the same tag, though; only the <function>start_xxx</function> method will get called.)</para>
+</callout>
+<callout arearefs="dialect.dialectizer.2.5">
+<para>Another &attributeerror;, which means that the call to &getattr; failed with <function>do_xxx</function>.  Since you found neither a <function>start_xxx</function> nor a <function>do_xxx</function> method for this tag, you catch the exception and fall back on the default method, &unknown_starttag;.</para>
+</callout>
+<callout arearefs="dialect.dialectizer.2.6">
+<para>Remember, &tryexcept; blocks can have an &else; clause, which is called if <link linkend="crossplatform.example">no exception is raised</link> during the &tryexcept; block.  Logically, that means that you <emphasis>did</emphasis> find a <function>do_xxx</function> method for this tag, so you're going to call it.</para>
+</callout>
+<callout arearefs="dialect.dialectizer.2.7">
+<para>By the way, don't worry about these different return values; in theory they mean something, but they're never actually used.  Don't worry about the <literal>self.stack.append(tag)</literal> either; &sgmlparser; keeps track internally of whether your start tags are balanced by appropriate end tags, but it doesn't do anything with this information either.  In theory, you could use this module to validate that your tags were fully balanced, but it's probably not worth it, and it's beyond the scope of this chapter.  You have better things to worry about right now.</para>
+</callout>
+<callout arearefs="dialect.dialectizer.2.8">
+<para><function>start_xxx</function> and <function>do_xxx</function> methods are not called directly; the tag, method, and attributes are passed to this function, <function>handle_starttag</function>, so that descendants can override it and change the way <emphasis>all</emphasis> start tags are dispatched.  You don't need that level of control, so you just let this method do its thing, which is to call the method (<function>start_xxx</function> or <function>do_xxx</function>) with the list of attributes.  Remember, <varname>method</varname> is a function, returned from &getattr;, and functions are objects.  (I know you're getting tired of hearing it, and I promise I'll stop saying it as soon as I run out of ways to use it to my advantage.)  Here, the function object is passed into this dispatch method as an argument, and this method turns around and calls the function.  At this point, you don't need to know what the function is, what it's named, or where it's defined; the only thing you need to know about the function is that it is called with one argument, <varname>attrs</varname>.</para>
+</callout>
+</calloutlist>
+</example>
+<para>Now back to our regularly scheduled program: &dialect_classname;.  When you left, you were in the process of defining specific handler methods for &pre_starttag; and &pre_endtag; tags.  There's only one thing left to do, and that is to process text blocks with the pre-defined substitutions.  For that, you need to override the &handle_data; method.</para>
+<example>
+<title>Overriding the &handle_data; method</title>
+<programlisting>
+&dialect_datadef; <co id="dialect.dialectizer.3.1"/>
+&dialect_datacode; <co id="dialect.dialectizer.3.2"/></programlisting>
+<calloutlist>
+<callout arearefs="dialect.dialectizer.3.1">
+<para>&handle_data; is called with only one argument, the text to process.</para>
+</callout>
+<callout arearefs="dialect.dialectizer.3.2">
+<para>In the ancestor <link linkend="dialect.basehtml.intro">&basehtml_classname;</link>, the &handle_data; method simply appended the text to the output buffer, &selfpieces;.  Here the logic is only slightly more complicated.  If you're in the middle of a <literal>&pre_starttag;...&pre_endtag;</literal> block, <varname>self.verbatim</varname> will be some value greater than &zero;, and you want to put the text in the output buffer unaltered.  Otherwise, you will call a separate method to process the substitutions, then put the result of that into the output buffer.  In &python;, this is a one-liner, using <link linkend="apihelper.andortrick.intro">the &andor; trick</link>.</para>
+</callout>
+</calloutlist>
+</example>
+<para>You're close to completely understanding &dialect_classname;.  The only missing link is the nature of the text substitutions themselves.  If you know any &perl;, you know that when complex text substitutions are required, the only real solution is regular expressions.  The classes later in &dialect_filename; define a series of regular expressions that operate on the text between the &html; tags.  But you just had <link linkend="re">a whole chapter on regular expressions</link>.  You don't really want to slog through regular expressions again, do you?  God knows I don't.  I think you've learned enough for one chapter.</para>
+</section>
+<section id="dialect.alltogether">
+<?dbhtml filename="html_processing/all_together.html"?>
+<title>Putting it all together</title>
+<abstract>
+<title/>
+<para>It's time to put everything you've learned so far to good use.  I hope you were paying attention.</para>
+</abstract>
+<example>
+<title>The &translate; function, part 1</title>
+<programlisting>
+&dialect_translatedef; <co id="dialect.alltogether.1.1"/>
+&dialect_translateimport; <co id="dialect.alltogether.1.2"/>
+&dialect_translateopen; <co id="dialect.alltogether.1.3"/>
+&dialect_translateread;
+&dialect_translateclose;
+</programlisting>
+<calloutlist>
+<callout arearefs="dialect.alltogether.1.1">
+<para>The &translate; function has an <link linkend="apihelper.optional">optional argument</link> <varname>dialectName</varname>, which is a string that specifies the dialect you'll be using.  You'll see how this is used in a minute.</para>
+</callout>
+<callout arearefs="dialect.alltogether.1.2">
+<para>Hey, wait a minute, there's an <link linkend="odbchelper.import">&import;</link> statement in this function!  That's perfectly legal in &python;.  You're used to seeing &import; statements at the top of a program, which means that the imported module is available anywhere in the program.  But you can also import modules within a function, which means that the imported module is only available within the function.  If you have a module that is only ever used in one function, this is an easy way to make your code more modular.  (When you find that your weekend hack has turned into an 800-line work of art and decide to split it up into a dozen reusable modules, you'll appreciate this.)</para>
+</callout>
+<callout arearefs="dialect.alltogether.1.3">
+<para>Now you <link linkend="dialect.extract.urllib">get the source of the given URL</link>.</para>
+</callout>
+</calloutlist>
+</example>
+<example>
+<title>The &translate; function, part 2: curiouser and curiouser</title>
+<programlisting>
+&dialect_translateparsername; <co id="dialect.alltogether.2.1"/>
+&dialect_translateparserclass; <co id="dialect.alltogether.2.2"/>
+&dialect_translateinstantiate; <co id="dialect.alltogether.2.3"/>
+</programlisting>
+<calloutlist>
+<callout arearefs="dialect.alltogether.2.1">
+<para>&capitalize; is a string method you haven't seen before; it simply capitalizes the first letter of a string and forces everything else to lowercase.  Combined with some <link linkend="odbchelper.stringformatting">string formatting</link>, you've taken the name of a dialect and transformed it into the name of the corresponding Dialectizer class.  If <varname>dialectName</varname> is the string <literal>'chef'</literal>, <varname>parserName</varname> will be the string <literal>'ChefDialectizer'</literal>.</para>
+</callout>
+<callout arearefs="dialect.alltogether.2.2">
+<para>You have the name of a class as a string (<varname>parserName</varname>), and you have the global namespace as a dictionary (&globals;()).  Combined, you can get a reference to the class which the string names.  (Remember, <link linkend="fileinfo.classattributes">classes are objects</link>, and they can be assigned to variables just like any other object.)  If <varname>parserName</varname> is the string <literal>'ChefDialectizer'</literal>, <varname>parserClass</varname> will be the class <literal>ChefDialectizer</literal>.</para>
+</callout>
+<callout arearefs="dialect.alltogether.2.3">
+<para>Finally, you have a class object (<varname>parserClass</varname>), and you want an instance of the class.  Well, you already know how to do that: <link linkend="fileinfo.create">call the class like a function</link>.  The fact that the class is being stored in a local variable makes absolutely no difference; you just call the local variable like a function, and out pops an instance of the class.  If <varname>parserClass</varname> is the class <literal>ChefDialectizer</literal>, <varname>parser</varname> will be an instance of the class <literal>ChefDialectizer</literal>.</para>
+</callout>
+</calloutlist>
+</example>
+<para>Why bother?  After all, there are only 3 <classname>Dialectizer</classname> classes; why not just use a <function>case</function> statement?  (Well, there's no <function>case</function> statement in &python;, but why not just use a series of &if; statements?)  One reason: extensibility.  The &translate; function has absolutely no idea how many Dialectizer classes you've defined.  Imagine if you defined a new <classname>FooDialectizer</classname> tomorrow; &translate; would work by passing <literal>'foo'</literal> as the <varname>dialectName</varname>.</para>
+<para>Even better, imagine putting <classname>FooDialectizer</classname> in a separate module, and importing it with &frommoduleimport;.  You've already seen that this <link linkend="dialect.globals.example">includes it in &globals;()</link>, so &translate; would still work without modification, even though <classname>FooDialectizer</classname> was in a separate file.</para>
+<para>Now imagine that the name of the dialect is coming from somewhere outside the program, maybe from a database or from a user-inputted value on a form.  You can use any number of server-side &python; scripting architectures to dynamically generate web pages; this function could take a &url; and a dialect name (both strings) in the query string of a web page request, and output the <quote>translated</quote> web page.</para>
+<para>Finally, imagine a <classname>Dialectizer</classname> framework with a plug-in architecture.  You could put each <classname>Dialectizer</classname> class in a separate file, leaving only the &translate; function in &dialect_filename;.  Assuming a consistent naming scheme, the &translate; function could dynamic import the appropiate class from the appropriate file, given nothing but the dialect name.  (You haven't seen dynamic importing yet, but I promise to cover it in a later chapter.)  To add a new dialect, you would simply add an appropriately-named file in the plug-ins directory (like <filename>foodialect.py</filename> which contains the <classname>FooDialectizer</classname> class).  Calling the &translate; function with the dialect name <literal>'foo'</literal> would find the module <filename>foodialect.py</filename>, import the class <classname>FooDialectizer</classname>, and away you go.</para>
+<example>
+<title>The &translate; function, part 3</title>
+<programlisting>
+&dialect_translatefeed; <co id="dialect.alltogether.3.1"/>
+&dialect_translateclose2; <co id="dialect.alltogether.3.2"/>
+&dialect_translatereturn; <co id="dialect.alltogether.3.3"/>
+</programlisting>
+<calloutlist>
+<callout arearefs="dialect.alltogether.3.1">
+<para>After all that imagining, this is going to seem pretty boring, but the <function>feed</function> function is what <link linkend="dialect.feed.example">does the entire transformation</link>.  You had the entire &html; source in a single string, so you only had to call <function>feed</function> once.  However, you can call <function>feed</function> as often as you want, and the parser will just keep parsing.  So if you were worried about memory usage (or you knew you were going to be dealing with very large &html; pages), you could set this up in a loop, where you read a few bytes of &html; and fed it to the parser.  The result would be the same.</para>
+</callout>
+<callout arearefs="dialect.alltogether.3.2">
+<para>Because <function>feed</function> maintains an internal buffer, you should always call the parser's &close; method when you're done (even if you fed it all at once, like you did).  Otherwise you may find that your output is missing the last few bytes.</para>
+</callout>
+<callout arearefs="dialect.alltogether.3.3">
+<para>Remember, <function>output</function> is the function you defined on &basehtml_classname; that <link linkend="dialect.output.example">joins all the pieces of output you've buffered</link> and returns them in a single string.</para>
+</callout>
+</calloutlist>
+</example>
+<para>And just like that, you've <quote>translated</quote> a web page, given nothing but a &url; and the name of a dialect.</para>
+<itemizedlist role="furtherreading">
+<title>Further reading</title>
+<listitem><para>You thought I was kidding about the server-side scripting idea.  So did I, until I found <ulink url="http://rinkworks.com/dialect/">this web-based dialectizer</ulink>.  Unfortunately, source code does not appear to be available.</para></listitem>
+</itemizedlist>
+</section>
+<section id="dialect.summary">
+<?dbhtml filename="html_processing/summary.html"?>
+<title>Summary</title>
+<abstract>
+<title/>
+<para>&python; provides you with a powerful tool, &sgmllib_filename;, to manipulate &html; by turning its structure into an object model.  You can use this tool in many different ways.</para>
+</abstract>
+<itemizedlist>
+<listitem><para>parsing the &html; looking for something specific</para></listitem>
+<listitem><para>aggregating the results, like the <link linkend="dialect.extract.links">&url; lister</link></para></listitem>
+<listitem><para>altering the structure along the way, like the <link linkend="dialect.quoting.example">attribute quoter</link></para></listitem>
+<listitem><para>transforming the &html; into something else by manipulating the text while leaving the tags alone, like the <link linkend="dialect.dialectizer"><classname>Dialectizer</classname></link></para></listitem>
+</itemizedlist>
+<para>Along with these examples, you should be comfortable doing all of the following things:</para>
+<itemizedlist>
+<listitem><para>Using <link linkend="dialect.locals">&locals;() and &globals;()</link> to access namespaces</para></listitem>
+<listitem><para><link linkend="dialect.dictsub">Formatting strings</link> using dictionary-based substitutions</para></listitem>
+</itemizedlist>
+</section>
+</chapter>
+<!--
+* sgmllib
+  * SGMLParser: a class that consumes HTML
+  * identifies tags and attributes, entities, and raw data
+  * run test suite against toc.html and show output
+  * 7 things it finds in HTML: start tag, end tag, character reference, entity reference, comment, processing instruction, and raw data
+    * for each start tag "tagname", tries to call "start_tagname" or "do_tagname" method, defaults to calling "unknown_starttag"
+    * for each end tag "tagname", tries to call "end_tagname", defaults to calling "unknown_endtag"
+    * calls "handle_charref", "handle_entityref", "handle_comment", "handle_pi", and "handle_data" for the other 5 things
+  * segue into BaseHTMLProcessor
+* BaseHTMLProcessor
+  * single purpose: turn HTML consumer into HTML producer
+  * effect is that feeding well-formed HTML into BaseHTMLProcessor will produce equivalent (though probably not identical) HTML
+  * works by defining unknown_starttag, unknown_endtag, handle_* to collect individual pieces of HTML in a list (self.pieces)
+  * output() function joins all the separate pieces into a single string
+  * example: turning unquoted attributes into quoted ones
+* locals() and globals(
+  * screen example for locals()
+  * how to show globals() effectively?  maybe just mention it?  show example in IDE?  create test script?
+* dictionary-based string formatting
+  * works with any dictionary (give screen example)
+  * locals(): dictionary of local variables
+  X even works within a list comprehension (unknown_starttag)
+* Dialectizer (1 section)
+  * reset
+  * start_pre/end_pre
+  * handle_data
+* regular expressions (1 section)
+  * brief intro, screen example
+  * re module
+  * point to Regular Expression HOWTO
+* putting it all together (1 section)
+  * translate()
+    * (review) getting live web page with urllib
+    * constructing class name, then accessing through globals, then constructing instance of said class
+    * feed parser and output
+  X test()
+    - test suite
+    - webbrowser module
+* summary (1 section)
+-->

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+<preface id="preface">
+<?dbhtml filename="preface/index.html"?>
+<title>Preface</title>
+<para>This book is not for newbies, for wimps, or For Dummies.  It assumes a lot about you.</para>
+<itemizedlist>
+<listitem><para>You know at least one real object-oriented language, like &java;, &cpp;, or &delphi;.</para></listitem>
+<listitem><para>You know at least one scripting language, like &perl;, &vb;, or &javascript;.</para></listitem>
+<listitem><para>You have already installed &python;.  See the <ulink url="&url_diveintopython;">home page</ulink> for links to download &python; for your favorite operating system.  &python; &minversion; or later is required; &python; &recommendedversion; is recommended.  Where there are important differences between &minversion; and &recommendedversion;, they are clearly noted in the text.</para></listitem>
+<listitem><para>You have <ulink url="&url_diveintopython;&url_dip_examples;" type="Download example scripts">downloaded the example programs</ulink> used in this book.</para></listitem>
+</itemizedlist>
+<para>If you're just getting started programming, that does not mean that you can't learn &python;.  &python; is an easy language to learn, but you should probably learn it somewhere else.  I highly recommend &learningtoprogram; and &howtothink;, and &pythonorg; has links to other <ulink url="&url_nonprogrammer;">introductions to &python; programming</ulink> for non-programmers.</para>
+<para>Let's dive in.</para>
+</preface>
+-->

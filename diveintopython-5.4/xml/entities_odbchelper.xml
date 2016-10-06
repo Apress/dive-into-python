@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!ENTITY odbchelper_name 'odbchelper'>
+<!ENTITY odbchelper_filename '<filename>&odbchelper_name;.py</filename>'>
+<!ENTITY odbchelper_modulename '<filename class="headerfile">&odbchelper_name;</filename>'>
+<!ENTITY odbchelper_funcname 'buildConnectionString'>
+<!ENTITY odbchelper_function '<function>&odbchelper_funcname;</function>'>
+<!ENTITY odbchelper_funcdef 'def &odbchelper_funcname;(params):'>
+<!ENTITY odbchelper_docstring 'Build a connection string from a dictionary of parameters.
+
+    Returns string.'>
+<!ENTITY odbchelper_doc '    """&odbchelper_docstring;"""'>
+<!ENTITY odbchelper_stringformatting '"&pct;s=&pct;s" &pct; (k, v)'>
+<!ENTITY odbchelper_listmapping '[&odbchelper_stringformatting; for k, v in params.items()]'>
+<!ENTITY odbchelper_join '";".join(&odbchelper_listmapping;)'>
+<!ENTITY odbchelper_code '    return &odbchelper_join;'>
+<!ENTITY odbchelper_function_full "&odbchelper_funcdef;
+&odbchelper_doc;
+&odbchelper_code;">
+<!ENTITY odbchelper_if 'if __name__ == "__main__":'>
+<!ENTITY odbchelper_dict '    myParams = {"server":"mpilgrim", \
+                "database":"master", \
+                "uid":"sa", \
+                "pwd":"secret" \
+                }'>
+<!ENTITY odbchelper_print '    print buildConnectionString(myParams)'>
+<!ENTITY odbchelper_mainblock_full "&odbchelper_if;
+&odbchelper_dict;
+&odbchelper_print;">
+<!ENTITY odbchelper_full "&odbchelper_function_full;
+
+&odbchelper_mainblock_full;">
+<!ENTITY odbchelper_output "server=mpilgrim;uid=sa;database=master;pwd=secret">

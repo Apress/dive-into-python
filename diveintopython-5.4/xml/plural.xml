@@ -1,0 +1,634 @@
+<?xml version="1.0" encoding="utf-8"?>
+<chapter id="plural">
+<?dbhtml filename="dynamic_functions/index.html"?>
+<title>Dynamic functions</title>
+<titleabbrev id="plural.numberonly">Chapter 17</titleabbrev>
+<section id="plural.divein">
+<title>Diving in</title>
+<abstract>
+<title/>
+<para>I want to talk about plural nouns.  Also, functions that return other functions, advanced regular expressions, and generators.  Generators are new in &python; 2.3.  But first, let's talk about how to make plural nouns.</para>
+</abstract>
+<para>If you haven't read <xref linkend="re"/>, now would be a good time.  This chapter assumes you understand the basics of regular expressions, and quickly descends into more advanced uses.</para>
+<para>English is a schizophrenic language that borrows from a lot of other languages, and the rules for making singular nouns into plural nouns are varied and complex.  There are rules, and then there are exceptions to those rules, and then there are exceptions to the exceptions.</para>
+<para>If you grew up in an English-speaking country or learned English in a formal school setting, you're probably familiar with the basic rules:</para>
+<orderedlist>
+<listitem><para>If a word ends in S, X, or Z, add ES.  <quote>Bass</quote> becomes <quote>basses</quote>, <quote>fax</quote> becomes <quote>faxes</quote>, and <quote>waltz</quote> becomes <quote>waltzes</quote>.</para></listitem>
+<listitem><para>If a word ends in a noisy H, add ES; if it ends in a silent H, just add S.  What's a noisy H?  One that gets combined with other letters to make a sound that you can hear.  So <quote>coach</quote> becomes <quote>coaches</quote> and <quote>rash</quote> becomes <quote>rashes</quote>, because you can hear the CH and SH sounds when you say them.  But <quote>cheetah</quote> becomes <quote>cheetahs</quote>, because the H is silent.</para></listitem>
+<listitem><para>If a word ends in Y that sounds like I, change the Y to IES; if the Y is combined with a vowel to sound like something else, just add S.  So <quote>vacancy</quote> becomes <quote>vacancies</quote>, but <quote>day</quote> becomes <quote>days</quote>.</para></listitem>
+<listitem><para>If all else fails, just add S and hope for the best.</para></listitem>
+</orderedlist>
+<para>(I know, there are a lot of exceptions.  <quote>Man</quote> becomes <quote>men</quote> and <quote>woman</quote> becomes <quote>women</quote>, but <quote>human</quote> becomes <quote>humans</quote>.  <quote>Mouse</quote> becomes <quote>mice</quote> and <quote>louse</quote> becomes <quote>lice</quote>, but <quote>house</quote> becomes <quote>houses</quote>.  <quote>Knife</quote> becomes <quote>knives</quote> and <quote>wife</quote> becomes <quote>wives</quote>, but <quote>lowlife</quote> becomes <quote>lowlifes</quote>.  And don't even get me started on words that are their own plural, like <quote>sheep</quote>, <quote>deer</quote>, and <quote>haiku</quote>.)</para>
+<para>Other languages are, of course, completely different.</para>
+<para>Let's design a module that pluralizes nouns.  Start with just English nouns, and just these four rules, but keep in mind that you'll inevitably need to add more rules, and you may eventually need to add more languages.</para>
+</section>
+<section id="plural.stage1">
+<?dbhtml filename="dynamic_functions/stage1.html"?>
+<title>&plural_filename;, stage 1</title>
+<abstract>
+<title/>
+<para>So you're looking at words, which at least in English are strings of characters.  And you have rules that say you need to find different combinations of characters, and then do different things to them.  This sounds like a job for regular expressions.</para>
+</abstract>
+<example>
+<title><filename>plural1.py</filename></title>
+<programlisting>
+&importre;
+
+&p1_defplural;
+&p1_if1; <co id="plural.stage1.1.1"/>
+&p1_return1; <co id="plural.stage1.1.2"/>
+&p1_if2;
+&p1_return2;
+&p1_if3;
+&p1_return3;
+&p1_else;
+&p1_return4;
+</programlisting>
+<calloutlist>
+<callout arearefs="plural.stage1.1.1">
+<para>OK, this is a regular expression, but it uses a syntax you didn't see in <xref linkend="re"/>.  The square brackets mean <quote>match exactly one of these characters</quote>.  So <literal>[sxz]</literal> means <quote><literal>s</literal>, or <literal>x</literal>, or <literal>z</literal></quote>, but only one of them.  The <literal>$</literal> should be familiar; it matches the end of string.  So you're checking to see if <varname>noun</varname> ends with <literal>s</literal>, <literal>x</literal>, or <literal>z</literal>.</para>
+</callout>
+<callout arearefs="plural.stage1.1.2">
+<para>This <function>re.sub</function> function performs regular expression-based string substitutions.  Let's look at it in more detail.</para>
+</callout>
+</calloutlist>
+</example>
+<example>
+<title>Introducing <function>re.sub</function></title>
+<screen>
+&prompt;<userinput>import re</userinput>
+&prompt;<userinput>re.search('[abc]', 'Mark')</userinput>   <co id="plural.stage1.2.1"/>
+<computeroutput>&lt;_sre.SRE_Match object at 0x001C1FA8></computeroutput>
+&prompt;<userinput>re.sub('[abc]', 'o', 'Mark')</userinput> <co id="plural.stage1.2.2"/>
+<computeroutput>'Mork'</computeroutput>
+&prompt;<userinput>re.sub('[abc]', 'o', 'rock')</userinput> <co id="plural.stage1.2.3"/>
+<computeroutput>'rook'</computeroutput>
+&prompt;<userinput>re.sub('[abc]', 'o', 'caps')</userinput> <co id="plural.stage1.2.4"/>
+<computeroutput>'oops'</computeroutput>
+</screen>
+<calloutlist>
+<callout arearefs="plural.stage1.2.1">
+<para>Does the string <literal>Mark</literal> contain <literal>a</literal>, <literal>b</literal>, or <literal>c</literal>?  Yes, it contains <literal>a</literal>.</para>
+</callout>
+<callout arearefs="plural.stage1.2.2">
+<para>OK, now find <literal>a</literal>, <literal>b</literal>, or <literal>c</literal>, and replace it with <literal>o</literal>.  <literal>Mark</literal> becomes <literal>Mork</literal>.</para>
+</callout>
+<callout arearefs="plural.stage1.2.3">
+<para>The same function turns <literal>rock</literal> into <literal>rook</literal>.</para>
+</callout>
+<callout arearefs="plural.stage1.2.4">
+<para>You might think this would turn <literal>caps</literal> into <literal>oaps</literal>, but it doesn't.  <literal>re.sub</literal> replaces <emphasis>all</emphasis> of the matches, not just the first one.  So this regular expression turns <literal>caps</literal> into <literal>oops</literal>, because both the <literal>c</literal> and the <literal>a</literal> get turned into <literal>o</literal>.</para>
+</callout>
+</calloutlist>
+</example>
+<example>
+<title>Back to <filename>plural1.py</filename></title>
+<programlisting>
+&importre;
+
+&p1_defplural;
+&p1_if1;
+&p1_return1; <co id="plural.stage1.3.1"/>
+&p1_if2; <co id="plural.stage1.3.2"/>
+&p1_return2; <co id="plural.stage1.3.3"/>
+&p1_if3;
+&p1_return3;
+&p1_else;
+&p1_return4;
+</programlisting>
+<calloutlist>
+<callout arearefs="plural.stage1.3.1">
+<para>Back to the <function>plural</function> function.  What are you doing?  You're replacing the end of string with <literal>es</literal>.  In other words, adding <literal>es</literal> to the string.  You could accomplish the same thing with string concatenation, for example <literal>noun + 'es'</literal>, but I'm using regular expressions for everything, for consistency, for reasons that will become clear later in the chapter.</para>
+</callout>
+<callout arearefs="plural.stage1.3.2">
+<para>Look closely, this is another new variation.  The <literal>^</literal> as the first character inside the square brackets means something special: negation.  <literal>[^abc]</literal> means <quote>any single character <emphasis>except</emphasis> <literal>a</literal>, <literal>b</literal>, or <literal>c</literal></quote>.  So <literal>[^aeioudgkprt]</literal> means any character except <literal>a</literal>, <literal>e</literal>, <literal>i</literal>, <literal>o</literal>, <literal>u</literal>, <literal>d</literal>, <literal>g</literal>, <literal>k</literal>, <literal>p</literal>, <literal>r</literal>, or <literal>t</literal>.  Then that character needs to be followed by <literal>h</literal>, followed by end of string.  You're looking for words that end in H where the H can be heard.</para>
+</callout>
+<callout arearefs="plural.stage1.3.3">
+<para>Same pattern here: match words that end in Y, where the character before the Y is <emphasis>not</emphasis> <literal>a</literal>, <literal>e</literal>, <literal>i</literal>, <literal>o</literal>, or <literal>u</literal>.  You're looking for words that end in Y that sounds like I.</para>
+</callout>
+</calloutlist>
+</example>
+<example>
+<title>More on negation regular expressions</title>
+<screen>
+&prompt;<userinput>import re</userinput>
+&prompt;<userinput>re.search('[^aeiou]y$', 'vacancy')</userinput> <co id="plural.stage1.4.1"/>
+<computeroutput>&lt;_sre.SRE_Match object at 0x001C1FA8></computeroutput>
+&prompt;<userinput>re.search('[^aeiou]y$', 'boy')</userinput>     <co id="plural.stage1.4.2"/>
+&prompt;
+&prompt;<userinput>re.search('[^aeiou]y$', 'day')</userinput>
+&prompt;
+&prompt;<userinput>re.search('[^aeiou]y$', 'pita')</userinput>    <co id="plural.stage1.4.3"/>
+&prompt;
+</screen>
+<calloutlist>
+<callout arearefs="plural.stage1.4.1">
+<para><literal>vacancy</literal> matches this regular expression, because it ends in <literal>cy</literal>, and <literal>c</literal> is not <literal>a</literal>, <literal>e</literal>, <literal>i</literal>, <literal>o</literal>, or <literal>u</literal>.</para>
+</callout>
+<callout arearefs="plural.stage1.4.2">
+<para><literal>boy</literal> does not match, because it ends in <literal>oy</literal>, and you specifically said that the character before the <literal>y</literal> could not be <literal>o</literal>.  <literal>day</literal> does not match, because it ends in <literal>ay</literal>.</para>
+</callout>
+<callout arearefs="plural.stage1.4.3">
+<para><literal>pita</literal> does not match, because it does not end in <literal>y</literal>.</para>
+</callout>
+</calloutlist>
+</example>
+<example>
+<title>More on <function>re.sub</function></title>
+<screen>
+&prompt;<userinput>re.sub('y$', 'ies', 'vacancy')</userinput>              <co id="plural.stage1.5.1"/>
+<computeroutput>'vacancies'</computeroutput>
+&prompt;<userinput>re.sub('y$', 'ies', 'agency')</userinput>
+<computeroutput>'agencies'</computeroutput>
+&prompt;<userinput>re.sub('([^aeiou])y$', r'\1ies', 'vacancy')</userinput> <co id="plural.stage1.5.2"/>
+<computeroutput>'vacancies'</computeroutput>
+</screen>
+<calloutlist>
+<callout arearefs="plural.stage1.5.1">
+<para>This regular expression turns <literal>vacancy</literal> into <literal>vacancies</literal> and <literal>agency</literal> into <literal>agencies</literal>, which is what you wanted.  Note that it would also turn <literal>boy</literal> into <literal>boies</literal>, but that will never happen in the function because you did that <function>re.search</function> first to find out whether you should do this <function>re.sub</function>.</para>
+</callout>
+<callout arearefs="plural.stage1.5.2">
+<para>Just in passing, I want to point out that it is possible to combine these two regular expressions (one to find out if the rule applies, and another to actually apply it) into a single regular expression.  Here's what that would look like.  Most of it should look familiar: you're using a remembered group, which you learned in <xref linkend="re.phone"/>, to remember the character before the <literal>y</literal>.  Then in the substitution string, you use a new syntax, <literal>\1</literal>, which means <quote>hey, that first group you remembered?  put it here</quote>.  In this case, you remember the <literal>c</literal> before the <literal>y</literal>, and then when you do the substitution, you substitute <literal>c</literal> in place of <literal>c</literal>, and <literal>ies</literal> in place of <literal>y</literal>.  (If you have more than one remembered group, you can use <literal>\2</literal> and <literal>\3</literal> and so on.)</para>
+</callout>
+</calloutlist>
+</example>
+<para>Regular expression substitutions are extremely powerful, and the <literal>\1</literal> syntax makes them even more powerful.  But combining the entire operation into one regular expression is also much harder to read, and it doesn't directly map to the way you first described the pluralizing rules.  You originally laid out rules like <quote>if the word ends in S, X, or Z, then add ES</quote>.  And if you look at this function, you have two lines of code that say <quote>if the word ends in S, X, or Z, then add ES</quote>.  It doesn't get much more direct than that.</para>
+</section>
+
+<section id="plural.stage2">
+<?dbhtml filename="dynamic_functions/stage2.html"?>
+<title>&plural_filename;, stage 2</title>
+<abstract>
+<title/>
+<para>Now you're going to add a level of abstraction.  You started by defining a list of rules: if this, then do that, otherwise go to the next rule.  Let's temporarily complicate part of the program so you can simplify another part.</para>
+</abstract>
+<example>
+<title><filename>plural2.py</filename></title>
+<programlisting>
+&importre;
+
+&p2_defmatch1;
+&p2_return1m;
+
+&p2_defapply1;
+&p2_return1a;
+
+&p2_defmatch2;
+&p2_return2m;
+
+&p2_defapply2;
+&p2_return2a;
+
+&p2_defmatch3;
+&p2_return3m;
+        
+&p2_defapply3;
+&p2_return3a;
+
+&p2_defmatch4;
+&p2_return4m;
+        
+&p2_defapply4;
+&p2_return4a;
+
+&p2_rules; <co id="plural.stage2.1.1"/>
+
+&p2_defplural;
+&p2_for; <co id="plural.stage2.1.2"/>
+&p2_if; <co id="plural.stage2.1.3"/>
+&p2_return; <co id="plural.stage2.1.4"/>
+</programlisting>
+<calloutlist>
+<callout arearefs="plural.stage2.1.1">
+<para>This version looks more complicated (it's certainly longer), but it does exactly the same thing: try to match four different rules, in order, and apply the appropriate regular expression when a match is found.  The difference is that each individual match and apply rule is defined in its own function, and the functions are then listed in this <varname>rules</varname> variable, which is a tuple of tuples.</para>
+</callout>
+<callout arearefs="plural.stage2.1.2">
+<para>Using a &for; loop, you can pull out the match and apply rules two at a time (one match, one apply) from the <varname>rules</varname> tuple.  On the first iteration of the &for; loop, <varname>matchesRule</varname> will get <function>match_sxz</function>, and <varname>applyRule</varname> will get <function>apply_sxz</function>.  On the second iteration (assuming you get that far), <varname>matchesRule</varname> will be assigned <function>match_h</function>, and <varname>applyRule</varname> will be assigned <function>apply_h</function>.</para>
+</callout>
+<callout arearefs="plural.stage2.1.3">
+<para>Remember that <link linkend="odbchelper.objects">everything in &python; is an object</link>, including functions.  <varname>rules</varname> contains actual functions; not names of functions, but actual functions.  When they get assigned in the &for; loop, then <varname>matchesRule</varname> and <varname>applyRule</varname> are actual functions that you can call.  So on the first iteration of the &for; loop, this is equivalent to calling <function>matches_sxz(noun)</function>.</para>
+</callout>
+<callout arearefs="plural.stage2.1.4">
+<para>On the first iteration of the &for; loop, this is equivalent to calling <function>apply_sxz(noun)</function>, and so forth.</para>
+</callout>
+</calloutlist>
+</example>
+<para>If this additional level of abstraction is confusing, try unrolling the function to see the equivalence.  This &for; loop is equivalent to the following:</para>
+<example>
+<title>Unrolling the <function>plural</function> function</title>
+<programlisting>
+def plural(noun):
+    if match_sxz(noun):
+        return apply_sxz(noun)
+    if match_h(noun):
+        return apply_h(noun)
+    if match_y(noun):
+        return apply_y(noun)
+    if match_default(noun):
+        return apply_default(noun)
+</programlisting>
+</example>
+<para>The benefit here is that that <function>plural</function> function is now simplified.  It takes a list of rules, defined elsewhere, and iterates through them in a generic fashion.  Get a match rule; does it match?  Then call the apply rule.  The rules could be defined anywhere, in any way.  The <function>plural</function> function doesn't care.</para>
+<para>Now, was adding this level of abstraction worth it?  Well, not yet.  Let's consider what it would take to add a new rule to the function.  Well, in the previous example, it would require adding an &if; statement to the <function>plural</function> function.  In this example, it would require adding two functions, <function>match_foo</function> and <function>apply_foo</function>, and then updating the <varname>rules</varname> list to specify where in the order the new match and apply functions should be called relative to the other rules.</para>
+<para>This is really just a stepping stone to the next section.  Let's move on.</para>
+</section>
+
+<section id="plural.stage3">
+<?dbhtml filename="dynamic_functions/stage3.html"?>
+<title>&plural_filename;, stage 3</title>
+<abstract>
+<title/>
+<para>Defining separate named functions for each match and apply rule isn't really necessary.  You never call them directly; you define them in the <varname>rules</varname> list and call them through there.  Let's streamline the rules definition by anonymizing those functions.</para>
+</abstract>
+<example>
+<title><filename>plural3.py</filename></title>
+<programlisting>
+&importre;
+
+&p3_rules; <co id="plural.stage3.1.1"/>
+
+&p3_defplural;
+&p3_for; <co id="plural.stage3.1.2"/>
+&p3_if;
+&p3_return;
+</programlisting>
+<calloutlist>
+<callout arearefs="plural.stage3.1.1">
+<para>This is the same set of rules as you defined in stage 2.  The only difference is that instead of defining named functions like <function>match_sxz</function> and <function>apply_sxz</function>, you have <quote>inlined</quote> those function definitions directly into the <varname>rules</varname> list itself, using <link linkend="apihelper.lambda">lambda functions</link>.</para>
+</callout>
+<callout arearefs="plural.stage3.1.2">
+<para>Note that the <function>plural</function> function hasn't changed at all.  It iterates through a set of rule functions, checks the first rule, and if it returns a true value, calls the second rule and returns the value.  Same as above, word for word.  The only difference is that the rule functions were defined inline, anonymously, using lambda functions.  But the <function>plural</function> function doesn't care how they were defined; it just gets a list of rules and blindly works through them.</para>
+</callout>
+</calloutlist>
+</example>
+<para>Now to add a new rule, all you need to do is define the functions directly in the <varname>rules</varname> list itself: one match rule, and one apply rule.  But defining the rule functions inline like this makes it very clear that you have some unnecessary duplication here.  You have four pairs of functions, and they all follow the same pattern.  The match function is a single call to <function>re.search</function>, and the apply function is a single call to <function>re.sub</function>.  Let's factor out these similarities.</para>
+</section>
+
+<section id="plural.stage4">
+<?dbhtml filename="dynamic_functions/stage4.html"?>
+<title>&plural_filename;, stage 4</title>
+<abstract>
+<title/>
+<para>Let's factor out the duplication in the code so that defining new rules can be easier.</para>
+</abstract>
+<example id="plural.stage4.example.1">
+<title><filename>plural4.py</filename></title>
+<programlisting>
+&importre;
+
+&p4_defbuild;
+&p4_match; <co id="plural.stage4.1.1"/>
+&p4_apply; <co id="plural.stage4.1.2"/>
+&p4_return; <co id="plural.stage4.1.3"/>
+</programlisting>
+<calloutlist>
+<callout arearefs="plural.stage4.1.1">
+<para><function>buildMatchAndApplyFunctions</function> is a function that builds other functions dynamically.  It takes <varname>pattern</varname>, <varname>search</varname> and <varname>replace</varname> (actually it takes a tuple, but more on that in a minute), and you can build the match function using the &lambdafunction; syntax to be a function that takes one parameter (<varname>word</varname>) and calls <function>re.search</function> with the <varname>pattern</varname> that was passed to the <function>buildMatchAndApplyFunctions</function> function, and the <varname>word</varname> that was passed to the match function you're building.  Whoa.</para>
+</callout>
+<callout arearefs="plural.stage4.1.2">
+<para>Building the apply function works the same way.  The apply function is a function that takes one parameter, and calls <function>re.sub</function> with the <varname>search</varname> and <varname>replace</varname> parameters that were passed to the <function>buildMatchAndApplyFunctions</function> function, and the <varname>word</varname> that was passed to the apply function you're building.  This technique of using the values of outside parameters within a dynamic function is called <emphasis>closures</emphasis>.  You're essentially defining constants within the apply function you're building: it takes one parameter (<varname>word</varname>), but it then acts on that plus two other values (<varname>search</varname> and <varname>replace</varname>) which were set when you defined the apply function.</para>
+</callout>
+<callout arearefs="plural.stage4.1.3">
+<para>Finally, the <function>buildMatchAndApplyFunctions</function> function returns a tuple of two values: the two functions you just created.  The constants you defined within those functions (<varname>pattern</varname> within <varname>matchFunction</varname>, and <varname>search</varname> and <varname>replace</varname> within <varname>applyFunction</varname>) stay with those functions, even after you return from <function>buildMatchAndApplyFunctions</function>.  That's insanely cool.</para>
+</callout>
+</calloutlist>
+</example>
+<para>If this is incredibly confusing (and it should be, this is weird stuff), it may become clearer when you see how to use it.</para>
+<example>
+<title><filename>plural4.py</filename> continued</title>
+<programlisting>
+&p4_patterns; <co id="plural.stage4.2.1"/>
+&p4_rules; <co id="plural.stage4.2.2"/>
+</programlisting>
+<calloutlist>
+<callout arearefs="plural.stage4.2.1">
+<para>Our pluralization rules are now defined as a series of strings (not functions).  The first string is the regular expression that you would use in <function>re.search</function> to see if this rule matches; the second and third are the search and replace expressions you would use in <function>re.sub</function> to actually apply the rule to turn a noun into its plural.</para>
+</callout>
+<callout arearefs="plural.stage4.2.2">
+<para>This line is magic.  It takes the list of strings in <varname>patterns</varname> and turns them into a list of functions.  How?  By mapping the strings to the <function>buildMatchAndApplyFunctions</function> function, which just happens to take three strings as parameters and return a tuple of two functions.  This means that <varname>rules</varname> ends up being exactly the same as the previous example: a list of tuples, where each tuple is a pair of functions, where the first function is the match function that calls <function>re.search</function>, and the second function is the apply function that calls <function>re.sub</function>.</para>
+</callout>
+</calloutlist>
+</example>
+<para>I swear I am not making this up: <varname>rules</varname> ends up with exactly the same list of functions as the previous example.  Unroll the <varname>rules</varname> definition, and you'll get this:</para>
+<example>
+<title>Unrolling the rules definition</title>
+<programlisting>
+&p3_rules;
+</programlisting>
+</example>
+<example id="plural.finishing.up">
+<title><filename>plural4.py</filename>, finishing up</title>
+<programlisting>
+&p4_defplural;
+&p4_for; <co id="plural.stage4.3.1"/>
+&p4_if;
+&p4_return2;
+</programlisting>
+<calloutlist>
+<callout arearefs="plural.stage4.3.1">
+<para>Since the <varname>rules</varname> list is the same as the previous example, it should come as no surprise that the <function>plural</function> function hasn't changed.  Remember, it's completely generic; it takes a list of rule functions and calls them in order.  It doesn't care how the rules are defined.  In <link linkend="plural.stage2">stage 2</link>, they were defined as seperate named functions.  In <link linkend="plural.stage3">stage 3</link>, they were defined as anonymous &lambdafunction; functions.  Now in stage 4, they are built dynamically by mapping the <function>buildMatchAndApplyFunctions</function> function onto a list of raw strings.  Doesn't matter; the <function>plural</function> function still works the same way.</para>
+</callout>
+</calloutlist>
+</example>
+<para>Just in case that wasn't mind-blowing enough, I must confess that there was a subtlety in the definition of <function>buildMatchAndApplyFunctions</function> that I skipped over.  Let's go back and take another look.</para>
+<example>
+<title>Another look at <function>buildMatchAndApplyFunctions</function></title>
+<programlisting>
+&p4_defbuild; <co id="plural.stage4.4.1"/>
+</programlisting>
+<calloutlist>
+<callout arearefs="plural.stage4.4.1">
+<para>Notice the double parentheses?  This function doesn't actually take three parameters; it actually takes one parameter, a tuple of three elements.  But the tuple is expanded when the function is called, and the three elements of the tuple are each assigned to different variables: <varname>pattern</varname>, <varname>search</varname>, and <varname>replace</varname>.  Confused yet?  Let's see it in action.</para>
+</callout>
+</calloutlist>
+</example>
+<example>
+<title>Expanding tuples when calling functions</title>
+<screen>
+&prompt;<userinput>def foo((a, b, c)):</userinput>
+&continuationprompt;<userinput>print c</userinput>
+&continuationprompt;<userinput>print b</userinput>
+&continuationprompt;<userinput>print a</userinput>
+&prompt;<userinput>parameters = ('apple', 'bear', 'catnap')</userinput>
+&prompt;<userinput>foo(parameters)</userinput> <co id="plural.stage4.5.1"/>
+<computeroutput>catnap</computeroutput>
+<computeroutput>bear</computeroutput>
+<computeroutput>apple</computeroutput>
+</screen>
+<calloutlist>
+<callout arearefs="plural.stage4.5.1">
+<para>The proper way to call the function <function>foo</function> is with a tuple of three elements.  When the function is called, the elements are assigned to different local variables within <function>foo</function>.</para>
+</callout>
+</calloutlist>
+<para>Now let's go back and see why this auto-tuple-expansion trick was necessary.  <varname>patterns</varname> was a list of tuples, and each tuple had three elements.  When you called <literal>map(buildMatchAndApplyFunctions, patterns)</literal>, that means that <function>buildMatchAndApplyFunctions</function> is <emphasis>not</emphasis> getting called with three parameters.  Using <function>map</function> to map a single list onto a function always calls the function with a single parameter: each element of the list.  In the case of <varname>patterns</varname>, each element of the list is a tuple, so <function>buildMatchAndApplyFunctions</function> always gets called with the tuple, and you use the auto-tuple-expansion trick in the definition of <function>buildMatchAndApplyFunctions</function> to assign the elements of that tuple to named variables that you can work with.</para>
+</example>
+</section>
+
+<section id="plural.stage5">
+<?dbhtml filename="dynamic_functions/stage5.html"?>
+<title>&plural_filename;, stage 5</title>
+<abstract>
+<title/>
+<para>You've factored out all the duplicate code and added enough abstractions so that the pluralization rules are defined in a list of strings.  The next logical step is to take these strings and put them in a separate file, where they can be maintained separately from the code that uses them.</para>
+</abstract>
+<para>First, let's create a text file that contains the rules you want.  No fancy data structures, just space- (or tab-)delimited strings in three columns.  You'll call it <filename>rules.en</filename>; <quote>en</quote> stands for English.  These are the rules for pluralizing English nouns.  You could add other rule files for other languages later.</para>
+<example>
+<title><filename>rules.en</filename></title>
+<programlisting>
+[sxz]$                  $               es
+[^aeioudgkprt]h$        $               es
+[^aeiou]y$              y$              ies
+$                       $               s
+</programlisting>
+</example>
+<para>Now let's see how you can use this rules file.</para>
+<example>
+<title><filename>plural5.py</filename></title>
+<programlisting>
+&importre;
+&p5_import;
+
+&p5_defbuild;
+&p5_return; <co id="plural.stage5.1.1"/>
+
+&p5_defplural; <co id="plural.stage5.1.2"/>
+&p5_lines; <co id="plural.stage5.1.3"/>
+&p5_patterns; <co id="plural.stage5.1.4"/>
+&p5_rules; <co id="plural.stage5.1.5"/>
+&p5_for;
+&p5_apply; <co id="plural.stage5.1.6"/>
+&p5_if;
+</programlisting>
+<calloutlist>
+<callout arearefs="plural.stage5.1.1">
+<para>You're still using the closures technique here (building a function dynamically that uses variables defined outside the function), but now you've combined the separate match and apply functions into one.  (The reason for this change will become clear in the next section.)  This will let you accomplish the same thing as having two functions, but you'll need to call it differently, as you'll see in a minute.</para>
+</callout>
+<callout arearefs="plural.stage5.1.2">
+<para>Our <function>plural</function> function now takes an optional second parameter, <varname>language</varname>, which defaults to <literal>en</literal>.</para>
+</callout>
+<callout arearefs="plural.stage5.1.3">
+<para>You use the <varname>language</varname> parameter to construct a filename, then open the file and read the contents into a list.  If <varname>language</varname> is <literal>en</literal>, then you'll open the <filename>rules.en</filename> file, read the entire thing, break it up by carriage returns, and return a list.  Each line of the file will be one element in the list.</para>
+</callout>
+<callout arearefs="plural.stage5.1.4">
+<para>As you saw, each line in the file really has three values, but they're separated by whitespace (tabs or spaces, it makes no difference).  Mapping the <function>string.split</function> function onto this list will create a new list where each element is a tuple of three strings.  So a line like <literal>[sxz]$ $ es</literal> will be broken up into the tuple <literal>('[sxz]$', '$', 'es')</literal>.  This means that <varname>patterns</varname> will end up as a list of tuples, just like you hard-coded it in <link linkend="plural.stage4">stage 4</link>.</para>
+</callout>
+<callout arearefs="plural.stage5.1.5">
+<para>If <varname>patterns</varname> is a list of tuples, then <varname>rules</varname> will be a list of the functions created dynamically by each call to <function>buildRule</function>.  Calling <function>buildRule(('[sxz]$', '$', 'es'))</function> returns a function that takes a single parameter, <varname>word</varname>.  When this returned function is called, it will execute <literal>re.search('[sxz]$', word) and re.sub('$', 'es', word)</literal>.</para>
+</callout>
+<callout arearefs="plural.stage5.1.6">
+<para>Because you're now building a combined match-and-apply function, you need to call it differently.  Just call the function, and if it returns something, then that's the plural; if it returns nothing (&none;), then the rule didn't match and you need to try another rule.</para>
+</callout>
+</calloutlist>
+</example>
+<para>So the improvement here is that you've completely separated the pluralization rules into an external file.  Not only can the file be maintained separately from the code, but you've set up a naming scheme where the same <function>plural</function> function can use different rule files, based on the <varname>language</varname> parameter.</para>
+
+<para>The downside here is that you're reading that file every time you call the <function>plural</function> function.  I thought I could get through this entire book without using the phrase <quote>left as an exercise for the reader</quote>, but here you go: building a caching mechanism for the language-specific rule files that auto-refreshes itself if the rule files change between calls <emphasis>is left as an exercise for the reader</emphasis>.  Have fun.</para>
+</section>
+
+<section id="plural.stage6">
+<?dbhtml filename="dynamic_functions/stage6.html"?>
+<title>&plural_filename;, stage 6</title>
+<abstract>
+<title/>
+<para>Now you're ready to talk about generators.</para>
+</abstract>
+<example>
+<title><filename>plural6.py</filename></title>
+<programlisting>
+&importre;
+
+&p6_defrules;
+&p6_forline;
+&p6_split;
+&p6_yield;
+
+&p6_defplural;
+&p6_for;
+&p6_apply;
+&p6_return;
+</programlisting>
+</example>
+<para>This uses a technique called generators, which I'm not even going to try to explain until you look at a simpler example first.</para>
+<example id="plural.introducing.generators">
+<title>Introducing generators</title>
+<screen>
+&prompt;<userinput>def make_counter(x):</userinput>
+&continuationprompt;<userinput>print 'entering make_counter'</userinput>
+&continuationprompt;<userinput>while 1:</userinput>
+&continuationprompt;<userinput>    yield x</userinput>               <co id="plural.stage6.2.1"/>
+&continuationprompt;<userinput>    print 'incrementing x'</userinput>
+&continuationprompt;<userinput>    x = x + 1</userinput>
+&continuationprompt;
+&prompt;<userinput>counter = make_counter(2)</userinput> <co id="plural.stage6.2.2"/>
+&prompt;<userinput>counter</userinput>                   <co id="plural.stage6.2.3"/>
+<computeroutput>&lt;generator object at 0x001C9C10></computeroutput>
+&prompt;<userinput>counter.next()</userinput>            <co id="plural.stage6.2.4"/>
+<computeroutput>entering make_counter
+2</computeroutput>
+&prompt;<userinput>counter.next()</userinput>            <co id="plural.stage6.2.5"/>
+<computeroutput>incrementing x
+3</computeroutput>
+&prompt;<userinput>counter.next()</userinput>            <co id="plural.stage6.2.6"/>
+<computeroutput>incrementing x
+4</computeroutput>
+</screen>
+<calloutlist>
+<callout arearefs="plural.stage6.2.1">
+<para>The presence of the &yield; keyword in <function>make_counter</function> means that this is not a normal function.  It is a special kind of function which generates values one at a time.  You can think of it as a resumable function.  Calling it will return a generator that can be used to generate successive values of <varname>x</varname>.</para>
+</callout>
+<callout arearefs="plural.stage6.2.2">
+<para>To create an instance of the <function>make_counter</function> generator, just call it like any other function.  Note that this does not actually execute the function code.  You can tell this because the first line of <function>make_counter</function> is a &print; statement, but nothing has been printed yet.</para>
+</callout>
+<callout arearefs="plural.stage6.2.3">
+<para>The <function>make_counter</function> function returns a generator object.</para>
+</callout>
+<callout arearefs="plural.stage6.2.4">
+<para>The first time you call the <function>next()</function> method on the generator object, it executes the code in <function>make_counter</function> up to the first &yield; statement, and then returns the value that was yielded.  In this case, that will be <literal>2</literal>, because you originally created the generator by calling <function>make_counter(2)</function>.</para>
+</callout>
+<callout arearefs="plural.stage6.2.5">
+<para>Repeatedly calling <function>next()</function> on the generator object <emphasis>resumes where you left off</emphasis> and continues until you hit the next &yield; statement.  The next line of code waiting to be executed is the &print; statement that prints <literal>incrementing x</literal>, and then after that the <literal>x = x + 1</literal> statement that actually increments it.  Then you loop through the &while; loop again, and the first thing you do is <literal>yield x</literal>, which returns the current value of <varname>x</varname> (now 3).</para>
+</callout>
+<callout arearefs="plural.stage6.2.6">
+<para>The second time you call <function>counter.next()</function>, you do all the same things again, but this time <varname>x</varname> is now <literal>4</literal>.  And so forth.  Since <function>make_counter</function> sets up an infinite loop, you could theoretically do this forever, and it would just keep incrementing <varname>x</varname> and spitting out values.  But let's look at more productive uses of generators instead.</para>
+</callout>
+</calloutlist>
+</example>
+<example id="plural.fib.example">
+<title>Using generators instead of recursion</title>
+<programlisting>
+def fibonacci(max):
+    a, b = 0, 1       <co id="plural.stage6.3.1"/>
+    while a &lt; max:
+        yield a       <co id="plural.stage6.3.2"/>
+        a, b = b, a+b <co id="plural.stage6.3.3"/>
+</programlisting>
+<calloutlist>
+<callout arearefs="plural.stage6.3.1">
+<para>The Fibonacci sequence is a sequence of numbers where each number is the sum of the two numbers before it.  It starts with &zero; and &one;, goes up slowly at first, then more and more rapidly.  To start the sequence, you need two variables: <varname>a</varname> starts at &zero;, and <varname>b</varname> starts at &one;.</para>
+</callout>
+<callout arearefs="plural.stage6.3.2">
+<para><varname>a</varname> is the current number in the sequence, so yield it.</para>
+</callout>
+<callout arearefs="plural.stage6.3.3">
+<para><varname>b</varname> is the next number in the sequence, so assign that to <varname>a</varname>, but also calculate the next value (<literal>a+b</literal>) and assign that to <varname>b</varname> for later use.  Note that this happens in parallel; if <varname>a</varname> is <literal>3</literal> and <varname>b</varname> is <literal>5</literal>, then <literal>a, b = b, a+b</literal> will set <varname>a</varname> to <literal>5</literal> (the previous value of <varname>b</varname>) and <varname>b</varname> to <literal>8</literal> (the sum of the previous values of <varname>a</varname> and <varname>b</varname>).</para>
+</callout>
+</calloutlist>
+</example>
+<para>So you have a function that spits out successive Fibonacci numbers.  Sure, you could do that with recursion, but this way is easier to read.  Also, it works well with &for; loops.</para>
+<example>
+<title>Generators in &for; loops</title>
+<screen>
+&prompt;<userinput>for n in fibonacci(1000):</userinput> <co id="plural.stage6.4.1"/>
+&continuationprompt;<userinput>print n,</userinput>              <co id="plural.stage6.4.2"/>
+<computeroutput>0 1 1 2 3 5 8 13 21 34 55 89 144 233 377 610 987</computeroutput>
+</screen>
+<calloutlist>
+<callout arearefs="plural.stage6.4.1">
+<para>You can use a generator like <function>fibonacci</function> in a &for; loop directly.  The &for; loop will create the generator object and successively call the <function>next()</function> method to get values to assign to the &for; loop index variable (<varname>n</varname>).</para>
+</callout>
+<callout arearefs="plural.stage6.4.2">
+<para>Each time through the &for; loop, <varname>n</varname> gets a new value from the &yield; statement in <function>fibonacci</function>, and all you do is print it out.  Once <function>fibonacci</function> runs out of numbers (<varname>a</varname> gets bigger than <varname>max</varname>, which in this case is <literal>1000</literal>), then the &for; loop exits gracefully.</para>
+</callout>
+</calloutlist>
+</example>
+<para>OK, let's go back to the <function>plural</function> function and see how you're using this.</para>
+<example>
+<title>Generators that generate dynamic functions</title>
+<programlisting>
+&p6_defrules;
+&p6_forline; <co id="plural.stage6.5.1"/>
+&p6_split; <co id="plural.stage6.5.2"/>
+&p6_yield; <co id="plural.stage6.5.3"/>
+
+&p6_defplural;
+&p6_for; <co id="plural.stage6.5.4"/>
+&p6_apply;
+&p6_return;
+</programlisting>
+<calloutlist>
+<callout arearefs="plural.stage6.5.1">
+<para><literal>for line in file(...)</literal> is a common idiom for reading lines from a file, one line at a time.  It works because <emphasis><function>file</function> actually returns a generator</emphasis> whose <function>next()</function> method returns the next line of the file.  That is so insanely cool, I wet myself just thinking about it.</para>
+</callout>
+<callout arearefs="plural.stage6.5.2">
+<para>No magic here.  Remember that the lines of the rules file have three values separated by whitespace, so <literal>line.split()</literal> returns a tuple of 3 values, and you assign those values to 3 local variables.</para>
+</callout>
+<callout arearefs="plural.stage6.5.3">
+<para><emphasis>And then you yield.</emphasis>  What do you yield?  A function, built dynamically with &lambdafunction;, that is actually a closure (it uses the local variables <varname>pattern</varname>, <varname>search</varname>, and <varname>replace</varname> as constants).  In other words, <function>rules</function> is a generator that spits out rule functions.</para>
+</callout>
+<callout arearefs="plural.stage6.5.4">
+<para>Since <function>rules</function> is a generator, you can use it directly in a &for; loop.  The first time through the &for; loop, you will call the <function>rules</function> function, which will open the rules file, read the first line out of it, dynamically build a function that matches and applies the first rule defined in the rules file, and yields the dynamically built function.  The second time through the &for; loop, you will pick up where you left off in <function>rules</function> (which was in the middle of the <literal>for line in file(...)</literal> loop), read the second line of the rules file, dynamically build another function that matches and applies the second rule defined in the rules file, and yields it.  And so forth.</para>
+</callout>
+</calloutlist>
+</example>
+<para>What have you gained over <link linkend="plural.stage5">stage 5</link>?  In stage 5, you read the entire rules file and built a list of all the possible rules before you even tried the first one.  Now with generators, you can do everything lazily: you open the first and read the first rule and create a function to try it, but if that works you don't ever read the rest of the file or create any other functions.</para>
+<itemizedlist role="furtherreading">
+<title>Further reading</title>
+<listitem><para><ulink url="http://www.python.org/peps/pep-0255.html">PEP 255</ulink> defines generators.</para></listitem>
+<listitem><para>&pythoncookbook; has <ulink url="http://www.google.com/search?q=generators+cookbook+site:aspn.activestate.com">many more examples of generators</ulink>.</para></listitem>
+</itemizedlist>
+</section>
+
+<section id="plural.summary">
+<?dbhtml filename="dynamic_functions/summary.html"?>
+<title>Summary</title>
+<abstract>
+<title/>
+<para>You talked about several different advanced techniques in this chapter.  Not all of them are appropriate for every situation.</para>
+</abstract>
+<para>You should now be comfortable with all of these techniques:</para>
+<itemizedlist>
+<listitem><para>Performing <link linkend="plural.stage1">string substitution with regular expressions</link>.</para></listitem>
+<listitem><para>Treating <link linkend="plural.stage2">functions as objects</link>, storing them in lists, assigning them to variables, and calling them through those variables.</para></listitem>
+<listitem><para>Building <link linkend="plural.stage3">dynamic functions with &lambdafunction;</link>.</para></listitem>
+<listitem><para>Building <link linkend="plural.stage4">closures</link>, dynamic functions that contain surrounding variables as constants.</para></listitem>
+<listitem><para>Building <link linkend="plural.stage6">generators</link>, resumable functions that perform incremental logic and return different values each time you call them.</para></listitem>
+</itemizedlist>
+<para>Adding abstractions, building functions dynamically, building closures, and using generators can all make your code simpler, more readable, and more flexible.  But they can also end up making it more difficult to debug later.  It's up to you to find the right balance between simplicity and power.</para>
+</section>
+</chapter>
+
+<!--
+- Case study: pluralizing nouns
+  - Examples:
+    if re.search('[sxz]$', noun, re.IGNORECASE):
+      result = re.sub('$', 'es', noun)
+    elif re.search('[^aeioudgkprt]h$', noun, re.IGNORECASE):
+      result = re.sub('$', 'es', noun)
+    elif re.search('[^aeiou]y$', noun, re.IGNORECASE):
+      result = re.sub('y$', 'ies', noun)
+    else:
+      result = noun + 's'
+  - Search flags (re.IGNORECASE)
+  - Patterns:
+    [] single-character or
+    ^  not
+  - maybe do this in stages, like roman chapter
+  - store each stage's code in common/py/plural/
+  - each stage can just use the three "common" rules (SXZ, hard H, and Y to IES)
+  - stage 1
+    - code plural.py as series of 'if' statements
+  - stage 2
+    - abstract what's the same about each if statement
+    - look at it as "if matchesRule(noun): noun = applyRule(noun)"
+    - code plural.py as series of match functions and pluralize functions
+  - stage 3
+    - redefine match and apply functions inline
+    - make a single function that takes a noun and returns whether it matches a hardcoded rule
+      matchesYtoIESrule = re.compile('y$', re.IGNORECASE).search
+    - use lambda to make a single function that takes a noun and returns its plural, based on a hardcoded rule
+      applyYtoIESrule = lambda noun: re.sub('y$', 'ies', noun, re.IGNORECASE)
+    - Now you can use a series of if statements like this:
+      if matchesYtoIESrule(noun): result = applyYtoIESrule(noun)
+  - stage 4
+    - Define the rules as a tuple of functions, and iterate through them
+      rules = ((matchesYtoIESrule, applyYtoIESrule), ...)
+      for matchesRule, applyRule in rules:
+        if matchesRule(noun):
+          result = applyRule(noun)
+          break
+  - stage 5
+    - Abstract what's similar about each function (re.search, re.sub)
+    - (more here)
+  - stage 6
+    - makeMatchAndApply
+-->

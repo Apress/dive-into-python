@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<title>Dive Into &python;</title>
+<subtitle>&python; from novice to pro</subtitle>
+<authorgroup>
+<author>
+<firstname>Mark</firstname>
+<surname>Pilgrim</surname>
+</author>
+</authorgroup>
+<copyright>
+<year>2000</year>
+<year>2001</year>
+<year>2002</year>
+<year>2003</year>
+<year>2004</year>
+<holder><ulink url="mailto:mark@diveintopython.org">Mark Pilgrim</ulink></holder>
+</copyright>
+<pubdate>20 May 2004</pubdate>
+<abstract>
+<title/>
+<para>This book lives at <ulink url="&url_diveintopython;"/>.  If you're reading it somewhere else, you may not have the latest version.</para>
+</abstract>
+<keywordset>
+<keyword>Python</keyword>
+<keyword>Dive Into Python</keyword>
+<keyword>tutorial</keyword>
+<keyword>object-oriented</keyword>
+<keyword>programming</keyword>
+<keyword>documentation</keyword>
+<keyword>book</keyword>
+<keyword>free</keyword>
+</keywordset>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+"../../common/docbook/dtd/docbookx.dtd"
+[
+<!--
+"http://www.oasis-open.org/docbook/xml/4.0/docbookx.dtd"
+-->
+<!ENTITY % entities SYSTEM "entities.xml">
+%entities;
+]>
+<article>
+<articleinfo>&pubinfo;
+</articleinfo>
+<section id="intro">
+<title/>
+<para>&citetitle; is a free &python; book for experienced programmers. You can <ulink url="toc/index.html">read the book</ulink> online, or <link linkend="download">download it</link> in a variety of formats.  It is also available in <link linkend="languages">multiple languages</link>.</para>
+</section>
+<section id="read">
+<title>Read <ulink url="toc/index.html">&citetitle;</ulink></title>
+<para>This book is still being written. You can <ulink url="appendix/history.html">read the revision history</ulink> to see what's new. <token id="updated"/></para>
+</section>
+<section id="download">
+<title>Download &citetitle;</title>
+<itemizedlist>
+<listitem><para><ulink url="&url_dip_html;" type="Download as HTML">&html;</ulink></para></listitem>
+<listitem><para><ulink url="&url_dip_pdf;" type="Download as PDF">&pdf;</ulink></para></listitem>
+<listitem><para><ulink url="&url_dip_doc;" type="Download in Microsoft Word format">&msword;</ulink></para></listitem>
+<!--
+<listitem><para><ulink url="&url_dip_help;" type="Download in Windows Help format">&winhelp;</ulink></para></listitem>
+-->
+<listitem><para><ulink url="&url_dip_text;" type="Download as plain text">plain text</ulink></para></listitem>
+<listitem><para><ulink url="&url_dip_htmlflat;" type="Download as single HTML file">&html; (single file)</ulink></para></listitem>
+<listitem><para><ulink url="&url_dip_xml;" type="Download XML source">XML (DocBook)</ulink></para></listitem>
+<listitem><para><ulink url="&url_dip_common;" type="Download build tools and auxiliary files">Build scripts</ulink> (for translators)</para></listitem>
+</itemizedlist>
+</section>
+<section id="languages">
+<title>&citetitle; in your language</title>
+<para><ulink url="appendix/fdl_translation.html">Translations are freely permitted</ulink> as long as they are released under the &gnu; Free Documentation License.  &citetitle; has already been fully or partially translated into several languages.  If you translate it into another language and would like to be listed here, just <ulink url="mailto:mark@diveintopython.org">let me know</ulink>.</para>
+<itemizedlist>
+<listitem><para><ulink url="&url_diveintopythonit;">Italian</ulink></para></listitem>
+<listitem><para><ulink url="&url_diveintopythonfr;">French</ulink></para></listitem>
+<listitem><para><ulink url="&url_diveintopythones;">Spanish</ulink></para></listitem>
+<listitem><para><ulink url="&url_diveintopythoncn;">Chinese</ulink></para></listitem>
+<listitem><para><ulink url="&url_diveintopythonkr;">Korean</ulink></para></listitem>
+<listitem><para><ulink url="&url_diveintopythonru;">Russian</ulink></para></listitem>
+</itemizedlist>
+</section>
+<section id="republish">
+<title>Republish &citetitle;</title>
+<para>Want to mirror this web site? Publish this book on your corporate intranet? Distribute it on <acronym>CD-ROM</acronym>? Feel free. This book is published under the &gnu; Free Documentation License, which gives you enormous freedoms to modify and redistribute it in all its forms. If you're familiar with the &gnu; General Public License for software, you already understand these freedoms; the <acronym>FDL</acronym> is the &gpl; for books. You can <ulink url="appendix/fdl.html">read the license</ulink> for all the details.</para>
+</section>
+<appendix>
+<title>Download &python;</title>
+<itemizedlist>
+<listitem><para><ulink url="&url_activepython;">ActivePython</ulink> (freeware, Windows)</para></listitem>
+<listitem><para><ulink url="&url_pythondownload;">IDLE</ulink> (open source, Windows)</para></listitem>
+<listitem><para><ulink url="&url_komodo;">Komodo</ulink> (commercial, Windows)</para></listitem>
+<listitem><para><ulink url="&url_pythondownloadrpms;">RPMs</ulink> (open source, Linux)</para></listitem>
+<listitem><para><ulink url="&url_pythondownload;">Source code</ulink> (all platforms)</para></listitem>
+<listitem><para><ulink url="&url_pythonmode;">&pythonmode;</ulink> for <ulink url="&url_emacs;">&emacs;</ulink></para></listitem>
+<listitem><para><ulink url="&url_mac;">Jack Jansen's binaries</ulink> (open source, &macos;, &macosx;)</para></listitem>
+<listitem><para><ulink url="&url_finkosx;">Fink</ulink> (open source, &macosx;)</para></listitem>
+<listitem><para><ulink url="&url_jythondownload;">Jython</ulink> (open source, &java;)</para></listitem>
+<listitem><para><ulink url="&url_other;">more platforms</ulink></para></listitem>
+</itemizedlist>
+</appendix>
+<appendix>
+<title>Learn &python;</title>
+<itemizedlist>
+<listitem><para>&learningtoprogram;</para></listitem>
+<listitem><para>&howtothink;</para></listitem>
+<listitem><para>&thinkinginpython;</para></listitem>
+<listitem><para><ulink url="&url_nonprogrammer;" type="Python articles for beginners and experts">Introductions</ulink></para></listitem>
+<listitem><para><ulink url="&url_pythonoreilly;" type="books for sale, plus online articles">O'Reilly &python; Center</ulink></para></listitem>
+<listitem><para><ulink url="&url_nonenglish;" type="tutorials in over a dozen languages">Non-English resources</ulink></para></listitem>
+<listitem><para><ulink url="&url_dmozpythondoc;">more tutorials</ulink></para></listitem>
+</itemizedlist>
+</appendix>
+<appendix>
+<title>&python; reference</title>
+<itemizedlist>
+<listitem><para><ulink url="&url_pythondocs;" type="official Python documentation">Official documentation</ulink></para></listitem>
+<listitem><para><ulink url="&url_pythonquickreference;" type="all essential Python syntax, on one page">Quick Reference</ulink></para></listitem>
+</itemizedlist>
+</appendix>
+<appendix>
+<title>&python; community</title>
+<itemizedlist>
+<listitem><para>&pythonorg;</para></listitem>
+<listitem><para><ulink url="&url_clp;" type="lively discussion of all things Python">comp.lang.python</ulink></para></listitem>
+<listitem><para><ulink url="&url_clpa;" type="announcements of new and updated software, books, and other resources">c.l.p.announce</ulink></para></listitem>
+<listitem><para><ulink url="&url_tutormailinglist;" type="mailing list for beginners">Tutor</ulink></para></listitem>
+<listitem><para><ulink url="&url_pythonmailinglists;" type="email discussions of specific Python topics">&python; mailing lists</ulink></para></listitem>
+<listitem><para><ulink url="&url_dmozpython;">more links</ulink></para></listitem>
+</itemizedlist>
+</appendix>
+<appendix>
+<title>&python; code</title>
+<itemizedlist>
+<listitem><para>&pythoncookbook;</para></listitem>
+<listitem><para><ulink url="&url_vaultsofparnassus;" type="central repository for 3rd party Python software">Vaults of Parnassus</ulink></para></listitem>
+<listitem><para><ulink url="&url_faqts;" type="community-maintained knowledge base">&python;.faqts</ulink></para></listitem>
+</itemizedlist>
+</appendix>
+<appendix>
+<title>Also by the author</title>
+<itemizedlist>
+<listitem><para><ulink url="http://diveintoaccessibility.org/" type="Free book for web designers">Dive Into Accessibility</ulink></para></listitem>
+<listitem><para><ulink url="http://diveintoosx.org/" type="Free repository for Macintosh system administrators">Dive Into OS X</ulink></para></listitem>
+<listitem><para><ulink url="http://diveintomark.org/" type="author's own Python projects, web services and other fun stuff">dive into mark</ulink></para></listitem>
+</itemizedlist>
+</appendix>
+</article>

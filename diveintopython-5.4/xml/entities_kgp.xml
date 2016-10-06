@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!ENTITY kgp_name 'kgp'>
+<!ENTITY kgp_filename '<filename class="headerfile">&kgp_name;.py</filename>'>
+<!ENTITY kgp_classname '<classname>KantGenerator</classname>'>
+<!ENTITY toolbox_name 'toolbox'>
+<!ENTITY toolbox_filename '<filename class="headerfile">&toolbox_name;.py</filename>'>
+<!ENTITY kantxml_filename '<filename>kant.xml</filename>'>
+<!ENTITY binaryxml_filename '<filename>binary.xml</filename>'>
+<!ENTITY xml_packagename '<filename class="headerfile">xml</filename>'>
+<!ENTITY dom_packagename '<filename class="headerfile">dom</filename>'>
+<!ENTITY sax_packagename '<filename class="headerfile">sax</filename>'>
+<!ENTITY xmldom_packagename '<filename class="headerfile">xml.dom</filename>'>
+<!ENTITY minidom_modulename '<filename class="headerfile">minidom</filename>'>
+<!ENTITY element_classname '<classname>Element</classname>'>
+<!ENTITY node_classname '<classname>Node</classname>'>
+<!ENTITY text_classname '<classname>Text</classname>'>
+<!ENTITY document_classname '<classname>Document</classname>'>
+<!ENTITY init_filename '<filename>__init__.py</filename>'>
+<!ENTITY minidomparse_functionname '<function>minidom.parse</function>'>
+<!ENTITY parsestring_functionname '<function>parseString</function>'>
+<!ENTITY toxml_functionname '<function>toxml</function>'>
+<!ENTITY childnodes_attr '<function>childNodes</function>'>
+<!ENTITY randomchildelement_functionname '<function>randomChildElement</function>'>
+<!ENTITY random_modulename '<filename class="headerfile">random</filename>'>
+<!ENTITY getopt_modulename '<filename class="headerfile">getopt</filename>'>
+<!ENTITY getopt_functionname '<function>getopt</function>'>
+
+<!ENTITY grammarnode '<sgmltag>grammar</sgmltag>'>
+<!ENTITY refnode '<sgmltag>ref</sgmltag>'>
+<!ENTITY xrefnode '<sgmltag>xref</sgmltag>'>
+<!ENTITY pnode '<sgmltag>p</sgmltag>'>
+<!ENTITY choicenode '<sgmltag>choice</sgmltag>'>
+<!ENTITY idattr '<sgmltag>id</sgmltag>'>
+<!ENTITY firstchild_attr '<function>firstChild</function>'>
+<!ENTITY lastchild_attr '<function>lastChild</function>'>
+<!ENTITY getelementsbytagname_functionname '<function>getElementsByTagName</function>'>
+<!ENTITY url_xmltutorial 'http://directory.google.com/Top/Computers/Data_Formats/Markup_Languages/XML/Resources/FAQs,_Help,_and_Tutorials/'>
+<!ENTITY namednodemap_classname '<classname>NamedNodeMap</classname>'>
+<!ENTITY attr_classname '<classname>Attr</classname>'>
+<!ENTITY stringio_modulename '<filename class="headerfile">StringIO</filename>'>
+<!ENTITY stringio_classname '<classname>StringIO</classname>'>
+<!ENTITY openanything_functionname '<function>openAnything</function>'>
+<!ENTITY url_unicode 'http://www.unicode.org/'>
+<!ENTITY url_unicodetech '&url_unicode;standard/principles.html'>
+<!ENTITY url_unicodetutorial 'http://www.reportlab.com/i18n/python_unicode_tutorial.html'>
+<!ENTITY url_unicodeproposal 'http://www.lemburg.com/files/python/unicode-proposal.txt'>
+<!ENTITY stdin '<literal>stdin</literal>'>
+<!ENTITY stdout '<literal>stdout</literal>'>
+<!ENTITY stderr '<literal>stderr</literal>'>
+<!ENTITY kgprefs '<varname>self.refs</varname>'>
+
+<!ENTITY kgp_doc '"""Kant Generator for Python
+
+Generates mock philosophy based on a context-free grammar
+
+Usage: python kgp.py [options] [source]
+
+Options:
+  -g ..., --grammar=...   use specified grammar file or URL
+  -h, --help              show this help
+  -d                      show debugging information while parsing
+
+Examples:
+  kgp.py                  generates several paragraphs of Kantian philosophy
+  kgp.py -g husserl.xml   generates several paragraphs of Husserl
+  kpg.py "&lt;xref id=&singquot;paragraph&singquot;/>"  generates a paragraph of Kant
+  kgp.py template.xml     reads from template.xml to decide what to generate
+"""'>
+<!ENTITY kgp_import 'from xml.dom import minidom
+import random
+import toolbox
+import sys
+import getopt'>
+
+<!ENTITY kgp_debug       '_debug = 0'>
+
+<!ENTITY kgp_exception   'class NoSourceError(Exception): pass'>
+
+<!ENTITY kgp_classdef    'class KantGenerator:'>
+<!ENTITY kgp_classdoc    '    """generates mock philosophy based on a context-free grammar"""'>
+    
+<!ENTITY kgp_init        '    def __init__(self, grammar, source=None):'>
+<!ENTITY kgp_initgrammar '        self.loadGrammar(grammar)'>
+<!ENTITY kgp_initsource  '        self.loadSource(source and source or self.getDefaultSource())'>
+<!ENTITY kgp_refresh     '        self.refresh()'>
+
+<!ENTITY kgp_privateload '    def _load(self, source):'>
+<!ENTITY kgp_loaddoc '        """load XML input source, return parsed XML document
+
+        - a URL of a remote XML file ("http://diveintopython.org/kant.xml")
+        - a filename of a local XML file ("~/diveintopython/common/py/kant.xml")
+        - standard input ("-")
+        - the actual XML document, as a string
+        """'>
+<!ENTITY kgp_loadopen '        sock = toolbox.openAnything(source)'>
+<!ENTITY kgp_loadparse '        xmldoc = minidom.parse(sock).documentElement'>
+<!ENTITY kgp_loadclose '        sock.close()'>
+<!ENTITY kgp_loadreturn '        return xmldoc'>
+
+<!ENTITY kgp_loadgrammardef '    def loadGrammar(self, grammar):                         '>
+<!ENTITY kgp_loadgrammardoc '        """load context-free grammar"""                     '>
+<!ENTITY kgp_loadgrammar    '        self.grammar = self._load(grammar)                  '>
+<!ENTITY kgp_initrefs       '        self.refs = {}                                      '>
+<!ENTITY kgp_forref         '        for ref in self.grammar.getElementsByTagName("ref"):'>
+<!ENTITY kgp_refid          '            self.refs[ref.attributes["id"].value] = ref     '>
+
+<!ENTITY kgp_loadsourcedef '    def loadSource(self, source):'>
+<!ENTITY kgp_loadsourcedoc '        """load source"""'>
+<!ENTITY kgp_loadsource '        self.source = self._load(source)'>
+
+<!ENTITY kgp_defaultsourcedef '    def getDefaultSource(self):'>
+<!ENTITY kgp_defaultsourcedoc '        """guess default source of the current grammar
+        
+        The default source will be one of the &lt;ref>s that is not
+        cross-referenced.  This sounds complicated but it&singquot;s not.
+        Example: The default source for kant.xml is
+        "&lt;xref id=&singquot;section&singquot;/>", because &singquot;section&singquot; is the one &lt;ref>
+        that is not &lt;xref>&singquot;d anywhere in the grammar.
+        In most grammars, the default source will produce the
+        longest (and most interesting) output.
+        """'>
+<!ENTITY kgp_initxrefs           '        xrefs = {}'>
+<!ENTITY kgp_forxref             '        for xref in self.grammar.getElementsByTagName("xref"):'>
+<!ENTITY kgp_xrefid              '            xrefs[xref.attributes["id"].value] = 1'>
+<!ENTITY kgp_xrefkeys            '        xrefs = xrefs.keys()'>
+<!ENTITY kgp_standalonexrefs     '        standaloneXrefs = [e for e in self.refs.keys() if e not in xrefs]'>
+<!ENTITY kgp_ifstandalone        '        if not standaloneXrefs:'>
+<!ENTITY kgp_raiseerror          '            raise NoSourceError, "can&singquot;t guess source, and no source specified"'>
+<!ENTITY kgp_returndefaultsource '        return &singquot;&lt;xref id="&pct;s"/>&singquot; &pct; random.choice(standaloneXrefs)'>
+        
+<!ENTITY kgp_resetdef               '    def reset(self):'>
+<!ENTITY kgp_resetdoc               '        """reset parser"""'>
+<!ENTITY kgp_initpieces             '        self.pieces = []'>
+<!ENTITY kgp_initcapitalizenextword '        self.capitalizeNextWord = 0'>
+
+<!ENTITY kgp_refreshdef '    def refresh(self):'>
+<!ENTITY kgp_refreshdoc '        """reset output buffer, re-parse entire source file, and return output
+        
+        Since parsing involves a good deal of randomness, this is an
+        easy way to get new output without having to reload a grammar file
+        each time.
+        """'>
+<!ENTITY kgp_reset '        self.reset()'>
+<!ENTITY kgp_parse '        self.parse(self.source)'>
+<!ENTITY kgp_output '        return self.output()'>
+
+<!ENTITY kgp_outputdef '    def output(self):'>
+<!ENTITY kgp_outputdoc '        """output generated text"""'>
+<!ENTITY kgp_returnoutput '        return "".join(self.pieces)'>
+
+<!ENTITY kgp_randomchildelementdef '    def randomChildElement(self, node):'>
+<!ENTITY kgp_randomchildelementdoc '        """choose a random child element of a node
+        
+        This is a utility method used by do_xref and do_choice.
+        """'>
+<!ENTITY kgp_choices      '        choices = [e for e in node.childNodes
+                   if e.nodeType == e.ELEMENT_NODE]'>
+<!ENTITY kgp_chosen       '        chosen = random.choice(choices)            '>
+<!ENTITY kgp_ifdebug      '        if _debug:                                 '>
+<!ENTITY kgp_printchoices '            sys.stderr.write(&singquot;&pct;s available choices: &pct;s\n&singquot; &pct; \
+                (len(choices), [e.toxml() for e in choices]))'>
+<!ENTITY kgp_printchosen  '            sys.stderr.write(&singquot;Chosen: &pct;s\n&singquot; &pct; chosen.toxml())'>
+<!ENTITY kgp_returnchosen '        return chosen                              '>
+
+<!ENTITY kgp_parsedef               '    def parse(self, node):         '>
+<!ENTITY kgp_parsedoc               '        """parse a single XML node
+        
+        A parsed XML document (from minidom.parse) is a tree of nodes
+        of various types.  Each node is represented by an instance of the
+        corresponding Python class (Element for a tag, Text for
+        text data, Document for the top-level document).  The following
+        statement constructs the name of a class method based on the type
+        of node we&singquot;re parsing ("parse_Element" for an Element node,
+        "parse_Text" for a Text node, etc.) and then calls the method.
+        """'>
+<!ENTITY kgp_getparsemethod         '        parseMethod = getattr(self, "parse_&pct;s" &pct; node.__class__.__name__)'>
+<!ENTITY kgp_parsemethod            '        parseMethod(node)'>
+
+<!ENTITY kgp_parsedocumentdef       '    def parse_Document(self, node):'>
+<!ENTITY kgp_parsedocumentdoc       '        """parse the document node
+        
+        The document node by itself isn&singquot;t interesting (to us), but
+        its only child, node.documentElement, is: it&singquot;s the root node
+        of the grammar.
+        """'>
+<!ENTITY kgp_parsedocument          '        self.parse(node.documentElement)'>
+
+<!ENTITY kgp_parsetextdef           '    def parse_Text(self, node):    '>
+<!ENTITY kgp_parsetextdoc           '        """parse a text node
+        
+        The text of a text node is usually added to the output buffer
+        verbatim.  The one exception is that &lt;p class=&singquot;sentence&singquot;&gt; sets
+        a flag to capitalize the first letter of the next word.  If
+        that flag is set, we capitalize the text and reset the flag.
+        """'>
+<!ENTITY kgp_text                   '        text = node.data'>
+<!ENTITY kgp_ifcapitalizenextword   '        if self.capitalizeNextWord:'>
+<!ENTITY kgp_appendcapital          '            self.pieces.append(text[0].upper())'>
+<!ENTITY kgp_appendrest             '            self.pieces.append(text[1:])'>
+<!ENTITY kgp_resetcapital           '            self.capitalizeNextWord = 0'>
+<!ENTITY kgp_elsecapitalizenextword '        else:'>
+<!ENTITY kgp_appendnormal           '            self.pieces.append(text)'>
+
+<!ENTITY kgp_parseelementdef        '    def parse_Element(self, node): '>
+<!ENTITY kgp_parseelementdoc        '        """parse an element
+        
+        An XML element corresponds to an actual tag in the source:
+        &lt;xref id=&singquot;...&singquot;&gt;, &lt;p chance=&singquot;...&singquot;&gt;, &lt;choice&gt;, etc.
+        Each element type is handled in its own method.  Like we did in
+        parse(), we construct a method name based on the name of the
+        element ("do_xref" for an &lt;xref&gt; tag, etc.) and
+        call the method.
+        """'>
+<!ENTITY kgp_gethandlermethod       '        handlerMethod = getattr(self, "do_&pct;s" &pct; node.tagName)'>
+<!ENTITY kgp_handlermethod          '        handlerMethod(node)'>
+
+<!ENTITY kgp_parsecommentdef        '    def parse_Comment(self, node):'>
+<!ENTITY kgp_parsecommentdoc        '        """parse a comment
+        
+        The grammar can contain XML comments, but we ignore them
+        """'>
+<!ENTITY kgp_pass                   '        pass'>
+    
+<!ENTITY kgp_doxrefdef              '    def do_xref(self, node):'>
+<!ENTITY kgp_doxrefdoc              '        """handle &lt;xref id=&singquot;...&singquot;&gt; tag
+        
+        An &lt;xref id=&singquot;...&singquot;&gt; tag is a cross-reference to a &lt;ref id=&singquot;...&singquot;&gt;
+        tag.  &lt;xref id=&singquot;sentence&singquot;/&gt; evaluates to a randomly chosen child of
+        &lt;ref id=&singquot;sentence&singquot;&gt;.
+        """'>
+<!ENTITY kgp_id                     '        id = node.attributes["id"].value'>
+<!ENTITY kgp_parsexref              '        self.parse(self.randomChildElement(self.refs[id]))'>
+
+<!ENTITY kgp_dopdef                 '    def do_p(self, node):'>
+<!ENTITY kgp_dopdoc                 '        """handle &lt;p&gt; tag
+        
+        The &lt;p&gt; tag is the core of the grammar.  It can contain almost
+        anything: freeform text, &lt;choice&gt; tags, &lt;xref&gt; tags, even other
+        &lt;p&gt; tags.  If a "class=&singquot;sentence&singquot;" attribute is found, a flag
+        is set and the next word will be capitalized.  If a "chance=&singquot;X&singquot;"
+        attribute is found, there is an X&pct; chance that the tag will be
+        evaluated (and therefore a (100-X)&pct; chance that it will be
+        completely ignored)
+        """'>
+<!ENTITY kgp_keys                   '        keys = node.attributes.keys()'>
+<!ENTITY kgp_ifclass                '        if "class" in keys:'>
+<!ENTITY kgp_sentence               '            if node.attributes["class"].value == "sentence":'>
+<!ENTITY kgp_setcapitalizenextword  '                self.capitalizeNextWord = 1'>
+<!ENTITY kgp_ifchance               '        if "chance" in keys:'>
+<!ENTITY kgp_chance                 '            chance = int(node.attributes["chance"].value)'>
+<!ENTITY kgp_rolldice               '            doit = (chance &gt; random.randrange(100))'>
+<!ENTITY kgp_elsechance             '        else:'>
+<!ENTITY kgp_setdoit                '            doit = 1'>
+<!ENTITY kgp_ifdoit                 '        if doit:'>
+<!ENTITY kgp_parsep                 '            for child in node.childNodes: self.parse(child)'>
+
+<!ENTITY kgp_dochoicedef            '    def do_choice(self, node):'>
+<!ENTITY kgp_dochoicedoc            '        """handle &lt;choice&gt; tag
+        
+        A &lt;choice&gt; tag contains one or more &lt;p&gt; tags.  One &lt;p&gt; tag
+        is chosen at random and evaluated; the rest are ignored.
+        """'>
+<!ENTITY kgp_parsechoice            '        self.parse(self.randomChildElement(node))'>
+
+<!ENTITY kgp_usagedef        'def usage():'>
+<!ENTITY kgp_usagecode       '    print __doc__'>
+
+<!ENTITY kgp_maindef         'def main(argv):                         '>
+<!ENTITY kgp_initmaingrammar '    grammar = "kant.xml"                '>
+<!ENTITY kgp_trygetopt       '    try:                                '>
+<!ENTITY kgp_getopt          '        opts, args = getopt.getopt(argv, "hg:d", ["help", "grammar="])'>
+<!ENTITY kgp_exceptgetopt    '    except getopt.GetoptError:          '>
+<!ENTITY kgp_errorusage      '        usage()                         '>
+<!ENTITY kgp_errorexit       '        sys.exit(2)                     '>
+<!ENTITY kgp_foropt          '    for opt, arg in opts:               '>
+<!ENTITY kgp_ifh             '        if opt in ("-h", "--help"):     '>
+<!ENTITY kgp_helpusage       '            usage()                     '>
+<!ENTITY kgp_helpexit        '            sys.exit()                  '>
+<!ENTITY kgp_ifd             '        elif opt == &singquot;-d&singquot;:               '>
+<!ENTITY kgp_globaldebug     '            global _debug               '>
+<!ENTITY kgp_setdebug        '            _debug = 1                  '>
+<!ENTITY kgp_ifg             '        elif opt in ("-g", "--grammar"):'>
+<!ENTITY kgp_setmaingrammar  '            grammar = arg               '>
+    
+<!ENTITY kgp_setdefaultsource '    source = "".join(args)              '>
+
+<!ENTITY kgp_createkantgenerator '    k = KantGenerator(grammar, source)'>
+<!ENTITY kgp_nowrap              '    print k.output()'>
+
+<!ENTITY kgp_ifmain 'if __name__ == "__main__":'>
+<!ENTITY kgp_main '    main(sys.argv[1:])'>
+
+<!ENTITY tb_doc '"""Miscellaneous utility functions"""'>
+
+<!ENTITY tb_openanythingdef 'def openAnything(source):            '>
+<!ENTITY tb_openanythingdoc '    """URI, filename, or string --&gt; stream
+
+    This function lets you define parsers that take any input source
+    (URL, pathname to local or network file, or actual data as a string)
+    and deal with it in a uniform manner.  Returned object is guaranteed
+    to have all the basic stdio read methods (read, readline, readlines).
+    Just .close() the object when you&singquot;re done with it.
+    
+    Examples:
+    &gt;&gt;&gt; from xml.dom import minidom
+    &gt;&gt;&gt; sock = openAnything("http://localhost/kant.xml")
+    &gt;&gt;&gt; doc = minidom.parse(sock)
+    &gt;&gt;&gt; sock.close()
+    &gt;&gt;&gt; sock = openAnything("c:\\inetpub\\wwwroot\\kant.xml")
+    &gt;&gt;&gt; doc = minidom.parse(sock)
+    &gt;&gt;&gt; sock.close()
+    &gt;&gt;&gt; sock = openAnything("&lt;ref id=&singquot;conjunction&singquot;&gt;&lt;text&gt;and&lt;/text&gt;&lt;text&gt;or&lt;/text&gt;&lt;/ref&gt;")
+    &gt;&gt;&gt; doc = minidom.parse(sock)
+    &gt;&gt;&gt; sock.close()
+    """'>
+
+<!ENTITY tb_ifhasattr       '    if hasattr(source, "read"):'>
+<!ENTITY tb_returnsource    '        return source'>
+
+<!ENTITY tb_stdin           '    if source == &singquot;-&singquot;:'>
+<!ENTITY tb_stdinimport     '        import sys'>
+<!ENTITY tb_stdinreturn     '        return sys.stdin'>
+
+<!ENTITY tb_urllibcomment   '    # try to open with urllib (if source is http, ftp, or file URL)'>
+<!ENTITY tb_importurllib    '    import urllib                         '>
+<!ENTITY tb_tryurllib       '    try:                                  '>
+<!ENTITY tb_urlopen         '        return urllib.urlopen(source)     '>
+<!ENTITY tb_excepturllib    '    except (IOError, OSError):            '>
+<!ENTITY tb_urllibpass      '        pass                              '>
+    
+<!ENTITY tb_nativecomment   '    # try to open with native open function (if source is pathname)'>
+<!ENTITY tb_trynative       '    try:                                  '>
+<!ENTITY tb_native          '        return open(source)               '>
+<!ENTITY tb_exceptnative    '    except (IOError, OSError):            '>
+<!ENTITY tb_nativepass      '        pass                              '>
+    
+<!ENTITY tb_stringiocomment '    # treat source as string'>
+<!ENTITY tb_importstringio  '    import StringIO                       '>
+<!ENTITY tb_stringio        '    return StringIO.StringIO(str(source)) '>

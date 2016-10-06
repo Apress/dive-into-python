@@ -1,0 +1,1038 @@
+<?xml version="1.0" encoding="utf-8"?>
+<chapter id="oa">
+<?dbhtml filename="http_web_services/index.html"?>
+<title>HTTP Web Services</title>
+<titleabbrev id="oa.numberonly">Chapter 11</titleabbrev>
+<section id="oa.divein">
+<title>Diving in</title>
+<abstract>
+<title/>
+<para>You've learned about <link linkend="dialect">HTML processing</link> and <link linkend="kgp">XML processing</link>, and along the way you saw <link linkend="dialect.extract.urllib">how to download a web page</link> and <link linkend="kgp.openanything.urllib">how to parse XML from a URL</link>, but let's dive into the more general topic of HTTP web services.</para>
+</abstract>
+<para>Simply stated, HTTP web services are programmatic ways of sending and receiving data from remote servers using the operations of HTTP directly.  If you want to get data from the server, use a straight HTTP GET; if you want to send new data to the server, use HTTP POST.  (Some more advanced HTTP web service APIs also define ways of modifying existing data and deleting data, using HTTP PUT and HTTP DELETE.)  In other words, the <quote>verbs</quote> built into the HTTP protocol (GET, POST, PUT, and DELETE) map directly to application-level operations for receiving, sending, modifying, and deleting data.</para>
+<para>The main advantage of this approach is simplicity, and its simplicity has proven popular with a lot of different sites.  Data -- usually XML data -- can be built and stored statically, or generated dynamically by a server-side script, and all major languages include an HTTP library for downloading it.  Debugging is also easier, because you can load up the web service in any web browser and see the raw data.  Modern browsers will even nicely format and pretty-print XML data for you, to allow you to quickly navigate through it.</para>
+<para>Examples of pure XML-over-HTTP web services:</para>
+<itemizedlist>
+<listitem><para><ulink url="http://www.amazon.com/webservices">Amazon API</ulink> allows you to retrieve product information from the Amazon.com online store.</para></listitem>
+<listitem><para><ulink url="http://www.nws.noaa.gov/alerts/">National Weather Service</ulink> (United States) and <ulink url="http://demo.xml.weather.gov.hk/">Hong Kong Observatory</ulink> (Hong Kong) offer weather alerts as a web service.</para></listitem>
+<listitem><para><ulink url="http://atomenabled.org/">Atom API</ulink> for managing web-based content.</para></listitem>
+<listitem><para><ulink url="http://syndic8.com/">Syndicated feeds</ulink> from weblogs and news sites bring you up-to-the-minute news from a variety of sites.</para></listitem>
+</itemizedlist>
+<para>In later chapters, you'll explore APIs which use HTTP as a transport for sending and receiving data, but don't map application semantics to the underlying HTTP semantics.  (They tunnel everything over HTTP POST.)  But this chapter will concentrate on using HTTP GET to get data from a remote server, and you'll explore several HTTP features you can use to get the maximum benefit out of pure HTTP web services.</para>
+<para>Here is a more advanced version of the <filename class="headerfile">openanything</filename> module that you saw in <link linkend="streams">the previous chapter</link>:</para>
+<example>
+<title>&openanything_filename;</title>
+&para_download;
+<programlisting>
+&oa_import;
+&oa_importstringio;
+
+&oa_useragent;
+
+&oa_smartredirect;
+&oa_301_def;
+&oa_301_result;
+&oa_301_result2;
+&oa_301_status;
+&oa_301_return;
+
+&oa_302_def;
+&oa_302_result;
+&oa_302_result2;
+&oa_302_status;
+&oa_302_return;
+
+&oa_defaulthandler;
+&oa_default_def;
+&oa_default_result;
+&oa_default_result2;
+&oa_default_status;
+&oa_default_return2;
+
+&oa_def;
+&oa_doc;
+
+&oa_hasattr;
+&oa_hasattr_return;
+
+&oa_stdin;
+&oa_stdin_return;
+
+&oa_urlparse;
+&oa_urlparse_comment;
+&oa_request;
+&oa_add_useragent;
+&oa_if_etag;
+&oa_add_etag;
+&of_if_lastmodified;
+&oa_add_lastmodified;
+&oa_add_gzip;
+&oa_build_opener;
+&oa_open_open;
+    
+&oa_local_comment;
+&oa_local_try;
+&oa_local_return;
+&oa_local_except;
+&oa_local_pass;
+
+&oa_string_comment;
+&oa_string_return;
+
+&oa_fetch_def;
+&oa_fetch_doc;
+&oa_fetch_result;
+&oa_fetch_openanything;
+&oa_fetch_read;
+&oa_fetch_headers;
+&oa_fetch_save_etag_comment;
+&oa_fetch_get_etag;
+&oa_fetch_lastmodified_comment;
+&oa_fetch_get_lastmodified;
+&oa_fetch_if_gzip;
+&oa_fetch_gzip_comment;
+&oa_fetch_gzip;
+&oa_fetch_if_url;
+&oa_fetch_save_url;
+&oa_fetch_default_status;
+&oa_fetch_if_status;
+&oa_fetch_save_status;
+&oa_fetch_close;
+&oa_fetch_return;
+</programlisting>
+</example>
+<itemizedlist role="furtherreading">
+<title>Further reading</title>
+<listitem><para>Paul Prescod believes that <ulink url="http://webservices.xml.com/pub/a/ws/2002/02/06/rest.html">pure HTTP web services are the future of the Internet</ulink>.</para></listitem>
+</itemizedlist>
+</section>
+<section id="oa.review">
+<?dbhtml filename="http_web_services/review.html"?>
+<title>How not to fetch data over HTTP</title>
+<abstract>
+<title/>
+<para>Let's say you want to download a resource over HTTP, such as a syndicated Atom feed.  But you don't just want to download it once; you want to download it over and over again, every hour, to get the latest news from the site that's offering the news feed.  Let's do it the quick-and-dirty way first, and then see how you can do better.</para>
+</abstract>
+<example>
+<title>Downloading a feed the quick-and-dirty way</title>
+<screen>
+&prompt;<userinput>import urllib</userinput>
+&prompt;<userinput>data = urllib.urlopen('http://diveintomark.org/xml/atom.xml').read()</userinput>    <co id="oa.review.1.1"/>
+&prompt;<userinput>print data</userinput>
+<computeroutput>&lt;?xml version="1.0" encoding="iso-8859-1"?>
+&lt;feed version="0.3"
+  xmlns="http://purl.org/atom/ns#"
+  xmlns:dc="http://purl.org/dc/elements/1.1/"
+  xml:lang="en">
+  &lt;title mode="escaped">dive into mark&lt;/title>
+  &lt;link rel="alternate" type="text/html" href="http://diveintomark.org/"/>
+  &lt;-- rest of feed omitted for brevity --></computeroutput>
+</screen>
+<calloutlist>
+<callout arearefs="oa.review.1.1">
+<para>Downloading anything over HTTP is incredibly easy in &python;; in fact, it's a one-liner.  The &urllib; module has a handy &urlopen; function that takes the address of the page you want, and returns a file-like object that you can just <function>read()</function> from to get the full contents of the page.  It just can't get much easier.</para>
+</callout>
+</calloutlist>
+</example>
+<para>So what's wrong with this?  Well, for a quick one-off during testing or development, there's nothing wrong with it.  I do it all the time.  I wanted the contents of the feed, and I got the contents of the feed.  The same technique works for any web page.  But once you start thinking in terms of a web service that you want to access on a regular basis -- and remember, you said you were planning on retrieving this syndicated feed once an hour -- then you're being inefficient, and you're being rude.</para>
+<para>Let's talk about some of the basic features of HTTP.</para>
+</section>
+
+<section id="oa.features">
+<?dbhtml filename="http_web_services/http_features.html"?>
+<title>Features of HTTP</title>
+<abstract>
+<title/>
+<para>There are five important features of HTTP which you should support.</para>
+</abstract>
+<section>
+<title>&useragent;</title>
+<para>The &useragent; is simply a way for a client to tell a server who it is when it requests a web page, a syndicated feed, or any sort of web service over HTTP.  When the client requests a resource, it should always announce who it is, as specifically as possible.  This allows the server-side administrator to get in touch with the client-side developer if anything is going fantastically wrong.</para>
+<para>By default, &python; sends a generic &useragent;: <literal>Python-urllib/1.15</literal>.  In the next section, you'll see how to change this to something more specific.</para>
+</section>
+<section>
+<title>Redirects</title>
+<para>Sometimes resources move around.  Web sites get reorganized, pages move to new addresses.  Even web services can reorganize.  A syndicated feed at <literal>http://example.com/index.xml</literal> might be moved to <literal>http://example.com/xml/atom.xml</literal>.  Or an entire domain might move, as an organization expands and reorganizes; for instance, <literal>http://www.example.com/index.xml</literal> might be redirected to <literal>http://server-farm-1.example.com/index.xml</literal>.</para>
+<para>Every time you request any kind of resource from an HTTP server, the server includes a status code in its response.  Status code <literal>200</literal> means <quote>everything's normal, here's the page you asked for</quote>.  Status code <literal>404</literal> means <quote>page not found</quote>.  (You've probably seen 404 errors while browsing the web.)</para>
+<para>HTTP has two different ways of signifying that a resource has moved.  Status code <literal>302</literal> is a <emphasis>temporary redirect</emphasis>; it means <quote>oops, that got moved over here temporarily</quote> (and then gives the temporary address in a <literal>Location:</literal> header).  Status code <literal>301</literal> is a <emphasis>permanent redirect</emphasis>; it means <quote>oops, that got moved permanently</quote> (and then gives the new address in a <literal>Location:</literal> header).  If you get a <literal>302</literal> status code and a new address, the HTTP specification says you should use the new address to get what you asked for, but the next time you want to access the same resource, you should retry the old address.  But if you get a <literal>301</literal> status code and a new address, you're supposed to use the new address from then on.</para>
+<para><function>urllib.urlopen</function> will automatically <quote>follow</quote> redirects when it receives the appropriate status code from the HTTP server, but unfortunately, it doesn't tell you when it does so.  You'll end up getting data you asked for, but you'll never know that the underlying library <quote>helpfully</quote> followed a redirect for you.  So you'll continue pounding away at the old address, and each time you'll get redirected to the new address.  That's two round trips instead of one: not very efficient!  Later in this chapter, you'll see how to work around this so you can deal with permanent redirects properly and efficiently.</para>
+</section>
+<section>
+<title>&lastmodified;/&ifmodifiedsince;</title>
+<para>Some data changes all the time.  The home page of CNN.com is constantly updating every few minutes.  On the other hand, the home page of Google.com only changes once every few weeks (when they put up a special holiday logo, or advertise a new service).  Web services are no different; usually the server knows when the data you requested last changed, and HTTP provides a way for the server to include this last-modified date along with the data you requested.</para>
+<para>If you ask for the same data a second time (or third, or fourth), you can tell the server the last-modified date that you got last time: you send an <literal>If-Modified-Since</literal> header with your request, with the date you got back from the server last time.  If the data hasn't changed since then, the server sends back a special HTTP status code <literal>304</literal>, which means <quote>this data hasn't changed since the last time you asked for it</quote>.  Why is this an improvement?  Because when the server sends a <literal>304</literal>, <emphasis>it doesn't re-send the data</emphasis>.  All you get is the status code.  So you don't need to download the same data over and over again if it hasn't changed; the server assumes you have the data cached locally.</para>
+<para>All modern web browsers support last-modified date checking.  If you've ever visited a page, re-visited the same page a day later and found that it hadn't changed, and wondered why it loaded so quickly the second time -- this could be why.  Your web browser cached the contents of the page locally the first time, and when you visited the second time, your browser automatically sent the last-modified date it got from the server the first time.  The server simply says <literal>304: Not Modified</literal>, so your browser knows to load the page from its cache.  Web services can be this smart too.</para>
+<para>&python;'s URL library has no built-in support for last-modified date checking, but since you can add arbitrary headers to each request and read arbitrary headers in each response, you can add support for it yourself.</para>
+</section>
+<section>
+<title>&etag;/&ifnonematch;</title>
+<para>ETags are an alternate way to accomplish the same thing as the last-modified date checking: don't re-download data that hasn't changed.  The way it works is, the server sends some sort of hash of the data (in an <literal>ETag</literal> header) along with the data you requested.  Exactly how this hash is determined is entirely up to the server.  The second time you request the same data, you include the ETag hash in an <literal>If-None-Match:</literal> header, and if the data hasn't changed, the server will send you back a <literal>304</literal> status code.  As with the last-modified date checking, the server <emphasis>just</emphasis> sends the <literal>304</literal>; it doesn't send you the same data a second time.  By including the ETag hash in your second request, you're telling the server that there's no need to re-send the same data if it still matches this hash, since you still have the data from the last time.</para>
+<para>&python;'s URL library has no built-in support for ETags, but you'll see how to add it later in this chapter.</para>
+</section>
+<section>
+<title>Compression</title>
+<para>The last important HTTP feature is gzip compression.  When you talk about HTTP web services, you're almost always talking about moving XML back and forth over the wire.  XML is text, and quite verbose text at that, and text generally compresses well.  When you request a resource over HTTP, you can ask the server that, if it has any new data to send you, to please send it in compressed format.  You include the <literal>Accept-encoding: gzip</literal> header in your request, and if the server supports compression, it will send you back gzip-compressed data and mark it with a <literal>Content-encoding: gzip</literal> header.</para>
+<para>&python;'s URL library has no built-in support for gzip compression per se, but you can add arbitrary headers to the request.  And &python; comes with a separate &gzip; module, which has functions you can use to decompress the data yourself.</para>
+<para>Note that <link linkend="oa.review">our little one-line script</link> to download a syndicated feed did not support any of these HTTP features.  Let's see how you can improve it.</para>
+</section>
+</section>
+
+<section id="oa.debug">
+<?dbhtml filename="http_web_services/debugging.html"?>
+<title>Debugging HTTP web services</title>
+<abstract>
+<title/>
+<para>First, let's turn on the debugging features of &python;'s HTTP library and see what's being sent over the wire.  This will be useful throughout the chapter, as you add more and more features.</para>
+</abstract>
+<example>
+<title>Debugging HTTP</title>
+<screen>
+&prompt;<userinput>import httplib</userinput>
+&prompt;<userinput>httplib.HTTPConnection.debuglevel = 1</userinput>             <co id="oa.debug.1.1"/>
+&prompt;<userinput>import urllib</userinput>
+&prompt;<userinput>feeddata = urllib.urlopen('http://diveintomark.org/xml/atom.xml').read()</userinput>
+<computeroutput>connect: (diveintomark.org, 80)</computeroutput>                       <co id="oa.debug.1.2"/>
+<computeroutput>send: '</computeroutput>
+<computeroutput>GET /xml/atom.xml HTTP/1.0</computeroutput>                            <co id="oa.debug.1.3"/>
+<computeroutput>Host: diveintomark.org</computeroutput>                                <co id="oa.debug.1.4"/>
+<computeroutput>User-agent: Python-urllib/1.15</computeroutput>                        <co id="oa.debug.1.5"/>
+<computeroutput>'</computeroutput>
+<computeroutput>reply: 'HTTP/1.1 200 OK\r\n'</computeroutput>                          <co id="oa.debug.1.6"/>
+<computeroutput>header: Date: Wed, 14 Apr 2004 22:27:30 GMT</computeroutput>
+<computeroutput>header: Server: Apache/2.0.49 (Debian GNU/Linux)</computeroutput>
+<computeroutput>header: Content-Type: application/atom+xml</computeroutput>
+<computeroutput>header: Last-Modified: Wed, 14 Apr 2004 22:14:38 GMT</computeroutput>  <co id="oa.debug.1.7"/>
+<computeroutput>header: ETag: "e8284-68e0-4de30f80"</computeroutput>                   <co id="oa.debug.1.8"/>
+<computeroutput>header: Accept-Ranges: bytes</computeroutput>
+<computeroutput>header: Content-Length: 26848</computeroutput>
+<computeroutput>header: Connection: close</computeroutput>
+</screen>
+</example>
+<calloutlist>
+<callout arearefs="oa.debug.1.1">
+<para>&urllib; relies on another standard &python; library, &httplib;.  Normally you don't need to <literal>import httplib</literal> directly (&urllib; does that automatically), but you will here so you can set the debugging flag on the <classname>HTTPConnection</classname> class that &urllib; uses internally to connect to the HTTP server.  This is an incredibly useful technique.  Some other &python; libraries have similar debug flags, but there's no particular standard for naming them or turning them on; you need to read the documentation of each library to see if such a feature is available.</para>
+</callout>
+<callout arearefs="oa.debug.1.2">
+<para>Now that the debugging flag is set, information on the the HTTP request and response is printed out in real time.  The first thing it tells you is that you're connecting to the server <literal>diveintomark.org</literal> on port 80, which is the standard port for HTTP.</para>
+</callout>
+<callout arearefs="oa.debug.1.3">
+<para>When you request the Atom feed, &urllib; sends three lines to the server.  The first line specifies the HTTP verb you're using, and the path of the resource (minus the domain name).  All the requests in this chapter will use <literal>GET</literal>, but in the next chapter on &soap;, you'll see that it uses <literal>POST</literal> for everything.  The basic syntax is the same, regardless of the verb.</para>
+</callout>
+<callout arearefs="oa.debug.1.4">
+<para>The second line is the <literal>Host</literal> header, which specifies the domain name of the service you're accessing.  This is important, because a single HTTP server can host multiple separate domains.  My server currently hosts 12 domains; other servers can host hundreds or even thousands.</para>
+</callout>
+<callout arearefs="oa.debug.1.5">
+<para>The third line is the &useragent; header.  What you see here is the generic &useragent; that the &urllib; library adds by default.  In the next section, you'll see how to customize this to be more specific.</para>
+</callout>
+<callout arearefs="oa.debug.1.6">
+<para>The server replies with a status code and a bunch of headers (and possibly some data, which got stored in the <varname>feeddata</varname> variable).  The status code here is <literal>200</literal>, meaning <quote>everything's normal, here's the data you requested</quote>.  The server also tells you the date it responded to your request, some information about the server itself, and the content type of the data it's giving you.  Depending on your application, this might be useful, or not.  It's certainly reassuring that you thought you were asking for an Atom feed, and lo and behold, you're getting an Atom feed (<literal>application/atom+xml</literal>, which is the registered content type for Atom feeds).</para>
+</callout>
+<callout arearefs="oa.debug.1.7">
+<para>The server tells you when this Atom feed was last modified (in this case, about 13 minutes ago).  You can send this date back to the server the next time you request the same feed, and the server can do last-modified checking.</para>
+</callout>
+<callout arearefs="oa.debug.1.8">
+<para>The server also tells you that this Atom feed has an ETag hash of <literal>"e8284-68e0-4de30f80"</literal>.  The hash doesn't mean anything by itself; there's nothing you can do with it, except send it back to the server the next time you request this same feed.  Then the server can use it to tell you if the data has changed or not.</para>
+</callout>
+</calloutlist>
+</section>
+
+<section id="oa.useragent">
+<?dbhtml filename="http_web_services/user_agent.html"?>
+<title>Setting the <literal>User-Agent</literal></title>
+<abstract>
+<title/>
+<para>The first step to improving your HTTP web services client is to identify yourself properly with a &useragent;.  To do that, you need to move beyond the basic &urllib; and dive into &urllib2;.</para>
+</abstract>
+<example>
+<title>Introducing &urllib2;</title>
+<screen>
+&prompt;<userinput>import httplib</userinput>
+&prompt;<userinput>httplib.HTTPConnection.debuglevel = 1</userinput>                             <co id="oa.useragent.1.1"/>
+&prompt;<userinput>import urllib2</userinput>
+&prompt;<userinput>request = urllib2.Request('http://diveintomark.org/xml/atom.xml')</userinput> <co id="oa.useragent.1.2"/>
+&prompt;<userinput>opener = urllib2.build_opener()</userinput>                                   <co id="oa.useragent.1.3"/>
+&prompt;<userinput>feeddata = opener.open(request).read()</userinput>                            <co id="oa.useragent.1.4"/>
+<computeroutput>connect: (diveintomark.org, 80)</computeroutput>
+<computeroutput>send: '</computeroutput>
+<computeroutput>GET /xml/atom.xml HTTP/1.0</computeroutput>
+<computeroutput>Host: diveintomark.org</computeroutput>
+<computeroutput>User-agent: Python-urllib/2.1</computeroutput>
+<computeroutput>'</computeroutput>
+<computeroutput>reply: 'HTTP/1.1 200 OK\r\n'</computeroutput>
+<computeroutput>header: Date: Wed, 14 Apr 2004 23:23:12 GMT</computeroutput>
+<computeroutput>header: Server: Apache/2.0.49 (Debian GNU/Linux)</computeroutput>
+<computeroutput>header: Content-Type: application/atom+xml</computeroutput>
+<computeroutput>header: Last-Modified: Wed, 14 Apr 2004 22:14:38 GMT</computeroutput>
+<computeroutput>header: ETag: "e8284-68e0-4de30f80"</computeroutput>
+<computeroutput>header: Accept-Ranges: bytes</computeroutput>
+<computeroutput>header: Content-Length: 26848</computeroutput>
+<computeroutput>header: Connection: close</computeroutput>
+</screen>
+<calloutlist>
+<callout arearefs="oa.useragent.1.1">
+<para>If you still have your &python; &ide; open from the previous section's example, you can skip this, but this turns on <link linkend="oa.debug">HTTP debugging</link> so you can see what you're actually sending over the wire, and what gets sent back.</para>
+</callout>
+<callout arearefs="oa.useragent.1.2">
+<para>Fetching an HTTP resource with &urllib2; is a three-step process, for good reasons that will become clear shortly.  The first step is to create a <classname>Request</classname> object, which takes the URL of the resource you'll eventually get around to retrieving.  Note that this step doesn't actually retrieve anything yet.</para>
+</callout>
+<callout arearefs="oa.useragent.1.3">
+<para>The second step is to build a URL opener.  This can take any number of handlers, which control how responses are handled.  But you can also build an opener without any custom handlers, which is what you're doing here.  You'll see how to define and use custom handlers later in this chapter when you explore redirects.</para>
+</callout>
+<callout arearefs="oa.useragent.1.4">
+<para>The final step is to tell the opener to open the URL, using the <classname>Request</classname> object you created.  As you can see from all the debugging information that gets printed, this step actually retrieves the resource and stores the returned data in <varname>feeddata</varname>.</para>
+</callout>
+</calloutlist>
+</example>
+<example>
+<title>Adding headers with the <classname>Request</classname></title>
+<screen>
+&prompt;<userinput>request</userinput>                                                <co id="oa.useragent.2.1"/>
+<computeroutput>&lt;urllib2.Request instance at 0x00250AA8></computeroutput>
+&prompt;<userinput>request.get_full_url()</userinput>
+<computeroutput>http://diveintomark.org/xml/atom.xml</computeroutput>
+&prompt;<userinput>request.add_header('User-Agent',
+&continuationprompt;'OpenAnything/1.0 +http://diveintopython.org/')</userinput>    <co id="oa.useragent.2.2"/>
+&prompt;<userinput>feeddata = opener.open(request).read()</userinput>                 <co id="oa.useragent.2.3"/>
+<computeroutput>connect: (diveintomark.org, 80)</computeroutput>
+<computeroutput>send: '</computeroutput>
+<computeroutput>GET /xml/atom.xml HTTP/1.0</computeroutput>
+<computeroutput>Host: diveintomark.org</computeroutput>
+<computeroutput>User-agent: OpenAnything/1.0 +http://diveintopython.org/</computeroutput>   <co id="oa.useragent.2.4"/>
+<computeroutput>'</computeroutput>
+<computeroutput>reply: 'HTTP/1.1 200 OK\r\n'</computeroutput>
+<computeroutput>header: Date: Wed, 14 Apr 2004 23:45:17 GMT</computeroutput>
+<computeroutput>header: Server: Apache/2.0.49 (Debian GNU/Linux)</computeroutput>
+<computeroutput>header: Content-Type: application/atom+xml</computeroutput>
+<computeroutput>header: Last-Modified: Wed, 14 Apr 2004 22:14:38 GMT</computeroutput>
+<computeroutput>header: ETag: "e8284-68e0-4de30f80"</computeroutput>
+<computeroutput>header: Accept-Ranges: bytes</computeroutput>
+<computeroutput>header: Content-Length: 26848</computeroutput>
+<computeroutput>header: Connection: close</computeroutput>
+</screen>
+<calloutlist>
+<callout arearefs="oa.useragent.2.1">
+<para>You're continuing from the previous example; you've already created a <classname>Request</classname> object with the URL you want to access.</para>
+</callout>
+<callout arearefs="oa.useragent.2.2">
+<para>Using the <function>add_header</function> method on the <classname>Request</classname> object, you can add arbitrary HTTP headers to the request.  The first argument is the header, the second is the value you're providing for that header.  Convention dictates that a &useragent; should be in this specific format: an application name, followed by a slash, followed by a version number.  The rest is free-form, and you'll see a lot of variations in the wild, but somewhere it should include a URL of your application.  The &useragent; is usually logged by the server along with other details of your request, and including a URL of your application allows server administrators looking through their access logs to contact you if something is wrong.</para>
+</callout>
+<callout arearefs="oa.useragent.2.3">
+<para>The <varname>opener</varname> object you created before can be reused too, and it will retrieve the same feed again, but with your custom &useragent; header.</para>
+</callout>
+<callout arearefs="oa.useragent.2.4">
+<para>And here's you sending your custom &useragent;, in place of the generic one that &python; sends by default.  If you look closely, you'll notice that you defined a <literal>User-Agent</literal> header, but you actually sent a <literal>User-agent</literal> header.  See the difference?  &urllib2; changed the case so that only the first letter was capitalized.  It doesn't really matter; HTTP specifies that header field names are completely case-insensitive.</para>
+</callout>
+</calloutlist>
+</example>
+</section>
+
+<section id="oa.etags">
+<?dbhtml filename="http_web_services/etags.html"?>
+<title>Handling &lastmodified; and &etag;</title>
+<abstract>
+<title/>
+<para>Now that you know how to add custom HTTP headers to your web service requests, let's look at adding support for &lastmodified; and &etag; headers.</para>
+</abstract>
+<para>These examples show the output with debugging turned off.  If you still have it turned on from the previous section, you can turn it off by setting <literal>httplib.HTTPConnection.debuglevel = 0</literal>.  Or you can just leave debugging on, if that helps you.</para>
+<example id="oa.etags.example.1">
+<title>Testing &lastmodified;</title>
+<screen>
+&prompt;<userinput>import urllib2</userinput>
+&prompt;<userinput>request = urllib2.Request('http://diveintomark.org/xml/atom.xml')</userinput>
+&prompt;<userinput>opener = urllib2.build_opener()</userinput>
+&prompt;<userinput>firstdatastream = opener.open(request)</userinput>
+&prompt;<userinput>firstdatastream.headers.dict</userinput>                       <co id="oa.etags.1.1"/>
+<computeroutput>{'date': 'Thu, 15 Apr 2004 20:42:41 GMT', 
+ 'server': 'Apache/2.0.49 (Debian GNU/Linux)', 
+ 'content-type': 'application/atom+xml',
+ 'last-modified': 'Thu, 15 Apr 2004 19:45:21 GMT', 
+ 'etag': '"e842a-3e53-55d97640"',
+ 'content-length': '15955', 
+ 'accept-ranges': 'bytes', 
+ 'connection': 'close'}</computeroutput>
+&prompt;<userinput>request.add_header('If-Modified-Since',</userinput>
+&continuationprompt;<userinput>firstdatastream.headers.get('Last-Modified'))</userinput>  <co id="oa.etags.1.2"/>
+&prompt;<userinput>seconddatastream = opener.open(request)</userinput>            <co id="oa.etags.1.3"/>
+<computeroutput role="traceback">Traceback (most recent call last):
+  File "&lt;stdin>", line 1, in ?
+  File "c:\python23\lib\urllib2.py", line 326, in open
+    '_open', req)
+  File "c:\python23\lib\urllib2.py", line 306, in _call_chain
+    result = func(*args)
+  File "c:\python23\lib\urllib2.py", line 901, in http_open
+    return self.do_open(httplib.HTTP, req)
+  File "c:\python23\lib\urllib2.py", line 895, in do_open
+    return self.parent.error('http', req, fp, code, msg, hdrs)
+  File "c:\python23\lib\urllib2.py", line 352, in error
+    return self._call_chain(*args)
+  File "c:\python23\lib\urllib2.py", line 306, in _call_chain
+    result = func(*args)
+  File "c:\python23\lib\urllib2.py", line 412, in http_error_default
+    raise HTTPError(req.get_full_url(), code, msg, hdrs, fp)
+urllib2.HTTPError: HTTP Error 304: Not Modified</computeroutput>
+</screen>
+<calloutlist>
+<callout arearefs="oa.etags.1.1">
+<para>Remember all those HTTP headers you saw printed out when you turned on debugging?  This is how you can get access to them programmatically: <varname>firstdatastream.headers</varname> is <link linkend="fileinfo.userdict">an object that acts like a dictionary</link> and allows you to get any of the individual headers returned from the HTTP server.</para>
+</callout>
+<callout arearefs="oa.etags.1.2">
+<para>On the second request, you add the &ifmodifiedsince; header with the last-modified date from the first request.  If the data hasn't changed, the server should return a <literal>304</literal> status code.</para>
+</callout>
+<callout arearefs="oa.etags.1.3">
+<para>Sure enough, the data hasn't changed.  You can see from the traceback that &urllib2; throws a special exception, <classname>HTTPError</classname>, in response to the <literal>304</literal> status code.  This is a little unusual, and not entirely helpful.  After all, it's not an error; you specifically asked the server not to send you any data if it hadn't changed, and the data didn't change, so the server told you it wasn't sending you any data.  That's not an error; that's exactly what you were hoping for.</para>
+</callout>
+</calloutlist>
+</example>
+<para>&urllib2; also raises an <classname>HTTPError</classname> exception for conditions that you would think of as errors, such as <literal>404</literal> (page not found).  In fact, it will raise <classname>HTTPError</classname> for <emphasis>any</emphasis> status code other than <literal>200</literal> (OK), <literal>301</literal> (permanent redirect), or <literal>302</literal> (temporary redirect).  It would be more helpful for your purposes to capture the status code and simply return it, without throwing an exception.  To do that, you'll need to define a custom URL handler.</para>
+<example>
+<title>Defining URL handlers</title>
+<para>This custom URL handler is part of &openanything_filename;.</para>
+<programlisting>
+&oa_defaulthandler; <co id="oa.etags.2.1"/>
+&oa_default_def; <co id="oa.etags.2.2"/>
+&oa_default_result;
+&oa_default_result2;
+&oa_default_status; <co id="oa.etags.2.3"/>
+&oa_default_return2;
+</programlisting>
+<calloutlist>
+<callout arearefs="oa.etags.2.1">
+<para>&urllib2; is designed around URL handlers.  Each handler is just a class that can define any number of methods.  When something happens -- like an HTTP error, or even a <literal>304</literal> code -- &urllib2; introspects into the list of defined handlers for a method that can handle it.  You used a similar introspection in <xref linkend="kgp"/> to define handlers for different node types, but &urllib2; is more flexible, and introspects over as many handlers as are defined for the current request.</para>
+</callout>
+<callout arearefs="oa.etags.2.2">
+<para>&urllib2; searches through the defined handlers and calls the <methodname>http_error_default</methodname> method when it encounters a <literal>304</literal> status code from the server. By defining a custom error handler, you can prevent &urllib2; from raising an exception.  Instead, you create the <classname>HTTPError</classname> object, but return it instead of raising it.</para>
+</callout>
+<callout arearefs="oa.etags.2.3">
+<para>This is the key part: before returning, you save the status code returned by the HTTP server.  This will allow you easy access to it from the calling program.</para>
+</callout>
+</calloutlist>
+</example>
+<example>
+<title>Using custom URL handlers</title>
+<screen>
+&prompt;<userinput>request.headers</userinput>                           <co id="oa.etags.3.1"/>
+<computeroutput>{'If-modified-since': 'Thu, 15 Apr 2004 19:45:21 GMT'}</computeroutput>
+&prompt;<userinput>import openanything</userinput>
+&prompt;<userinput>opener = urllib2.build_opener(</userinput>
+&continuationprompt;<userinput>openanything.DefaultErrorHandler())</userinput>   <co id="oa.etags.3.2"/>
+&prompt;<userinput>seconddatastream = opener.open(request)</userinput>
+&prompt;<userinput>seconddatastream.status</userinput>                   <co id="oa.etags.3.3"/>
+<computeroutput>304</computeroutput>
+&prompt;<userinput>seconddatastream.read()</userinput>                   <co id="oa.etags.3.4"/>
+<computeroutput>''</computeroutput>
+</screen>
+<calloutlist>
+<callout arearefs="oa.etags.3.1">
+<para>You're continuing the previous example, so the <classname>Request</classname> object is already set up, and you've already added the &ifmodifiedsince; header.</para>
+</callout>
+<callout arearefs="oa.etags.3.2">
+<para>This is the key: now that you've defined your custom URL handler, you need to tell &urllib2; to use it.  Remember how I said that &urllib2; broke up the process of accessing an HTTP resource into three steps, and for good reason?  This is why building the URL opener is its own step, because you can build it with your own custom URL handlers that override &urllib2;'s default behavior.</para>
+</callout>
+<callout arearefs="oa.etags.3.3">
+<para>Now you can quietly open the resource, and what you get back is an object that, along with the usual headers (use <varname>seconddatastream.headers.dict</varname> to acess them), also contains the HTTP status code.  In this case, as you expected, the status is <literal>304</literal>, meaning this data hasn't changed since the last time you asked for it.</para>
+</callout>
+<callout arearefs="oa.etags.3.4">
+<para>Note that when the server sends back a <literal>304</literal> status code, it doesn't re-send the data.  That's the whole point: to save bandwidth by not re-downloading data that hasn't changed.  So if you actually want that data, you'll need to cache it locally the first time you get it.</para>
+</callout>
+</calloutlist>
+</example>
+<para>Handling &etag; works much the same way, but instead of checking for &lastmodified; and sending &ifmodifiedsince;, you check for &etag; and send &ifnonematch;.  Let's start with a fresh &ide; session.</para>
+<example id="oa.etags.example">
+<title>Supporting &etag;/&ifnonematch;</title>
+<screen>
+&prompt;<userinput>import urllib2, openanything</userinput>
+&prompt;<userinput>request = urllib2.Request('http://diveintomark.org/xml/atom.xml')</userinput>
+&prompt;<userinput>opener = urllib2.build_opener(</userinput>
+&continuationprompt;<userinput>openanything.DefaultErrorHandler())</userinput>
+&prompt;<userinput>firstdatastream = opener.open(request)</userinput>
+&prompt;<userinput>firstdatastream.headers.get('ETag')</userinput>        <co id="oa.etags.4.1"/>
+<computeroutput>'"e842a-3e53-55d97640"'</computeroutput>
+&prompt;<userinput>firstdata = firstdatastream.read()</userinput>
+&prompt;<userinput>print firstdata</userinput>                            <co id="oa.etags.4.2"/>
+<computeroutput>&lt;?xml version="1.0" encoding="iso-8859-1"?>
+&lt;feed version="0.3"
+  xmlns="http://purl.org/atom/ns#"
+  xmlns:dc="http://purl.org/dc/elements/1.1/"
+  xml:lang="en">
+  &lt;title mode="escaped">dive into mark&lt;/title>
+  &lt;link rel="alternate" type="text/html" href="http://diveintomark.org/"/>
+  &lt;-- rest of feed omitted for brevity --></computeroutput>
+&prompt;<userinput>request.add_header('If-None-Match',</userinput>
+&continuationprompt;<userinput>firstdatastream.headers.get('ETag'))</userinput>   <co id="oa.etags.4.3"/>
+&prompt;<userinput>seconddatastream = opener.open(request)</userinput>
+&prompt;<userinput>seconddatastream.status</userinput>                    <co id="oa.etags.4.4"/>
+<computeroutput>304</computeroutput>
+&prompt;<userinput>seconddatastream.read()</userinput>                    <co id="oa.etags.4.5"/>
+<computeroutput>''</computeroutput>
+</screen>
+<calloutlist>
+<callout arearefs="oa.etags.4.1">
+<para>Using the <varname>firstdatastream.headers</varname> pseudo-dictionary, you can get the &etag; returned from the server.  (What happens if the server didn't send back an &etag;?  Then this line would return &none;.)</para>
+</callout>
+<callout arearefs="oa.etags.4.2">
+<para>OK, you got the data.</para>
+</callout>
+<callout arearefs="oa.etags.4.3">
+<para>Now set up the second call by setting the &ifnonematch; header to the &etag; you got from the first call.</para>
+</callout>
+<callout arearefs="oa.etags.4.4">
+<para>The second call succeeds quietly (without throwing an exception), and once again you see that the server has sent back a <literal>304</literal> status code.  Based on the &etag; you sent the second time, it knows that the data hasn't changed.</para>
+</callout>
+<callout arearefs="oa.etags.4.5">
+<para>Regardless of whether the <literal>304</literal> is triggered by &lastmodified; date checking or &etag; hash matching, you'll never get the data along with the <literal>304</literal>.  That's the whole point.</para>
+</callout>
+</calloutlist>
+</example>
+<note id="tip.etag.vs.lastmodified">
+<title>Support &lastmodified; <emphasis>and</emphasis> &etag;</title>
+<para>In these examples, the HTTP server has supported both &lastmodified; and &etag; headers, but not all servers do.  As a web services client, you should be prepared to support both, but you must code defensively in case a server only supports one or the other, or neither.</para>
+</note>
+</section>
+
+<section id="oa.redirect">
+<?dbhtml filename="http_web_services/redirects.html"?>
+<title>Handling redirects</title>
+<abstract>
+<title/>
+<para>You can support permanent and temporary redirects using a different kind of custom URL handler.</para>
+</abstract>
+<para>First, let's see why a redirect handler is necessary in the first place.</para>
+<example>
+<title>Accessing web services without a redirect handler</title>
+<screen>
+&prompt;<userinput>import urllib2, httplib</userinput>
+&prompt;<userinput>httplib.HTTPConnection.debuglevel = 1</userinput>           <co id="oa.redirect.1.0"/>
+&prompt;<userinput>request = urllib2.Request(</userinput>
+&continuationprompt;<userinput>'http://diveintomark.org/redir/example301.xml')</userinput> <co id="oa.redirect.1.1"/>
+&prompt;<userinput>opener = urllib2.build_opener()</userinput>
+&prompt;<userinput>f = opener.open(request)</userinput>
+<computeroutput>connect: (diveintomark.org, 80)
+send: '
+GET /redir/example301.xml HTTP/1.0
+Host: diveintomark.org
+User-agent: Python-urllib/2.1
+'
+reply: 'HTTP/1.1 301 Moved Permanently\r\n'</computeroutput>             <co id="oa.redirect.1.2"/>
+<computeroutput>header: Date: Thu, 15 Apr 2004 22:06:25 GMT
+header: Server: Apache/2.0.49 (Debian GNU/Linux)
+header: Location: http://diveintomark.org/xml/atom.xml</computeroutput>  <co id="oa.redirect.1.3"/>
+<computeroutput>header: Content-Length: 338
+header: Connection: close
+header: Content-Type: text/html; charset=iso-8859-1
+connect: (diveintomark.org, 80)
+send: '
+GET /xml/atom.xml HTTP/1.0</computeroutput>                              <co id="oa.redirect.1.4"/>
+<computeroutput>Host: diveintomark.org
+User-agent: Python-urllib/2.1
+'
+reply: 'HTTP/1.1 200 OK\r\n'
+header: Date: Thu, 15 Apr 2004 22:06:25 GMT
+header: Server: Apache/2.0.49 (Debian GNU/Linux)
+header: Last-Modified: Thu, 15 Apr 2004 19:45:21 GMT
+header: ETag: "e842a-3e53-55d97640"
+header: Accept-Ranges: bytes
+header: Content-Length: 15955
+header: Connection: close
+header: Content-Type: application/atom+xml</computeroutput>
+&prompt;<userinput>f.url</userinput>                                               <co id="oa.redirect.1.5"/>
+<computeroutput>'http://diveintomark.org/xml/atom.xml'</computeroutput>
+&prompt;<userinput>f.headers.dict</userinput>
+<computeroutput>{'content-length': '15955', 
+'accept-ranges': 'bytes', 
+'server': 'Apache/2.0.49 (Debian GNU/Linux)', 
+'last-modified': 'Thu, 15 Apr 2004 19:45:21 GMT', 
+'connection': 'close', 
+'etag': '"e842a-3e53-55d97640"', 
+'date': 'Thu, 15 Apr 2004 22:06:25 GMT', 
+'content-type': 'application/atom+xml'}</computeroutput>
+&prompt;<userinput>f.status</userinput>
+<computeroutput role="traceback">Traceback (most recent call last):
+  File "&lt;stdin>", line 1, in ?
+AttributeError: addinfourl instance has no attribute 'status'</computeroutput>
+</screen>
+<calloutlist>
+<callout arearefs="oa.redirect.1.0">
+<para>You'll be better able to see what's happening if you turn on debugging.</para>
+</callout>
+<callout arearefs="oa.redirect.1.1">
+<para>This is a URL which I have set up to permanently redirect to my Atom feed at <literal>http://diveintomark.org/xml/atom.xml</literal>.</para>
+</callout>
+<callout arearefs="oa.redirect.1.2">
+<para>Sure enough, when you try to download the data at that address, the server sends back a <literal>301</literal> status code, telling you that the resource has moved permanently.</para>
+</callout>
+<callout arearefs="oa.redirect.1.3">
+<para>The server also sends back a <literal>Location:</literal> header that gives the new address of this data.</para>
+</callout>
+<callout arearefs="oa.redirect.1.4">
+<para>&urllib2; notices the redirect status code and automatically tries to retrieve the data at the new location specified in the <literal>Location:</literal> header.</para>
+</callout>
+<callout arearefs="oa.redirect.1.5">
+<para>The object you get back from the <varname>opener</varname> contains the new permanent address and all the headers returned from the second request (retrieved from the new permanent address).  But the status code is missing, so you have no way of knowing programmatically whether this redirect was temporary or permanent.  And that matters very much: if it was a temporary redirect, then you should continue to ask for the data at the old location.  But if it was a permanent redirect (as this was), you should ask for the data at the new location from now on.</para>
+</callout>
+</calloutlist>
+</example>
+<para>This is suboptimal, but easy to fix.  &urllib2; doesn't behave exactly as you want it to when it encounters a <literal>301</literal> or <literal>302</literal>, so let's override its behavior.  How?  With a custom URL handler, <link linkend="oa.etags">just like you did to handle <literal>304</literal> codes</link>.</para>
+<example>
+<title>Defining the redirect handler</title>
+<para>This class is defined in &openanything_filename;.</para>
+<programlisting>
+&oa_smartredirect; <co id="oa.redirect.2.1"/>
+&oa_301_def;
+&oa_301_result; <co id="oa.redirect.2.2"/>
+&oa_301_result2;
+&oa_301_status; <co id="oa.redirect.2.3"/>
+&oa_301_return;
+
+&oa_302_def; <co id="oa.redirect.2.4"/>
+&oa_302_result;
+&oa_302_result2;
+&oa_302_status;
+&oa_302_return;
+</programlisting>
+<calloutlist>
+<callout arearefs="oa.redirect.2.1">
+<para>Redirect behavior is defined in &urllib2; in a class called <classname>HTTPRedirectHandler</classname>.  You don't want to completely override the behavior, you just want to extend it a little, so you'll subclass <classname>HTTPRedirectHandler</classname> so you can call the ancestor class to do all the hard work.</para>
+</callout>
+<callout arearefs="oa.redirect.2.2">
+<para>When it encounters a <literal>301</literal> status code from the server, &urllib2; will search through its handlers and call the <methodname>http_error_301</methodname> method.   The first thing ours does is just call the <methodname>http_error_301</methodname> method in the ancestor, which handles the grunt work of looking for the <literal>Location:</literal> header and following the redirect to the new address.</para>
+</callout>
+<callout arearefs="oa.redirect.2.3">
+<para>Here's the key: before you return, you store the status code (<literal>301</literal>), so that the calling program can access it later.</para>
+</callout>
+<callout arearefs="oa.redirect.2.4">
+<para>Temporary redirects (status code <literal>302</literal>) work the same way: override the <literal>http_error_302</literal> method, call the ancestor, and save the status code before returning.</para>
+</callout>
+</calloutlist>
+</example>
+<para>So what has this bought us?  You can now build a URL opener with the custom redirect handler, and it will still automatically follow redirects, but now it will also expose the redirect status code.</para>
+<example>
+<title>Using the redirect handler to detect permanent redirects</title>
+<screen>
+&prompt;<userinput>request = urllib2.Request('http://diveintomark.org/redir/example301.xml')</userinput>
+&prompt;<userinput>import openanything, httplib</userinput>
+&prompt;<userinput>httplib.HTTPConnection.debuglevel = 1</userinput>
+&prompt;<userinput>opener = urllib2.build_opener(</userinput>
+&continuationprompt;<userinput>openanything.SmartRedirectHandler())</userinput>           <co id="oa.redirect.3.1"/>
+&prompt;<userinput>f = opener.open(request)</userinput>
+<computeroutput>connect: (diveintomark.org, 80)
+send: 'GET /redir/example301.xml HTTP/1.0
+Host: diveintomark.org
+User-agent: Python-urllib/2.1
+'
+reply: 'HTTP/1.1 301 Moved Permanently\r\n'</computeroutput>            <co id="oa.redirect.3.2"/>
+<computeroutput>header: Date: Thu, 15 Apr 2004 22:13:21 GMT
+header: Server: Apache/2.0.49 (Debian GNU/Linux)
+header: Location: http://diveintomark.org/xml/atom.xml
+header: Content-Length: 338
+header: Connection: close
+header: Content-Type: text/html; charset=iso-8859-1
+connect: (diveintomark.org, 80)
+send: '
+GET /xml/atom.xml HTTP/1.0
+Host: diveintomark.org
+User-agent: Python-urllib/2.1
+'
+reply: 'HTTP/1.1 200 OK\r\n'
+header: Date: Thu, 15 Apr 2004 22:13:21 GMT
+header: Server: Apache/2.0.49 (Debian GNU/Linux)
+header: Last-Modified: Thu, 15 Apr 2004 19:45:21 GMT
+header: ETag: "e842a-3e53-55d97640"
+header: Accept-Ranges: bytes
+header: Content-Length: 15955
+header: Connection: close
+header: Content-Type: application/atom+xml
+</computeroutput>
+&prompt;<userinput>f.status</userinput>                                           <co id="oa.redirect.3.3"/>
+<computeroutput>301</computeroutput>
+&prompt;<userinput>f.url</userinput>
+<computeroutput>'http://diveintomark.org/xml/atom.xml'</computeroutput>
+</screen>
+<calloutlist>
+<callout arearefs="oa.redirect.3.1">
+<para>First, build a URL opener with the redirect handler you just defined.</para>
+</callout>
+<callout arearefs="oa.redirect.3.2">
+<para>You sent off a request, and you got a <literal>301</literal> status code in response.  At this point, the <methodname>http_error_301</methodname> method gets called.  You call the ancestor method, which follows the redirect and sends a request at the new location (<literal>http://diveintomark.org/xml/atom.xml</literal>).</para>
+</callout>
+<callout arearefs="oa.redirect.3.3">
+<para>This is the payoff: now, not only do you have access to the new URL, but you have access to the redirect status code, so you can tell that this was a permanent redirect.  The next time you request this data, you should request it from the new location (<literal>http://diveintomark.org/xml/atom.xml</literal>, as specified in <varname>f.url</varname>).  If you had stored the location in a configuration file or a database, you need to update that so you don't keep pounding the server with requests at the old address.  It's time to update your address book.</para>
+</callout>
+</calloutlist>
+</example>
+<para>The same redirect handler can also tell you that you <emphasis>shouldn't</emphasis> update your address book.</para>
+<example>
+<title>Using the redirect handler to detect temporary redirects</title>
+<screen>
+&prompt;<userinput>request = urllib2.Request(</userinput>
+&continuationprompt;<userinput>'http://diveintomark.org/redir/example302.xml')</userinput>   <co id="oa.redirect.4.1"/>
+&prompt;<userinput>f = opener.open(request)</userinput>
+<computeroutput>connect: (diveintomark.org, 80)
+send: '
+GET /redir/example302.xml HTTP/1.0
+Host: diveintomark.org
+User-agent: Python-urllib/2.1
+'
+reply: 'HTTP/1.1 302 Found\r\n'</computeroutput>                           <co id="oa.redirect.4.2"/>
+<computeroutput>header: Date: Thu, 15 Apr 2004 22:18:21 GMT
+header: Server: Apache/2.0.49 (Debian GNU/Linux)
+header: Location: http://diveintomark.org/xml/atom.xml
+header: Content-Length: 314
+header: Connection: close
+header: Content-Type: text/html; charset=iso-8859-1
+connect: (diveintomark.org, 80)
+send: '
+GET /xml/atom.xml HTTP/1.0</computeroutput>                                <co id="oa.redirect.4.3"/>
+<computeroutput>Host: diveintomark.org
+User-agent: Python-urllib/2.1
+'
+reply: 'HTTP/1.1 200 OK\r\n'
+header: Date: Thu, 15 Apr 2004 22:18:21 GMT
+header: Server: Apache/2.0.49 (Debian GNU/Linux)
+header: Last-Modified: Thu, 15 Apr 2004 19:45:21 GMT
+header: ETag: "e842a-3e53-55d97640"
+header: Accept-Ranges: bytes
+header: Content-Length: 15955
+header: Connection: close
+header: Content-Type: application/atom+xml</computeroutput>
+&prompt;<userinput>f.status</userinput>                                              <co id="oa.redirect.4.4"/>
+<computeroutput>302</computeroutput>
+&prompt;<userinput>f.url</userinput>
+<computeroutput>http://diveintomark.org/xml/atom.xml</computeroutput>
+</screen>
+<calloutlist>
+<callout arearefs="oa.redirect.4.1">
+<para>This is a sample URL I've set up that is configured to tell clients to <emphasis>temporarily</emphasis> redirect to <literal>http://diveintomark.org/xml/atom.xml</literal>.</para>
+</callout>
+<callout arearefs="oa.redirect.4.2">
+<para>The server sends back a <literal>302</literal> status code, indicating a temporary redirect.  The temporary new location of the data is given in the <literal>Location:</literal> header.</para>
+</callout>
+<callout arearefs="oa.redirect.4.3">
+<para>&urllib2; calls your <methodname>http_error_302</methodname> method, which calls the ancestor method of the same name in <classname>urllib2.HTTPRedirectHandler</classname>, which follows the redirect to the new location.  Then your <methodname>http_error_302</methodname> method stores the status code (<literal>302</literal>) so the calling application can get it later.</para>
+</callout>
+<callout arearefs="oa.redirect.4.4">
+<para>And here you are, having successfully followed the redirect to <literal>http://diveintomark.org/xml/atom.xml</literal>.  <varname>f.status</varname> tells you that this was a temporary redirect, which means that you should continue to request data from the original address (<literal>http://diveintomark.org/redir/example302.xml</literal>).  Maybe it will redirect next time too, but maybe not.  Maybe it will redirect to a different address.  It's not for you to say.  The server said this redirect was only temporary, so you should respect that.  And now you're exposing enough information that the calling application can respect that.</para>
+</callout>
+</calloutlist>
+</example>
+</section>
+
+<section id="oa.gzip">
+<?dbhtml filename="http_web_services/gzip_compression.html"?>
+<title>Handling compressed data</title>
+<abstract>
+<title/>
+<para>The last important HTTP feature you want to support is compression.  Many web services have the ability to send data compressed, which can cut down the amount of data sent over the wire by 60% or more.  This is especially true of XML web services, since XML data compresses very well.</para>
+</abstract>
+<para>Servers won't give you compressed data unless you tell them you can handle it.</para>
+<example>
+<title>Telling the server you would like compressed data</title>
+<screen>
+&prompt;<userinput>import urllib2, httplib</userinput>
+&prompt;<userinput>httplib.HTTPConnection.debuglevel = 1</userinput>
+&prompt;<userinput>request = urllib2.Request('http://diveintomark.org/xml/atom.xml')</userinput>
+&prompt;<userinput>request.add_header('Accept-encoding', 'gzip')</userinput>        <co id="oa.gzip.1.1"/>
+&prompt;<userinput>opener = urllib2.build_opener()</userinput>
+&prompt;<userinput>f = opener.open(request)</userinput>
+<computeroutput>connect: (diveintomark.org, 80)
+send: '
+GET /xml/atom.xml HTTP/1.0
+Host: diveintomark.org
+User-agent: Python-urllib/2.1
+Accept-encoding: gzip</computeroutput>                                    <co id="oa.gzip.1.2"/>
+<computeroutput>'
+reply: 'HTTP/1.1 200 OK\r\n'
+header: Date: Thu, 15 Apr 2004 22:24:39 GMT
+header: Server: Apache/2.0.49 (Debian GNU/Linux)
+header: Last-Modified: Thu, 15 Apr 2004 19:45:21 GMT
+header: ETag: "e842a-3e53-55d97640"
+header: Accept-Ranges: bytes
+header: Vary: Accept-Encoding
+header: Content-Encoding: gzip</computeroutput>                           <co id="oa.gzip.1.3"/>
+<computeroutput>header: Content-Length: 6289</computeroutput>                             <co id="oa.gzip.1.4"/>
+<computeroutput>header: Connection: close
+header: Content-Type: application/atom+xml</computeroutput>
+</screen>
+<calloutlist>
+<callout arearefs="oa.gzip.1.1">
+<para>This is the key: once you've created your <classname>Request</classname> object, add an <literal>Accept-encoding</literal> header to tell the server you can accept gzip-encoded data.  <literal>gzip</literal> is the name of the compression algorithm you're using.  In theory there could be other compression algorithms, but <literal>gzip</literal> is the compression algorithm used by 99% of web servers.</para>
+</callout>
+<callout arearefs="oa.gzip.1.2">
+<para>There's your header going across the wire.</para>
+</callout>
+<callout arearefs="oa.gzip.1.3">
+<para>And here's what the server sends back: the <literal>Content-Encoding: gzip</literal> header means that the data you're about to receive has been gzip-compressed.</para>
+</callout>
+<callout arearefs="oa.gzip.1.4">
+<para>The <literal>Content-Length</literal> header is the length of the compressed data, not the uncompressed data.  As you'll see in a minute, the actual length of the uncompressed data was 15955, so gzip compression cut your bandwidth by over 60%!</para>
+</callout>
+</calloutlist>
+</example>
+<example>
+<title>Decompressing the data</title>
+<screen>
+&prompt;<userinput>compresseddata = f.read()</userinput>                              <co id="oa.gzip.2.1"/>
+&prompt;<userinput>len(compresseddata)</userinput>
+<computeroutput>6289</computeroutput>
+&prompt;<userinput>import StringIO</userinput>
+&prompt;<userinput>compressedstream = StringIO.StringIO(compresseddata)</userinput>   <co id="oa.gzip.2.2"/>
+&prompt;<userinput>import gzip</userinput>
+&prompt;<userinput>gzipper = gzip.GzipFile(fileobj=compressedstream)</userinput>      <co id="oa.gzip.2.3"/>
+&prompt;<userinput>data = gzipper.read()</userinput>                                  <co id="oa.gzip.2.4"/>
+&prompt;<userinput>print data</userinput>                                             <co id="oa.gzip.2.5"/>
+<computeroutput>&lt;?xml version="1.0" encoding="iso-8859-1"?>
+&lt;feed version="0.3"
+  xmlns="http://purl.org/atom/ns#"
+  xmlns:dc="http://purl.org/dc/elements/1.1/"
+  xml:lang="en">
+  &lt;title mode="escaped">dive into mark&lt;/title>
+  &lt;link rel="alternate" type="text/html" href="http://diveintomark.org/"/>
+  &lt;-- rest of feed omitted for brevity --></computeroutput>
+&prompt;<userinput>len(data)</userinput>
+<computeroutput>15955</computeroutput>
+</screen>
+<calloutlist>
+<callout arearefs="oa.gzip.2.1">
+<para>Continuing from the previous example, <varname>f</varname> is the file-like object returned from the URL opener.  Using its <methodname>read()</methodname> method would ordinarily get you the uncompressed data, but since this data has been gzip-compressed, this is just the first step towards getting the data you really want.</para>
+</callout>
+<callout arearefs="oa.gzip.2.2">
+<para>OK, this step is a little bit of messy workaround.  &python; has a &gzip; module, which reads (and actually writes) gzip-compressed files on disk.  But you don't have a file on disk, you have a gzip-compressed buffer in memory, and you don't want to write out a temporary file just so you can uncompress it.  So what you're going to do is create a file-like object out of the in-memory data (<varname>compresseddata</varname>), using the &stringio_modulename; module.  You first saw the &stringio_modulename; module in <link linkend="kgp.openanything.stringio.example">the previous chapter</link>, but now you've found another use for it.</para>
+</callout>
+<callout arearefs="oa.gzip.2.3">
+<para>Now you can create an instance of <classname>GzipFile</classname>, and tell it that its <quote>file</quote> is the file-like object <varname>compressedstream</varname>.</para>
+</callout>
+<callout arearefs="oa.gzip.2.4">
+<para>This is the line that does all the actual work: <quote>reading</quote> from <classname>GzipFile</classname> will decompress the data.  Strange?  Yes, but it makes sense in a twisted kind of way.  <varname>gzipper</varname> is a file-like object which represents a gzip-compressed file.  That <quote>file</quote> is not a real file on disk, though; <varname>gzipper</varname> is really just <quote>reading</quote> from the file-like object you created with &stringio_modulename; to wrap the compressed data, which is only in memory in the variable <varname>compresseddata</varname>.  And where did that compressed data come from?  You originally downloaded it from a remote HTTP server by <quote>reading</quote> from the file-like object you built with <function>urllib2.build_opener</function>.  And amazingly, this all just works.  Every step in the chain has no idea that the previous step is faking it.</para>
+</callout>
+<callout arearefs="oa.gzip.2.5">
+<para>Look ma, real data. (15955 bytes of it, in fact.)</para>
+</callout>
+</calloutlist>
+</example>
+<para><quote>But wait!</quote> I hear you cry.  <quote>This could be even easier!</quote>  I know what you're thinking.  You're thinking that <varname>opener.open</varname> returns a file-like object, so why not cut out the &stringio_modulename; middleman and just pass <varname>f</varname> directly to <methodname>GzipFile</methodname>?  OK, maybe you weren't thinking that, but don't worry about it, because it doesn't work.</para>
+<example>
+<title>Decompressing the data directly from the server</title>
+<screen>
+&prompt;<userinput>f = opener.open(request)</userinput>                  <co id="oa.gzip.3.1"/>
+&prompt;<userinput>f.headers.get('Content-Encoding')</userinput>         <co id="oa.gzip.3.2"/>
+<computeroutput>'gzip'</computeroutput>
+&prompt;<userinput>data = gzip.GzipFile(fileobj=f).read()</userinput>    <co id="oa.gzip.3.3"/>
+<computeroutput role="traceback">Traceback (most recent call last):
+  File "&lt;stdin>", line 1, in ?
+  File "c:\python23\lib\gzip.py", line 217, in read
+    self._read(readsize)
+  File "c:\python23\lib\gzip.py", line 252, in _read
+    pos = self.fileobj.tell()   # Save current position
+AttributeError: addinfourl instance has no attribute 'tell'</computeroutput>
+</screen>
+<calloutlist>
+<callout arearefs="oa.gzip.3.1">
+<para>Continuing from the previous example, you already have a <classname>Request</classname> object set up with an <literal>Accept-encoding: gzip</literal> header.</para>
+</callout>
+<callout arearefs="oa.gzip.3.2">
+<para>Simply opening the request will get you the headers (though not download any data yet).  As you can see from the returned <literal>Content-Encoding</literal> header, this data has been sent gzip-compressed.</para>
+</callout>
+<callout arearefs="oa.gzip.3.3">
+<para>Since <methodname>opener.open</methodname> returns a file-like object, and you know from the headers that when you read it, you're going to get gzip-compressed data, why not simply pass that file-like object directly to <classname>GzipFile</classname>?  As you <quote>read</quote> from the <classname>GzipFile</classname> instance, it will <quote>read</quote> compressed data from the remote HTTP server and decompress it on the fly.  It's a good idea, but unfortunately it doesn't work.  Because of the way gzip compression works, <classname>GzipFile</classname> needs to save its position and move forwards and backwards through the compressed file.  This doesn't work when the <quote>file</quote> is a stream of bytes coming from a remote server; all you can do with it is retrieve bytes one at a time, not move back and forth through the data stream.  So the inelegant hack of using &stringio_modulename; is the best solution: download the compressed data, create a file-like object out of it with &stringio_modulename;, and then decompress the data from that.</para>
+</callout>
+</calloutlist>
+</example>
+</section>
+
+<section id="oa.alltogether">
+<?dbhtml filename="http_web_services/alltogether.html"?>
+<title>Putting it all together</title>
+<abstract>
+<title/>
+<para>You've seen all the pieces for building an intelligent HTTP web services client.  Now let's see how they all fit together.</para>
+</abstract>
+<example>
+<title>The <function>openanything</function> function</title>
+<para>This function is defined in &openanything_filename;.</para>
+<programlisting>
+&oa_def;
+    # non-HTTP code omitted for brevity
+&oa_urlparse; <co id="oa.alltogether.1.1"/>
+&oa_urlparse_comment;
+&oa_request;
+&oa_add_useragent; <co id="oa.alltogether.1.2"/>
+&oa_if_etag;
+&oa_add_etag; <co id="oa.alltogether.1.3"/>
+&of_if_lastmodified;
+&oa_add_lastmodified; <co id="oa.alltogether.1.4"/>
+&oa_add_gzip; <co id="oa.alltogether.1.5"/>
+&oa_build_opener; <co id="oa.alltogether.1.6"/>
+&oa_open_open; <co id="oa.alltogether.1.7"/>
+</programlisting>
+<calloutlist>
+<callout arearefs="oa.alltogether.1.1">
+<para>&urlparse; is a handy utility module for, you guessed it, parsing URLs.  It's primary function, also called <function>urlparse</function>, takes a URL and splits it into a tuple of (scheme, domain, path, params, query string parameters, and fragment identifier).  Of these, the only thing you care about is the scheme, to make sure that you're dealing with an HTTP URL (which &urllib2; can handle).</para>
+</callout>
+<callout arearefs="oa.alltogether.1.2">
+<para>You identify yourself to the HTTP server with the &useragent; passed in by the calling function.  If no &useragent; was specified, you use a default one defined earlier in the &openanything_filename; module.  You never use the default one defined by &urllib2;.</para>
+</callout>
+<callout arearefs="oa.alltogether.1.3">
+<para>If an &etag; hash was given, send it in the &ifnonematch; header.</para>
+</callout>
+<callout arearefs="oa.alltogether.1.4">
+<para>If a last-modified date was given, send it in the &ifmodifiedsince; header.</para>
+</callout>
+<callout arearefs="oa.alltogether.1.5">
+<para>Tell the server you would like compressed data if possible.</para>
+</callout>
+<callout arearefs="oa.alltogether.1.6">
+<para>Build a URL opener that uses <emphasis>both</emphasis> of the custom URL handlers: <classname>SmartRedirectHandler</classname> for handling <literal>301</literal> and <literal>302</literal> redirects, and <classname>DefaultErrorHandler</classname> for handling <literal>304</literal>, <literal>404</literal>, and other error conditions gracefully.</para>
+</callout>
+<callout arearefs="oa.alltogether.1.7">
+<para>That's it!  Open the URL and return a file-like object to the caller.</para>
+</callout>
+</calloutlist>
+</example>
+<example>
+<title>The <function>fetch</function> function</title>
+<para>This function is defined in &openanything_filename;.</para>
+<programlisting>
+&oa_fetch_def;
+&oa_fetch_doc;
+&oa_fetch_result;
+&oa_fetch_openanything; <co id="oa.alltogether.2.1"/>
+&oa_fetch_read; <co id="oa.alltogether.2.2"/>
+&oa_fetch_headers;
+&oa_fetch_save_etag_comment;
+&oa_fetch_get_etag; <co id="oa.alltogether.2.3"/>
+&oa_fetch_lastmodified_comment;
+&oa_fetch_get_lastmodified; <co id="oa.alltogether.2.4"/>
+&oa_fetch_if_gzip; <co id="oa.alltogether.2.5"/>
+&oa_fetch_gzip_comment;
+&oa_fetch_gzip;
+&oa_fetch_if_url; <co id="oa.alltogether.2.6"/>
+&oa_fetch_save_url;
+&oa_fetch_default_status;
+&oa_fetch_if_status; <co id="oa.alltogether.2.7"/>
+&oa_fetch_save_status;
+&oa_fetch_close;
+&oa_fetch_return;
+</programlisting>
+<calloutlist>
+<callout arearefs="oa.alltogether.2.1">
+<para>First, you call the <function>openAnything</function> function with a URL, &etag; hash, &lastmodified; date, and &useragent;.</para>
+</callout>
+<callout arearefs="oa.alltogether.2.2">
+<para>Read the actual data returned from the server.  This may be compressed; if so, you'll decompress it later.</para>
+</callout>
+<callout arearefs="oa.alltogether.2.3">
+<para>Save the &etag; hash returned from the server, so the calling application can pass it back to you next time, and you can pass it on to <function>openAnything</function>, which can stick it in the &ifnonematch; header and send it to the remote server.</para>
+</callout>
+<callout arearefs="oa.alltogether.2.4">
+<para>Save the &lastmodified; date too.</para>
+</callout>
+<callout arearefs="oa.alltogether.2.5">
+<para>If the server says that it sent compressed data, decompress it.</para>
+</callout>
+<callout arearefs="oa.alltogether.2.6">
+<para>If you got a URL back from the server, save it, and assume that the status code is <literal>200</literal> until you find out otherwise.</para>
+</callout>
+<callout arearefs="oa.alltogether.2.7">
+<para>If one of the custom URL handlers captured a status code, then save that too.</para>
+</callout>
+</calloutlist>
+</example>
+<example>
+<title>Using &openanything_filename;</title>
+<screen>
+&prompt;<userinput>import openanything</userinput>
+&prompt;<userinput>useragent = 'MyHTTPWebServicesApp/1.0'</userinput>
+&prompt;<userinput>url = 'http://diveintopython.org/redir/example301.xml'</userinput>
+&prompt;<userinput>params = openanything.fetch(url, agent=useragent)</userinput>              <co id="oa.alltogether.3.1"/>
+&prompt;<userinput>params</userinput>                                                         <co id="oa.alltogether.3.2"/>
+<computeroutput>{'url': 'http://diveintomark.org/xml/atom.xml', 
+'lastmodified': 'Thu, 15 Apr 2004 19:45:21 GMT', 
+'etag': '"e842a-3e53-55d97640"', 
+'status': 301,
+'data': '&lt;?xml version="1.0" encoding="iso-8859-1"?>
+&lt;feed version="0.3"
+&lt;-- rest of data omitted for brevity -->'}</computeroutput>
+&prompt;<userinput>if params['status'] == 301:</userinput>                                    <co id="oa.alltogether.3.3"/>
+&continuationprompt;<userinput>url = params['url']</userinput>
+&prompt;<userinput>newparams = openanything.fetch(</userinput>
+&continuationprompt;<userinput>url, params['etag'], params['lastmodified'], useragent)</userinput>    <co id="oa.alltogether.3.4"/>
+&prompt;<userinput>newparams</userinput>
+<computeroutput>{'url': 'http://diveintomark.org/xml/atom.xml', 
+'lastmodified': None, 
+'etag': '"e842a-3e53-55d97640"', 
+'status': 304,
+'data': ''}</computeroutput>                                                        <co id="oa.alltogether.3.5"/>
+</screen>
+<calloutlist>
+<callout arearefs="oa.alltogether.3.1">
+<para>The very first time you fetch a resource, you don't have an &etag; hash or &lastmodified; date, so you'll leave those out.  (They're <link linkend="apihelper.optional">optional parameters</link>.)</para>
+</callout>
+<callout arearefs="oa.alltogether.3.2">
+<para>What you get back is a dictionary of several useful headers, the HTTP status code, and the actual data returned from the server.  &openanything_module; handles the gzip compression internally; you don't care about that at this level.</para>
+</callout>
+<callout arearefs="oa.alltogether.3.3">
+<para>If you ever get a <literal>301</literal> status code, that's a permanent redirect, and you need to update your URL to the new address.</para>
+</callout>
+<callout arearefs="oa.alltogether.3.4">
+<para>The second time you fetch the same resource, you have all sorts of information to pass back: a (possibly updated) URL, the &etag; from the last time, the &lastmodified; date from the last time, and of course your &useragent;.</para>
+</callout>
+<callout arearefs="oa.alltogether.3.5">
+<para>What you get back is again a dictionary, but the data hasn't changed, so all you got was a <literal>304</literal> status code and no data.</para>
+</callout>
+</calloutlist>
+</example>
+</section>
+
+<section id="oa.summary">
+<?dbhtml filename="http_web_services/summary.html"?>
+<title>Summary</title>
+<abstract>
+<title/>
+<para>The &openanything_filename; and its functions should now make perfect sense.</para>
+</abstract>
+<para>There are 5 important features of HTTP web services that every client should support:</para>
+<itemizedlist>
+<listitem><para>Identifying your application <link linkend="oa.useragent">by setting a proper &useragent;</link>.</para></listitem>
+<listitem><para>Handling <link linkend="oa.redirect">permanent redirects properly</link>.</para></listitem>
+<listitem><para>Supporting <link linkend="oa.etags">&lastmodified; date checking</link> to avoid re-downloading data that hasn't changed.</para></listitem>
+<listitem><para>Supporting <link linkend="oa.etags.example">&etag; hashes</link> to avoid re-downloading data that hasn't changed.</para></listitem>
+<listitem><para>Supporting <link linkend="oa.gzip">gzip compression</link> to reduce bandwidth even when data <emphasis>has</emphasis> changed.</para></listitem>
+</itemizedlist>
+</section>
+</chapter>
+<!--
+- basic grabbing of a URL (review)
+  - so what's wrong with that?
+  - not thoughtful
+  - HTTP has a lot of features that most programs ignore
+  - you can do better
+- features of HTTP
+  - User-Agent
+  X Referer (referrer)
+  - redirects
+    - temporary (302)
+    - permanent (301)
+    X multiple choices (300/307)
+  - ETag/If-None-Match (304)
+  - Last-Modified/If-Modified-Since (304)
+  - gzip compression (Accept-encoding/Content-encoding)
+- setting User-Agent and Referer
+- handling etag and last-modified
+  - getting headers out of response
+  - adding headers back to next request
+  X how to construct dates with time.strftime
+  X and why you can't do that here
+  X date parsing with rfc822
+- handling redirects
+  - custom URL handlers
+  - exposing HTTP status codes
+  - 301/302
+  - other redirects (all other 3xx codes except 304)
+  - errors (404, etc.)
+- other custom URL handlers
+  - HTTP authentication
+  - proxies
+- handling gzip compression
+- putting it all together
+- summary
+-->
+
